@@ -12,11 +12,7 @@ interface ExportActionsProps {
   onShareClick: () => void;
 }
 
-export default function ExportActions({
-  canvasRef,
-  mode,
-  onShareClick,
-}: ExportActionsProps) {
+export default function ExportActions({ canvasRef, mode, onShareClick }: ExportActionsProps) {
   const [downloading, setDownloading] = useState(false);
   const [copied, setCopied] = useState(false);
 
@@ -29,22 +25,12 @@ export default function ExportActions({
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download =
-        mode === "pfp-frame"
-          ? "hh-goa-2026-pfp.png"
-          : "hh-goa-2026-builder-id.png";
+      a.download = mode === "pfp-frame" ? "hh-goa-2026-pfp.png" : "hh-goa-2026-builder-id.png";
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
-
-      // 🎉 Celebration confetti!
-      confetti({
-        particleCount: 100,
-        spread: 70,
-        origin: { y: 0.6 },
-        colors: ["#00f2fe", "#f857a6", "#ff6b35", "#43e97b", "#a78bfa"],
-      });
+      confetti({ particleCount: 80, spread: 60, origin: { y: 0.6 }, colors: ["#e5e5e5", "#a3a3a3", "#525252"] });
     } finally {
       setDownloading(false);
     }
@@ -55,67 +41,27 @@ export default function ExportActions({
     if (!canvas) return;
     try {
       const blob = await canvasToBlob(canvas);
-      await navigator.clipboard.write([
-        new ClipboardItem({ "image/png": blob }),
-      ]);
+      await navigator.clipboard.write([new ClipboardItem({ "image/png": blob })]);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
-    } catch (err) {
-      console.error("Failed to copy image:", err);
-      // Fallback: try data URL copy
-      try {
-        const dataUrl = canvas.toDataURL("image/png");
-        await navigator.clipboard.writeText(dataUrl);
-        setCopied(true);
-        setTimeout(() => setCopied(false), 2000);
-      } catch {
-        alert("Unable to copy to clipboard. Try downloading instead.");
-      }
+    } catch {
+      alert("Unable to copy to clipboard. Try downloading instead.");
     }
   };
 
   return (
     <div className="flex flex-col gap-2 animate-fade-in" style={{ animationDelay: "0.15s" }}>
-      {/* Download */}
-      <button
-        onClick={handleDownload}
-        disabled={downloading}
-        className="btn-primary flex items-center justify-center gap-2 w-full text-sm"
-      >
-        {downloading ? (
-          <Loader2 className="w-4 h-4 animate-spin" />
-        ) : (
-          <Download className="w-4 h-4" />
-        )}
+      <button onClick={handleDownload} disabled={downloading}
+        className="btn-primary flex items-center justify-center gap-2 w-full">
+        {downloading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />}
         {downloading ? "Exporting…" : "Download PNG"}
       </button>
-
       <div className="flex gap-2">
-        {/* Copy to clipboard */}
-        <button
-          onClick={handleCopy}
-          className="btn-secondary flex-1 flex items-center justify-center gap-2 text-xs"
-        >
-          {copied ? (
-            <>
-              <Check className="w-3.5 h-3.5 text-neon-green" />
-              <span className="text-neon-green">Copied!</span>
-            </>
-          ) : (
-            <>
-              <Copy className="w-3.5 h-3.5" />
-              Copy Image
-            </>
-          )}
+        <button onClick={handleCopy} className="btn-ghost flex-1 flex items-center justify-center gap-2 text-[12px]">
+          {copied ? <><Check className="w-3.5 h-3.5 text-neutral-300" /><span className="text-neutral-300">Copied!</span></> : <><Copy className="w-3.5 h-3.5" />Copy</>}
         </button>
-
-        {/* Share to X */}
-        <button
-          onClick={onShareClick}
-          className="flex-1 flex items-center justify-center gap-2 text-xs font-semibold rounded-xl py-2.5 px-4 bg-white/[0.06] hover:bg-white/[0.1] text-white/70 hover:text-white transition-all border border-white/5 hover:border-white/10"
-        >
-          <Share2 className="w-3.5 h-3.5" />
-          Share to 𝕏
+        <button onClick={onShareClick} className="btn-ghost flex-1 flex items-center justify-center gap-2 text-[12px]">
+          <Share2 className="w-3.5 h-3.5" />Share
         </button>
       </div>
     </div>
