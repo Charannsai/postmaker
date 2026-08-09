@@ -2,12 +2,10 @@
 
 import { useState, useRef, useCallback } from "react";
 import type {
-  AppState,
   AppMode,
   PhotoState,
   FrameSettings,
   CardData,
-  CardTemplateId,
 } from "@/types";
 import PhotoUploader from "@/components/PhotoUploader";
 import PhotoControls from "@/components/PhotoControls";
@@ -30,27 +28,25 @@ const DEFAULT_PHOTO: PhotoState = {
 };
 
 const DEFAULT_FRAME: FrameSettings = {
-  templateId: "hh-goa-paper-collage",
   caption: "I AM COMING TO HH GOA '26 · ARE YOU?",
   subcaption: "HH GOA 2026",
   captionStyle: "bold-street",
-  badgeEnabled: true,
-  badgeText: "SEE YOU IN GOA",
   stickers: ["washi-tape"],
   bgStyle: "paper-wrinkled",
   aspectRatio: "4:5",
 };
 
 const DEFAULT_CARD: CardData = {
-  name: "Alex Rivera",
+  name: "ALEX RIVERA",
+  nickname: "ALEX",
   handle: "alexbuilds",
   role: "Fullstack",
   techStack: ["Next.js", "TypeScript", "Solana", "Tailwind"],
   funTitle: "10x Caffeine-to-Code Pipeline",
-  tagline: "Everything Intentional · Shipping in Goa",
+  noteText: "TREMBLING W/ EXCITEMENT & NERVES",
   badgeId: "HHG-26-8420",
-  stickers: ["barcode"],
-  bgStyle: "paper-wrinkled",
+  stickers: ["wizard-hat"],
+  bgStyle: "notebook-lined",
 };
 
 export default function HomePage() {
@@ -58,8 +54,6 @@ export default function HomePage() {
   const [photo, setPhoto] = useState<PhotoState>(DEFAULT_PHOTO);
   const [frame, setFrame] = useState<FrameSettings>(DEFAULT_FRAME);
   const [card, setCard] = useState<CardData>(DEFAULT_CARD);
-  const [cardTemplateId, setCardTemplateId] =
-    useState<CardTemplateId>("hh-goa-paper-scrapbook");
   const [shareOpen, setShareOpen] = useState(false);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -78,7 +72,7 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen bg-[#f5f2eb] text-[#171717] selection:bg-[#fed7aa] selection:text-[#7c2d12]">
-      {/* ── Paper Studio Header ───────────────────────────── */}
+      {/* ── Studio Header ─────────────────────────────────── */}
       <header className="sticky top-0 z-40 bg-[#faf8f3]/90 backdrop-blur-md border-b border-[#e6dfd2] px-4 sm:px-8 py-3.5 shadow-sm">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -97,7 +91,7 @@ export default function HomePage() {
             </span>
           </div>
 
-          {/* Mode Switcher */}
+          {/* Mode Switcher: Single PFP Poster vs Single Builder ID */}
           <div className="flex items-center p-1 rounded-xl bg-[#ffffff] border border-[#e6dfd2] shadow-sm">
             <button
               onClick={() => setMode("pfp-frame")}
@@ -119,7 +113,7 @@ export default function HomePage() {
               }`}
             >
               <IdCard className="w-3.5 h-3.5" />
-              Builder Pass
+              Lanyard Builder ID
             </button>
           </div>
         </div>
@@ -127,21 +121,21 @@ export default function HomePage() {
 
       {/* ── Main Studio Layout ────────────────────────────── */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-8 space-y-6">
-        {/* Hero Intro Header */}
+        {/* Intro Header */}
         <div className="text-center max-w-2xl mx-auto space-y-2">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#ffffff] border border-[#e6dfd2] text-[11px] font-mono text-[#525252] shadow-sm">
             <Sparkles className="w-3.5 h-3.5 text-[#d97706]" />
-            #FrameInGoa · Editorial Paper Studio
+            #FrameInGoa · Official Studio
           </div>
           <h1 className="text-2xl sm:text-3xl font-serif font-black text-[#171717] tracking-tight">
             {mode === "pfp-frame"
-              ? "Create Your Paper Scrapbook & Social Frame"
-              : "Generate Your Official Builder Pass"}
+              ? "Editorial Paper Scrapbook Poster"
+              : "Lanyard Conference Badge on Notebook"}
           </h1>
           <p className="text-[13px] text-[#525252]">
             {mode === "pfp-frame"
-              ? "Announce your presence at Hacker House Goa 2026 with white die-cut sticker cutouts, spiral notebook tech stacks, and taped polaroids."
-              : "Design high-resolution tactile developer passes, boarding tickets, and conference badges."}
+              ? "Die-cut white sticker cutout, spiral notebook stack, taped polaroid, and clean typography."
+              : "Authentic transparent acrylic badge holder with lanyard strap, die-cut 3D stickers, and oval nametag on lined notebook paper."}
           </p>
         </div>
 
@@ -152,7 +146,7 @@ export default function HomePage() {
             <div className="surface p-4 sm:p-5 space-y-4">
               <div className="flex items-center justify-between border-b border-[#e6dfd2] pb-2.5">
                 <span className="text-[12px] font-bold text-[#171717] uppercase tracking-wider">
-                  1. Upload Photo
+                  1. Your Photo
                 </span>
                 <span className="text-[10px] text-[#737373] font-mono">
                   HEIC / JPG / PNG
@@ -180,7 +174,6 @@ export default function HomePage() {
                   photo={photo}
                   frame={frame}
                   card={card}
-                  cardTemplateId={cardTemplateId}
                   onPhotoOffsetChange={(offsetX, offsetY) =>
                     updatePhoto({ offsetX, offsetY })
                   }
@@ -198,15 +191,15 @@ export default function HomePage() {
             </div>
           </div>
 
-          {/* Right Column: Style, Captions, Stickers & Templates */}
+          {/* Right Column: Information & Details */}
           <div className="lg:col-span-4 order-3 lg:order-3 space-y-4">
             <div className="surface p-4 sm:p-5 space-y-4">
               <div className="flex items-center justify-between border-b border-[#e6dfd2] pb-2.5">
                 <span className="text-[12px] font-bold text-[#171717] uppercase tracking-wider">
-                  2. Customize Design
+                  2. {mode === "pfp-frame" ? "Poster Slogan" : "Badge Details"}
                 </span>
                 <span className="text-[10px] text-[#737373] font-mono">
-                  {mode === "pfp-frame" ? "Themes & Text" : "Badges & Info"}
+                  {mode === "pfp-frame" ? "Typography & Backdrop" : "Attendee Info"}
                 </span>
               </div>
 
@@ -215,9 +208,7 @@ export default function HomePage() {
               ) : (
                 <BuilderCardControls
                   card={card}
-                  templateId={cardTemplateId}
                   onCardChange={updateCard}
-                  onTemplateChange={setCardTemplateId}
                 />
               )}
             </div>

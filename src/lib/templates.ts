@@ -1,10 +1,8 @@
 /* ──────────────────────────────────────────────────────────────
-   Template Definitions & Presets – HH Goa 2026 Paper Studio
+   Definitions & Presets – HH Goa 2026 Studio
    ────────────────────────────────────────────────────────────── */
 
 import type {
-  FrameTemplate,
-  CardTemplate,
   FilterDef,
   FilterType,
   BackgroundStyle,
@@ -40,11 +38,6 @@ export const FILTERS: FilterDef[] = [
     label: "High Contrast",
     css: "contrast(1.4) saturate(1.2) brightness(1.05)",
   },
-  {
-    id: "cyber-neon",
-    label: "Cyber Neon",
-    css: "saturate(1.8) contrast(1.2) hue-rotate(170deg)",
-  },
 ];
 
 export function getFilterCss(id: FilterType): string {
@@ -53,13 +46,11 @@ export function getFilterCss(id: FilterType): string {
 
 // ── Canvas Background Styles ─────────────────────────────────
 export const BACKGROUND_STYLES: BackgroundStyle[] = [
+  { id: "notebook-lined", label: "Lined Notebook", preview: "#fcfbfa" },
   { id: "paper-wrinkled", label: "Wrinkled Paper", preview: "#f5f2eb" },
   { id: "hh-goa-emerald", label: "HH Goa Emerald", preview: "#0d4a2b" },
-  { id: "kraft-paper", label: "Kraft Cardstock", preview: "#d7c4a3" },
-  { id: "clean-white", label: "Studio White", preview: "#f5f5f5" },
-  { id: "dark-minimal", label: "Dark Studio", preview: "#0a0a0a" },
-  { id: "yellow-gingham", label: "Yellow Gingham", preview: "repeating-linear-gradient(45deg, #fef08a 0, #fef08a 10px, #fef9c3 10px, #fef9c3 20px)" },
-  { id: "blueprint-grid", label: "Blueprint Grid", preview: "#0f172a" },
+  { id: "kraft-paper", label: "Kraft Paper", preview: "#d7c4a3" },
+  { id: "clean-white", label: "Studio White", preview: "#ffffff" },
 ];
 
 // ── Caption Styles ───────────────────────────────────────────
@@ -69,146 +60,6 @@ export const CAPTION_STYLES: CaptionStyleDef[] = [
   { id: "typewriter-tape", label: "Typewriter Tape" },
   { id: "golden-serif", label: "Luxury Serif" },
   { id: "hacker-mono", label: "Monospace Terminal" },
-];
-
-// ── Format A: Frame Templates ────────────────────────────────
-export const FRAME_TEMPLATES: FrameTemplate[] = [
-  {
-    id: "hh-goa-paper-collage",
-    label: "Scrapbook Paper Collage",
-    description: "White sticker cutout with spiral notebook stack, taped polaroid & doodles",
-    category: "collage",
-    colors: { primary: "#f5f2eb", secondary: "#171717", accent: "#d97706" },
-  },
-  {
-    id: "hh-goa-official",
-    label: "HH Goa Official Poster",
-    description: "Emerald green cardstock, radiant sunburst rays & hot pink ribbon",
-    category: "official",
-    colors: { primary: "#0d4a2b", secondary: "#facc15", accent: "#ec4899" },
-  },
-  {
-    id: "hh-goa-signpost",
-    label: "Beach Directional Signpost",
-    description: "Wooden signpost arrows, palm silhouettes & ocean setting sun",
-    category: "official",
-    colors: { primary: "#08331e", secondary: "#fde047", accent: "#f43f5e" },
-  },
-  {
-    id: "polaroid-tape",
-    label: "Matte Paper Polaroid",
-    description: "Textured photo paper with washi tape & handwritten ink",
-    category: "aesthetic",
-    colors: { primary: "#faf9f5", secondary: "#e5e5dc", accent: "#d97706" },
-  },
-  {
-    id: "festival-wristband",
-    label: "Festival VIP Wristband",
-    description: "Heavy woven event ribbon with metallic gold header",
-    category: "festival",
-    colors: { primary: "#171717", secondary: "#facc15", accent: "#f59e0b" },
-  },
-  {
-    id: "streetwear-poster",
-    label: "Streetwear Typographic Poster",
-    description: "Heavy black-box street typography wrapping the frame",
-    category: "street",
-    colors: { primary: "#000000", secondary: "#ffffff", accent: "#ef4444" },
-  },
-  {
-    id: "cinema-ticket",
-    label: "Admit One Cinema Ticket",
-    description: "Golden retro perforated ticket with notch punch-outs",
-    category: "retro",
-    colors: { primary: "#f59e0b", secondary: "#78350f", accent: "#fef3c7" },
-  },
-  {
-    id: "postage-stamp",
-    label: "Perforated Air Mail Stamp",
-    description: "Fine scalloped stamp teeth with circular postal mark",
-    category: "aesthetic",
-    colors: { primary: "#faf8f5", secondary: "#b91c1c", accent: "#1e3a8a" },
-  },
-  {
-    id: "music-player",
-    label: "Retro Cassette Deck",
-    description: "Vintage audio player card with waveform and scrub bar",
-    category: "retro",
-    colors: { primary: "#141414", secondary: "#facc15", accent: "#facc15" },
-  },
-  {
-    id: "magazine-editorial",
-    label: "Editorial Magazine Cover",
-    description: "Luxury fashion editorial masthead and yellow quote box",
-    category: "aesthetic",
-    colors: { primary: "#0d0d0d", secondary: "#fafafa", accent: "#f43f5e" },
-  },
-  {
-    id: "cyber-hud-scanner",
-    label: "Cyber Biometric Scan",
-    description: "Developer biometric scan HUD with target reticle",
-    category: "cyber",
-    colors: { primary: "#050811", secondary: "#06b6d4", accent: "#10b981" },
-  },
-  {
-    id: "minimal-gallery",
-    label: "Gallery Passe-Partout",
-    description: "Museum exhibition matte with coordinate stamps",
-    category: "minimal",
-    colors: { primary: "#1c1c1c", secondary: "#f5f5f5", accent: "#a3a3a3" },
-  },
-];
-
-// ── Format B: Card Templates ─────────────────────────────────
-export const CARD_TEMPLATES: CardTemplate[] = [
-  {
-    id: "hh-goa-paper-scrapbook",
-    label: "Paper Scrapbook Profile",
-    description: "Editorial collage card with spiral notebook stack, taped polaroid & notes",
-    colors: { bg: "#f5f2eb", card: "#faf8f3", accent: "#d97706", text: "#171717" },
-  },
-  {
-    id: "hh-goa-emerald-badge",
-    label: "HH Goa Official Pass",
-    description: "Emerald green cardstock with sunburst gold & hot pink badges",
-    colors: { bg: "#063d23", card: "#0d4a2b", accent: "#facc15", text: "#fefce8" },
-  },
-  {
-    id: "boarding-pass",
-    label: "Goa Air Boarding Ticket",
-    description: "Luxury aviation ticket stub with barcode and flight route",
-    colors: { bg: "#0a0a0a", card: "#161616", accent: "#f59e0b", text: "#f5f5f5" },
-  },
-  {
-    id: "scrapbook-pass",
-    label: "Scrapbook Polaroid Pass",
-    description: "Textured matte paper pass with yellow washi tape",
-    colors: { bg: "#0f0f0f", card: "#faf9f5", accent: "#d97706", text: "#171717" },
-  },
-  {
-    id: "festival-access",
-    label: "All-Access Festival Pass",
-    description: "Heavy woven lanyard pass with gold metallic header",
-    colors: { bg: "#080808", card: "#161616", accent: "#facc15", text: "#fafafa" },
-  },
-  {
-    id: "holographic-vip",
-    label: "Holographic Lanyard VIP",
-    description: "Conference badge with iridescent foil accents",
-    colors: { bg: "#0a0a0a", card: "#12131a", accent: "#c084fc", text: "#e0e7ff" },
-  },
-  {
-    id: "cyber-terminal",
-    label: "Hacker Passport",
-    description: "Terminal identity document with GPS coordinates",
-    colors: { bg: "#050811", card: "#0d1322", accent: "#06b6d4", text: "#e0f2fe" },
-  },
-  {
-    id: "swiss-minimal",
-    label: "Swiss Modernist",
-    description: "Ultra-clean museum typography pass",
-    colors: { bg: "#080808", card: "#141414", accent: "#e5e5e5", text: "#fafafa" },
-  },
 ];
 
 // ── Clean Typographic Preset Captions (Zero Emojis) ──────────
@@ -225,23 +76,20 @@ export const PRESET_CAPTIONS = [
   "SUDO SHIP --DESTINATION=GOA_2026",
 ] as const;
 
-// ── Stickers (Clean Typographic Labels) ───────────────────────
+// ── Stickers ─────────────────────────────────────────────────
 export interface StickerDef {
   id: StickerType;
   label: string;
-  iconName: string;
 }
 
 export const STICKERS: StickerDef[] = [
-  { id: "signpost", label: "Signpost Stamp", iconName: "signpost" },
-  { id: "sun-rising", label: "Sunburst Stamp", iconName: "sun" },
-  { id: "verified", label: "Verified Pass", iconName: "verified" },
-  { id: "ticket-stamp", label: "Admit One Stamp", iconName: "ticket" },
-  { id: "washi-tape", label: "Washi Tape", iconName: "tape" },
-  { id: "hazard-tape", label: "Hazard Strip", iconName: "hazard" },
-  { id: "postmark", label: "Air Mail Mark", iconName: "postmark" },
-  { id: "barcode", label: "Event Barcode", iconName: "barcode" },
-  { id: "sparkles", label: "Star Cluster", iconName: "sparkles" },
+  { id: "wizard-hat", label: "Hacker Hat" },
+  { id: "washi-tape", label: "Washi Tape" },
+  { id: "verified", label: "Verified Pass" },
+  { id: "signpost", label: "Signpost Stamp" },
+  { id: "postmark", label: "Air Mail Stamp" },
+  { id: "barcode", label: "Event Barcode" },
+  { id: "sparkles", label: "Star Cluster" },
 ];
 
 // ── Tech Stack Options ───────────────────────────────────────
@@ -276,12 +124,4 @@ export const ROLES = [
   "Founder",
   "DevOps",
   "Mobile",
-] as const;
-
-export const BADGE_PRESETS = [
-  "SEE YOU IN GOA",
-  "VIP BUILDER",
-  "SPEAKER",
-  "FELLOW",
-  "HACKER",
 ] as const;

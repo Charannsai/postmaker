@@ -1,5 +1,8 @@
 /* ──────────────────────────────────────────────────────────────
-   Types & Data Models – HH Goa 2026 Paper Studio
+   Types & Data Models – HH Goa 2026 Studio
+   Two Focused Flagship Designs:
+   1. PFP Frame: Editorial Scrapbook Poster
+   2. Builder ID: Disney-Style Lanyard Conference Badge
    ────────────────────────────────────────────────────────────── */
 
 export type FilterType =
@@ -17,16 +20,14 @@ export interface FilterDef {
   css: string;
 }
 
-export type CanvasAspectRatio = "1:1" | "9:16" | "4:5";
+export type CanvasAspectRatio = "1:1" | "4:5" | "9:16";
 
 export type BackgroundStyleId =
   | "paper-wrinkled"
+  | "notebook-lined"
   | "hh-goa-emerald"
   | "kraft-paper"
-  | "dark-minimal"
-  | "yellow-gingham"
-  | "clean-white"
-  | "blueprint-grid";
+  | "clean-white";
 
 export interface BackgroundStyle {
   id: BackgroundStyleId;
@@ -46,82 +47,26 @@ export interface CaptionStyleDef {
   label: string;
 }
 
-// ── Format A: Aesthetic Frames ────────────────────────────────
-export type FrameTemplateId =
-  | "hh-goa-paper-collage"
-  | "hh-goa-official"
-  | "hh-goa-signpost"
-  | "polaroid-tape"
-  | "festival-wristband"
-  | "streetwear-poster"
-  | "cinema-ticket"
-  | "postage-stamp"
-  | "music-player"
-  | "magazine-editorial"
-  | "cyber-hud-scanner"
-  | "minimal-gallery"
-  | "goa-neon-sunset"
-  | "cyber-matrix";
-
-export interface FrameTemplate {
-  id: FrameTemplateId;
-  label: string;
-  description: string;
-  category: "collage" | "official" | "aesthetic" | "festival" | "street" | "retro" | "cyber" | "minimal";
-  colors: {
-    primary: string;
-    secondary: string;
-    accent: string;
-    bg?: string;
-  };
-}
-
 export type StickerType =
-  | "signpost"
-  | "sun-rising"
+  | "wizard-hat"
   | "washi-tape"
+  | "signpost"
   | "postmark"
   | "barcode"
   | "sparkles"
-  | "verified"
-  | "hazard-tape"
-  | "ticket-stamp";
+  | "verified";
 
+// ── Format A: PFP Poster Frame ────────────────────────────────
 export interface FrameSettings {
-  templateId: FrameTemplateId;
   caption: string;
   subcaption: string;
   captionStyle: CaptionStyleId;
-  badgeEnabled: boolean;
-  badgeText: string;
   stickers: StickerType[];
   bgStyle: BackgroundStyleId;
   aspectRatio: CanvasAspectRatio;
 }
 
-// ── Format B: Builder ID Cards ────────────────────────────────
-export type CardTemplateId =
-  | "hh-goa-paper-scrapbook"
-  | "hh-goa-emerald-badge"
-  | "boarding-pass"
-  | "scrapbook-pass"
-  | "festival-access"
-  | "holographic-vip"
-  | "cyber-terminal"
-  | "swiss-minimal";
-
-export interface CardTemplate {
-  id: CardTemplateId;
-  label: string;
-  description: string;
-  colors: {
-    bg: string;
-    card: string;
-    accent: string;
-    text: string;
-  };
-}
-
+// ── Format B: Builder ID Lanyard Badge ────────────────────────
 export type BuilderRole =
   | "Frontend"
   | "Backend"
@@ -136,11 +81,12 @@ export type BuilderRole =
 
 export interface CardData {
   name: string;
+  nickname: string;
   handle: string;
   role: BuilderRole;
   techStack: string[];
   funTitle: string;
-  tagline: string;
+  noteText: string;
   badgeId: string;
   stickers: StickerType[];
   bgStyle: BackgroundStyleId;
@@ -165,5 +111,4 @@ export interface AppState {
   photo: PhotoState;
   frame: FrameSettings;
   card: CardData;
-  cardTemplateId: CardTemplateId;
 }

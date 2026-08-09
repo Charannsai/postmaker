@@ -5,7 +5,6 @@ import type {
   PhotoState,
   FrameSettings,
   CardData,
-  CardTemplateId,
   AppMode,
 } from "@/types";
 import { renderPfpFrame, renderBuilderCard } from "@/lib/canvasRenderer";
@@ -15,7 +14,6 @@ interface PreviewCanvasProps {
   photo: PhotoState;
   frame: FrameSettings;
   card: CardData;
-  cardTemplateId: CardTemplateId;
   onPhotoOffsetChange: (offsetX: number, offsetY: number) => void;
   canvasRef: React.RefObject<HTMLCanvasElement | null>;
 }
@@ -25,7 +23,6 @@ export default function PreviewCanvas({
   photo,
   frame,
   card,
-  cardTemplateId,
   onPhotoOffsetChange,
   canvasRef,
 }: PreviewCanvasProps) {
@@ -41,7 +38,6 @@ export default function PreviewCanvas({
       return;
     }
     const img = new Image();
-    // Only set crossOrigin for remote http/https images, not blob: or data:
     if (photo.src.startsWith("http://") || photo.src.startsWith("https://")) {
       img.crossOrigin = "anonymous";
     }
@@ -62,9 +58,9 @@ export default function PreviewCanvas({
     if (mode === "pfp-frame") {
       renderPfpFrame(canvas, imgRef.current, photo, frame, 2);
     } else {
-      renderBuilderCard(canvas, imgRef.current, photo, card, cardTemplateId, 2);
+      renderBuilderCard(canvas, imgRef.current, photo, card, 2);
     }
-  }, [mode, photo, frame, card, cardTemplateId, canvasRef]);
+  }, [mode, photo, frame, card, canvasRef]);
 
   useEffect(() => {
     render();
@@ -92,28 +88,31 @@ export default function PreviewCanvas({
   }, []);
 
   const isPfp = mode === "pfp-frame";
-  let aspectRatioStyle = "1 / 1";
-  let maxWStyle = "max-w-[440px] sm:max-w-[480px] lg:max-w-[500px]";
+  let aspectRatioStyle = "4 / 5";
+  let maxWStyle = "max-w-[420px]";
 
   if (isPfp) {
-    if (frame.aspectRatio === "9:16") {
+    if (frame.aspectRatio === "1:1") {
+      aspectRatioStyle = "1 / 1";
+      maxWStyle = "max-w-[440px]";
+    } else if (frame.aspectRatio === "9:16") {
       aspectRatioStyle = "9 / 16";
-      maxWStyle = "max-w-[340px] sm:max-w-[380px]";
-    } else if (frame.aspectRatio === "4:5") {
+      maxWStyle = "max-w-[360px]";
+    } else {
       aspectRatioStyle = "4 / 5";
-      maxWStyle = "max-w-[380px] sm:max-w-[420px]";
+      maxWStyle = "max-w-[400px]";
     }
   } else {
-    aspectRatioStyle = "440 / 600";
-    maxWStyle = "max-w-[360px] sm:max-w-[400px]";
+    aspectRatioStyle = "520 / 640";
+    maxWStyle = "max-w-[420px]";
   }
 
   return (
     <div className="relative flex flex-col items-center justify-center w-full animate-scale-in">
-      <div className="relative w-full flex items-center justify-center p-3 sm:p-6 rounded-2xl bg-[#111111] border border-[#1f1f1f] shadow-2xl">
+      <div className="relative w-full flex items-center justify-center p-2 sm:p-4 rounded-2xl bg-[#faf8f3] border border-[#e6dfd2] shadow-sm">
         <canvas
           ref={canvasRef}
-          className={`relative w-full ${maxWStyle} rounded-xl shadow-2xl cursor-grab active:cursor-grabbing border border-white/5`}
+          className={`relative w-full ${maxWStyle} rounded-xl shadow-xl cursor-grab active:cursor-grabbing border border-[#e6dfd2]`}
           style={{ aspectRatio: aspectRatioStyle }}
           onPointerDown={handlePointerDown}
           onPointerMove={handlePointerMove}
@@ -121,7 +120,7 @@ export default function PreviewCanvas({
           onPointerLeave={handlePointerUp}
         />
         {photo.src && (
-          <div className="absolute bottom-6 left-1/2 -translate-x-1/2 text-[11px] text-neutral-400 font-mono bg-black/80 px-3 py-1 rounded-full border border-white/10 backdrop-blur-md pointer-events-none shadow-lg">
+          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 text-[10px] text-[#525252] font-mono bg-[#ffffff]/90 px-3 py-1 rounded-full border border-[#e6dfd2] backdrop-blur-md pointer-events-none shadow-sm">
             ✦ drag photo to reposition
           </div>
         )}
