@@ -53,6 +53,7 @@ export function getFilterCss(id: FilterType): string {
 
 // ── Canvas Background Styles ─────────────────────────────────
 export const BACKGROUND_STYLES: BackgroundStyle[] = [
+  { id: "hh-goa-emerald", label: "HH Goa Emerald", preview: "#0d4a2b" },
   { id: "dark-minimal", label: "Dark Studio", preview: "#0a0a0a" },
   { id: "yellow-gingham", label: "Yellow Gingham", preview: "repeating-linear-gradient(45deg, #fef08a 0, #fef08a 10px, #fef9c3 10px, #fef9c3 20px)" },
   { id: "red-texture", label: "Red Dot Canvas", preview: "#b91c1c" },
@@ -73,11 +74,18 @@ export const CAPTION_STYLES: CaptionStyleDef[] = [
 // ── Format A: Frame Templates ────────────────────────────────
 export const FRAME_TEMPLATES: FrameTemplate[] = [
   {
-    id: "polaroid-tape",
-    label: "Vintage Polaroid",
-    description: "Classic photo paper with washi tape & aesthetic script",
-    category: "aesthetic",
-    colors: { primary: "#faf9f5", secondary: "#e5e5dc", accent: "#d97706" },
+    id: "hh-goa-official",
+    label: "HH Goa Website Theme",
+    description: "Iconic emerald green, radiant sunburst & hot pink Goa branding",
+    category: "official",
+    colors: { primary: "#0d4a2b", secondary: "#facc15", accent: "#ec4899" },
+  },
+  {
+    id: "hh-goa-signpost",
+    label: "Beach Signpost Frame",
+    description: "Website beach direction signpost, palm trees & setting sun",
+    category: "official",
+    colors: { primary: "#08331e", secondary: "#fde047", accent: "#f43f5e" },
   },
   {
     id: "festival-wristband",
@@ -85,6 +93,13 @@ export const FRAME_TEMPLATES: FrameTemplate[] = [
     description: "Official event wristband banner: I am coming to HH GOA 26",
     category: "festival",
     colors: { primary: "#171717", secondary: "#facc15", accent: "#f59e0b" },
+  },
+  {
+    id: "polaroid-tape",
+    label: "Vintage Polaroid",
+    description: "Classic photo paper with washi tape & aesthetic script",
+    category: "aesthetic",
+    colors: { primary: "#faf9f5", secondary: "#e5e5dc", accent: "#d97706" },
   },
   {
     id: "streetwear-poster",
@@ -142,17 +157,22 @@ export const FRAME_TEMPLATES: FrameTemplate[] = [
     category: "cyber",
     colors: { primary: "#ff6b35", secondary: "#f857a6", accent: "#00f2fe" },
   },
-  {
-    id: "cyber-matrix",
-    label: "Hacker Terminal Ring",
-    description: "Circuit traces, HUD accents, and monospace coordinates",
-    category: "cyber",
-    colors: { primary: "#00f2fe", secondary: "#10b981", accent: "#a78bfa" },
-  },
 ];
 
 // ── Format B: Card Templates ─────────────────────────────────
 export const CARD_TEMPLATES: CardTemplate[] = [
+  {
+    id: "hh-goa-emerald-badge",
+    label: "HH Goa Website Official Pass",
+    description: "Emerald green & sunburst yellow official Hacker House card",
+    colors: { bg: "#063d23", card: "#0d4a2b", accent: "#facc15", text: "#fefce8" },
+  },
+  {
+    id: "boarding-pass",
+    label: "Goa Air Boarding Ticket",
+    description: "Balanced flight ticket with full passenger details & barcode stub",
+    colors: { bg: "#0a0a0a", card: "#161616", accent: "#f59e0b", text: "#f5f5f5" },
+  },
   {
     id: "scrapbook-pass",
     label: "Scrapbook Polaroid Pass",
@@ -164,12 +184,6 @@ export const CARD_TEMPLATES: CardTemplate[] = [
     label: "All-Access Festival Pass",
     description: "Official fabric festival pass with RFID chip & lanyard clasp",
     colors: { bg: "#080808", card: "#161616", accent: "#facc15", text: "#fafafa" },
-  },
-  {
-    id: "boarding-pass",
-    label: "Goa Air Boarding Pass",
-    description: "Flight / event ticket with perforated tear-off barcode stub",
-    colors: { bg: "#0a0a0a", card: "#161616", accent: "#f59e0b", text: "#f5f5f5" },
   },
   {
     id: "holographic-vip",
@@ -194,6 +208,7 @@ export const CARD_TEMPLATES: CardTemplate[] = [
 // ── Preset Captions ──────────────────────────────────────────
 export const PRESET_CAPTIONS = [
   "I am coming to HH GOA 26, Are you? 🌴",
+  "Everything intentional. Shipping by the beach 🌊",
   "PACKED & READY FOR HH GOA 2026 🚀",
   "See you on the beach, hackers! 🏖️",
   "CONFIRMED ATTENDEE · HH GOA '26 ✨",
@@ -202,7 +217,6 @@ export const PRESET_CAPTIONS = [
   "see the good 🌴",
   "She sparkles like sunshine.",
   "From commits to coconuts 🥥",
-  "sudo pack-bags --destination=goa",
 ] as const;
 
 // ── Stickers ─────────────────────────────────────────────────
@@ -213,6 +227,9 @@ export interface StickerDef {
 }
 
 export const STICKERS: StickerDef[] = [
+  { id: "signpost", label: "Beach Signpost", emoji: "🪧" },
+  { id: "sun-rising", label: "Radiant Sun", emoji: "🌅" },
+  { id: "scooter", label: "Goa Scooter", emoji: "🛵" },
   { id: "washi-tape", label: "Washi Tape", emoji: "📼" },
   { id: "sunflower", label: "Sunflower", emoji: "🌻" },
   { id: "verified", label: "VIP Verified", emoji: "⚡" },

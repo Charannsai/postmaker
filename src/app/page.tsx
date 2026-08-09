@@ -35,14 +35,14 @@ const DEFAULT_PHOTO: PhotoState = {
 };
 
 const DEFAULT_FRAME: FrameSettings = {
-  templateId: "festival-wristband",
+  templateId: "hh-goa-official",
   caption: "I am coming to HH GOA 26, Are you? 🌴",
   subcaption: "HH GOA 2026",
   captionStyle: "bold-street",
   badgeEnabled: true,
   badgeText: "SEE YOU IN GOA 🌴",
-  stickers: ["verified"],
-  bgStyle: "dark-minimal",
+  stickers: ["sun-rising"],
+  bgStyle: "hh-goa-emerald",
   aspectRatio: "1:1",
 };
 
@@ -52,10 +52,10 @@ const DEFAULT_CARD: CardData = {
   role: "Fullstack",
   techStack: ["Next.js", "TypeScript", "Solana", "Tailwind"],
   funTitle: "10x Caffeine-to-Code Pipeline",
-  tagline: "Shipping by the beach",
+  tagline: "Everything intentional. Shipping by the beach.",
   badgeId: "HHG-26-8420",
   stickers: ["barcode"],
-  bgStyle: "dark-minimal",
+  bgStyle: "hh-goa-emerald",
 };
 
 export default function HomePage() {
@@ -64,7 +64,7 @@ export default function HomePage() {
   const [frame, setFrame] = useState<FrameSettings>(DEFAULT_FRAME);
   const [card, setCard] = useState<CardData>(DEFAULT_CARD);
   const [cardTemplateId, setCardTemplateId] =
-    useState<CardTemplateId>("scrapbook-pass");
+    useState<CardTemplateId>("hh-goa-emerald-badge");
   const [shareOpen, setShareOpen] = useState(false);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 

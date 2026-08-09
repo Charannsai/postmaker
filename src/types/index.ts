@@ -20,6 +20,7 @@ export interface FilterDef {
 export type CanvasAspectRatio = "1:1" | "9:16" | "4:5";
 
 export type BackgroundStyleId =
+  | "hh-goa-emerald"
   | "dark-minimal"
   | "yellow-gingham"
   | "red-texture"
@@ -47,6 +48,8 @@ export interface CaptionStyleDef {
 
 // ── Format A: Aesthetic Frames ────────────────────────────────
 export type FrameTemplateId =
+  | "hh-goa-official"
+  | "hh-goa-signpost"
   | "polaroid-tape"
   | "festival-wristband"
   | "streetwear-poster"
@@ -63,7 +66,7 @@ export interface FrameTemplate {
   id: FrameTemplateId;
   label: string;
   description: string;
-  category: "aesthetic" | "festival" | "street" | "retro" | "cyber" | "minimal";
+  category: "official" | "aesthetic" | "festival" | "street" | "retro" | "cyber" | "minimal";
   colors: {
     primary: string;
     secondary: string;
@@ -73,6 +76,9 @@ export interface FrameTemplate {
 }
 
 export type StickerType =
+  | "signpost"
+  | "sun-rising"
+  | "scooter"
   | "washi-tape"
   | "sunflower"
   | "palm"
@@ -97,9 +103,10 @@ export interface FrameSettings {
 
 // ── Format B: Builder ID Cards ────────────────────────────────
 export type CardTemplateId =
+  | "hh-goa-emerald-badge"
+  | "boarding-pass"
   | "scrapbook-pass"
   | "festival-access"
-  | "boarding-pass"
   | "holographic-vip"
   | "cyber-terminal"
   | "swiss-minimal";

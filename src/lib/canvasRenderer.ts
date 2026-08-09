@@ -1,8 +1,8 @@
 /* ──────────────────────────────────────────────────────────────
    Aesthetic Canvas Engine – HH Goa 2026
-   Supports Polaroids, Festival Wristbands, Streetwear Posters,
-   Cinema Tickets, Postage Stamps, Retro Players, Editorial
-   Collages, Boarding Passes, Holographic Passes, & Stickers.
+   Supports Official Website Theme, Beach Signposts, Polaroids,
+   Festival Wristbands, Streetwear Posters, Cinema Tickets,
+   Postage Stamps, Retro Players, Boarding Passes, & Holographic Passes.
    ────────────────────────────────────────────────────────────── */
 
 import type {
@@ -55,7 +55,25 @@ export function drawCanvasBackground(
   scale: number
 ) {
   ctx.save();
-  if (styleId === "yellow-gingham") {
+  if (styleId === "hh-goa-emerald") {
+    // Official Website Emerald Green (#0d4a2b)
+    ctx.fillStyle = "#0d4a2b";
+    ctx.fillRect(0, 0, w, h);
+
+    // Subtle sunburst rays from top center
+    const cx = w / 2;
+    const rayCount = 18;
+    ctx.fillStyle = "rgba(250, 204, 21, 0.04)";
+    for (let i = 0; i < rayCount; i++) {
+      const a1 = (i * Math.PI) / rayCount;
+      const a2 = ((i + 0.45) * Math.PI) / rayCount;
+      ctx.beginPath();
+      ctx.moveTo(cx, 0);
+      ctx.arc(cx, 0, Math.max(w, h) * 1.2, a1, a2);
+      ctx.closePath();
+      ctx.fill();
+    }
+  } else if (styleId === "yellow-gingham") {
     ctx.fillStyle = "#fffbeb";
     ctx.fillRect(0, 0, w, h);
 
@@ -238,7 +256,6 @@ function drawStyledCaption(
 ) {
   ctx.save();
   if (style === "bold-street") {
-    // Streetwear black & yellow hazard block
     ctx.font = `900 ${14 * scale}px 'Impact', sans-serif`;
     const tw = Math.min(ctx.measureText(text.toUpperCase()).width + 24 * scale, maxWidth);
     const th = 26 * scale;
@@ -250,7 +267,6 @@ function drawStyledCaption(
     ctx.textBaseline = "middle";
     ctx.fillText(text.toUpperCase(), cx, cy);
   } else if (style === "typewriter-tape") {
-    // Typewriter yellow tape
     ctx.rotate(-0.02);
     ctx.font = `600 ${12 * scale}px 'Courier New', monospace`;
     const tw = Math.min(ctx.measureText(text).width + 20 * scale, maxWidth);
@@ -262,21 +278,18 @@ function drawStyledCaption(
     ctx.textBaseline = "middle";
     ctx.fillText(text, cx, cy);
   } else if (style === "hacker-mono") {
-    // Hacker monospace HUD text
     ctx.font = `bold ${12 * scale}px monospace`;
     ctx.fillStyle = "#06b6d4";
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
     ctx.fillText(`> ${text}`, cx, cy);
   } else if (style === "golden-serif") {
-    // Luxury serif
     ctx.font = `bold italic ${15 * scale}px 'Georgia', serif`;
     ctx.fillStyle = "#d97706";
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
     ctx.fillText(`✦ ${text} ✦`, cx, cy);
   } else {
-    // Default Handwritten / Aesthetic script
     ctx.font = `bold italic ${15 * scale}px 'Georgia', serif`;
     ctx.fillStyle = "#d97706";
     ctx.textAlign = "center";
@@ -298,7 +311,58 @@ export function drawSticker(
   ctx.save();
   ctx.translate(x, y);
 
-  if (type === "washi-tape") {
+  if (type === "signpost") {
+    // Website Beach Directional Signpost
+    ctx.fillStyle = "#78350f";
+    ctx.fillRect(-2 * scale, -size * 0.45, 4 * scale, size * 0.9);
+
+    // Yellow arrow pointing right: "HACK"
+    ctx.fillStyle = "#fde047";
+    ctx.fillRect(-size * 0.4, -size * 0.35, size * 0.7, 12 * scale);
+    ctx.fillStyle = "#000000";
+    ctx.font = `bold ${6.5 * scale}px sans-serif`;
+    ctx.fillText("HACK ➔", -size * 0.1, -size * 0.35 + 8 * scale);
+
+    // Hot pink arrow pointing left: "BEACH"
+    ctx.fillStyle = "#ec4899";
+    ctx.fillRect(-size * 0.35, -size * 0.12, size * 0.7, 12 * scale);
+    ctx.fillStyle = "#ffffff";
+    ctx.fillText("⬅ BEACH", -size * 0.05, -size * 0.12 + 8 * scale);
+
+    // Emerald arrow pointing right: "GOA '26"
+    ctx.fillStyle = "#0d4a2b";
+    ctx.fillRect(-size * 0.38, size * 0.1, size * 0.72, 12 * scale);
+    ctx.fillStyle = "#facc15";
+    ctx.fillText("GOA '26 ➔", -size * 0.05, size * 0.1 + 8 * scale);
+  } else if (type === "sun-rising") {
+    // Radiant Half-Sun setting over ocean (from website hero)
+    ctx.fillStyle = "#fde047";
+    ctx.beginPath();
+    ctx.arc(0, 0, size * 0.4, Math.PI, 0);
+    ctx.fill();
+    // Sun rays
+    ctx.strokeStyle = "#facc15";
+    ctx.lineWidth = 2 * scale;
+    for (let i = 0; i < 7; i++) {
+      const angle = Math.PI + (i * Math.PI) / 6;
+      ctx.beginPath();
+      ctx.moveTo(Math.cos(angle) * (size * 0.44), Math.sin(angle) * (size * 0.44));
+      ctx.lineTo(Math.cos(angle) * (size * 0.6), Math.sin(angle) * (size * 0.6));
+      ctx.stroke();
+    }
+  } else if (type === "scooter") {
+    // Hot Pink Retro Vespa Scooter
+    ctx.fillStyle = "#ec4899";
+    ctx.beginPath();
+    ctx.arc(-size * 0.25, size * 0.15, size * 0.15, 0, Math.PI * 2);
+    ctx.arc(size * 0.25, size * 0.15, size * 0.15, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = "#171717";
+    ctx.beginPath();
+    ctx.arc(-size * 0.25, size * 0.15, size * 0.08, 0, Math.PI * 2);
+    ctx.arc(size * 0.25, size * 0.15, size * 0.08, 0, Math.PI * 2);
+    ctx.fill();
+  } else if (type === "washi-tape") {
     ctx.rotate(-0.06);
     ctx.fillStyle = "rgba(253, 224, 71, 0.75)";
     const tw = size * 1.8;
@@ -335,7 +399,6 @@ export function drawSticker(
     ctx.arc(0, 0, r * 0.55, 0, Math.PI * 2);
     ctx.fill();
   } else if (type === "verified") {
-    // VIP Verified Lightning Badge
     ctx.shadowColor = "rgba(250, 204, 21, 0.4)";
     ctx.shadowBlur = 12 * scale;
     ctx.fillStyle = "#facc15";
@@ -348,7 +411,6 @@ export function drawSticker(
     ctx.textBaseline = "middle";
     ctx.fillText("⚡", 0, 1 * scale);
   } else if (type === "hazard-tape") {
-    // Caution Hazard Strip
     ctx.rotate(0.08);
     const tw = size * 2.2;
     const th = size * 0.4;
@@ -360,7 +422,6 @@ export function drawSticker(
     ctx.textBaseline = "middle";
     ctx.fillText("/// HH GOA 2026 ///", 0, 0);
   } else if (type === "ticket-stamp") {
-    // Admit One Stamp
     ctx.rotate(-0.1);
     ctx.strokeStyle = "#ef4444";
     ctx.lineWidth = 1.5 * scale;
@@ -461,10 +522,14 @@ export function renderPfpFrame(
   const cx = W / 2;
   const cy = H / 2;
 
-  if (frame.templateId === "polaroid-tape") {
-    renderVintagePolaroid(ctx, img, photo, frame, W, H, cx, cy, scale);
+  if (frame.templateId === "hh-goa-official") {
+    renderHhGoaOfficial(ctx, img, photo, frame, W, H, cx, cy, scale);
+  } else if (frame.templateId === "hh-goa-signpost") {
+    renderHhGoaSignpost(ctx, img, photo, frame, W, H, cx, cy, scale);
   } else if (frame.templateId === "festival-wristband") {
     renderFestivalWristband(ctx, img, photo, frame, W, H, cx, cy, scale);
+  } else if (frame.templateId === "polaroid-tape") {
+    renderVintagePolaroid(ctx, img, photo, frame, W, H, cx, cy, scale);
   } else if (frame.templateId === "streetwear-poster") {
     renderStreetwearPoster(ctx, img, photo, frame, W, H, cx, cy, scale);
   } else if (frame.templateId === "cinema-ticket") {
@@ -485,14 +550,16 @@ export function renderPfpFrame(
 
   if (frame.stickers && frame.stickers.length > 0) {
     frame.stickers.forEach((st) => {
-      if (st === "sunflower") {
+      if (st === "signpost") {
+        drawSticker(ctx, "signpost", 70 * scale, H - 70 * scale, 90 * scale, scale);
+      } else if (st === "sun-rising") {
+        drawSticker(ctx, "sun-rising", cx, 60 * scale, 70 * scale, scale);
+      } else if (st === "scooter") {
+        drawSticker(ctx, "scooter", W - 70 * scale, H - 50 * scale, 70 * scale, scale);
+      } else if (st === "sunflower") {
         drawSticker(ctx, "sunflower", W - 70 * scale, H - 70 * scale, 110 * scale, scale);
       } else if (st === "verified") {
         drawSticker(ctx, "verified", W - 60 * scale, 60 * scale, 45 * scale, scale);
-      } else if (st === "hazard-tape") {
-        drawSticker(ctx, "hazard-tape", cx, 30 * scale, 100 * scale, scale);
-      } else if (st === "ticket-stamp") {
-        drawSticker(ctx, "ticket-stamp", 70 * scale, 70 * scale, 70 * scale, scale);
       } else if (st === "washi-tape") {
         drawSticker(ctx, "washi-tape", cx - 60 * scale, cy - 170 * scale, 70 * scale, scale);
       } else if (st === "postmark") {
@@ -508,7 +575,178 @@ export function renderPfpFrame(
   }
 }
 
-// ── Template 1: Vintage Polaroid & Washi Tape ────────────────
+// ── Official Template 1: HH Goa Website Theme ────────────────
+function renderHhGoaOfficial(
+  ctx: CanvasRenderingContext2D,
+  img: HTMLImageElement | null,
+  photo: PhotoState,
+  frame: FrameSettings,
+  w: number,
+  h: number,
+  cx: number,
+  cy: number,
+  scale: number
+) {
+  ctx.save();
+  ctx.translate(cx, cy);
+
+  const cardW = Math.min(w * 0.86, 390 * scale);
+  const cardH = cardW * 1.32;
+  const x = -cardW / 2;
+  const y = -cardH / 2;
+
+  // Deep Emerald Card Body
+  ctx.shadowColor = "rgba(0,0,0,0.6)";
+  ctx.shadowBlur = 26 * scale;
+  ctx.shadowOffsetY = 12 * scale;
+
+  ctx.fillStyle = "#0d4a2b";
+  drawSquircle(ctx, x, y, cardW, cardH, 20 * scale);
+  ctx.fill();
+  ctx.shadowColor = "transparent";
+
+  ctx.strokeStyle = "#facc15";
+  ctx.lineWidth = 2 * scale;
+  drawSquircle(ctx, x, y, cardW, cardH, 20 * scale);
+  ctx.stroke();
+
+  // Radiant Golden Setting Sun at Top Center
+  ctx.fillStyle = "#fde047";
+  ctx.beginPath();
+  ctx.arc(0, y + 42 * scale, 32 * scale, Math.PI, 0);
+  ctx.fill();
+
+  // Iconic condensed serif: HACKER HOUSE with hot pink GOA badge
+  ctx.fillStyle = "#fde047";
+  ctx.font = `900 ${22 * scale}px 'Georgia', serif`;
+  ctx.textAlign = "center";
+  ctx.fillText("HACKER HOUSE", 0, y + 36 * scale);
+
+  // Pink "GOA" Tag
+  ctx.fillStyle = "#ec4899";
+  drawSquircle(ctx, -26 * scale, y + 40 * scale, 52 * scale, 14 * scale, 4 * scale);
+  ctx.fill();
+  ctx.fillStyle = "#fefce8";
+  ctx.font = `bold ${8 * scale}px sans-serif`;
+  ctx.fillText("GOA '26", 0, y + 50 * scale);
+
+  // Photo Frame in Center
+  const photoW = cardW - 36 * scale;
+  const photoH = photoW * 0.95;
+  const px = -photoW / 2;
+  const py = y + 62 * scale;
+
+  ctx.fillStyle = "#08331e";
+  drawSquircle(ctx, px, py, photoW, photoH, 12 * scale);
+  ctx.fill();
+
+  ctx.save();
+  drawSquircle(ctx, px, py, photoW, photoH, 12 * scale);
+  ctx.clip();
+  if (img) {
+    drawUserPhoto(ctx, img, photo, 0, py + photoH / 2, photoW, photoH);
+  } else {
+    ctx.fillStyle = "#08331e";
+    ctx.fillRect(px, py, photoW, photoH);
+    ctx.fillStyle = "rgba(254, 252, 232, 0.4)";
+    ctx.font = `600 ${12 * scale}px sans-serif`;
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText("Upload Photo", 0, py + photoH / 2);
+  }
+  ctx.restore();
+
+  ctx.strokeStyle = "#fde047";
+  ctx.lineWidth = 1.5 * scale;
+  drawSquircle(ctx, px, py, photoW, photoH, 12 * scale);
+  ctx.stroke();
+
+  // Bottom Slogan / Caption Ribbon
+  const by = py + photoH + 20 * scale;
+  const caption = frame.caption || "I am coming to HH GOA 26, Are you? 🌴";
+
+  // Hot pink ribbon banner
+  const rw = cardW - 30 * scale;
+  const rh = 30 * scale;
+  ctx.fillStyle = "#ec4899";
+  drawSquircle(ctx, -rw / 2, by, rw, rh, 6 * scale);
+  ctx.fill();
+
+  ctx.fillStyle = "#fefce8";
+  ctx.font = `900 ${10.5 * scale}px 'Impact', sans-serif`;
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillText(caption.toUpperCase(), 0, by + rh / 2);
+
+  // Subtitle
+  ctx.fillStyle = "#fde047";
+  ctx.font = `600 ${7.5 * scale}px monospace`;
+  ctx.fillText("★ EVERYTHING INTENTIONAL · AUGUST 13-16 2026 ★", 0, by + rh + 14 * scale);
+
+  ctx.restore();
+}
+
+// ── Official Template 2: Beach Signpost Frame ────────────────
+function renderHhGoaSignpost(
+  ctx: CanvasRenderingContext2D,
+  img: HTMLImageElement | null,
+  photo: PhotoState,
+  frame: FrameSettings,
+  w: number,
+  h: number,
+  cx: number,
+  cy: number,
+  scale: number
+) {
+  ctx.save();
+  ctx.translate(cx, cy);
+
+  const cardW = Math.min(w * 0.85, 380 * scale);
+  const cardH = cardW * 1.3;
+  const x = -cardW / 2;
+  const y = -cardH / 2;
+
+  ctx.fillStyle = "#08331e";
+  drawSquircle(ctx, x, y, cardW, cardH, 16 * scale);
+  ctx.fill();
+
+  ctx.strokeStyle = "#fde047";
+  ctx.lineWidth = 2 * scale;
+  drawSquircle(ctx, x, y, cardW, cardH, 16 * scale);
+  ctx.stroke();
+
+  // Photo
+  const photoW = cardW - 32 * scale;
+  const photoH = cardH - 100 * scale;
+  const px = -photoW / 2;
+  const py = y + 20 * scale;
+
+  ctx.save();
+  drawSquircle(ctx, px, py, photoW, photoH, 10 * scale);
+  ctx.clip();
+  if (img) {
+    drawUserPhoto(ctx, img, photo, 0, py + photoH / 2, photoW, photoH);
+  }
+  ctx.restore();
+
+  // Signpost overlay at bottom left
+  drawSticker(ctx, "signpost", px + 36 * scale, py + photoH - 20 * scale, 75 * scale, scale);
+
+  // Bottom Text
+  const by = py + photoH + 24 * scale;
+  ctx.fillStyle = "#fde047";
+  ctx.font = `900 ${14 * scale}px 'Impact', sans-serif`;
+  ctx.textAlign = "center";
+  ctx.fillText(frame.caption || "I AM COMING TO HH GOA 26, ARE YOU?", 0, by);
+
+  ctx.fillStyle = "#ec4899";
+  ctx.font = `italic bold ${8.5 * scale}px 'Georgia', serif`;
+  ctx.fillText("Everything intentional. Shipping by the beach.", 0, by + 16 * scale);
+
+  ctx.restore();
+}
+
+// ── Template: Vintage Polaroid ───────────────────────────────
 function renderVintagePolaroid(
   ctx: CanvasRenderingContext2D,
   img: HTMLImageElement | null,
@@ -589,7 +827,7 @@ function renderVintagePolaroid(
   ctx.restore();
 }
 
-// ── Template 2: Festival VIP Wristband Frame ─────────────────
+// ── Template: Festival VIP Wristband ─────────────────────────
 function renderFestivalWristband(
   ctx: CanvasRenderingContext2D,
   img: HTMLImageElement | null,
@@ -618,7 +856,6 @@ function renderFestivalWristband(
   ctx.fill();
   ctx.shadowColor = "transparent";
 
-  // Photo area
   const photoMargin = 16 * scale;
   const photoW = cardW - photoMargin * 2;
   const photoH = cardH - 80 * scale;
@@ -636,7 +873,6 @@ function renderFestivalWristband(
   }
   ctx.restore();
 
-  // Diagonal/Bottom Festival Wristband Ribbon
   const bandY = y + cardH - 52 * scale;
   const bandH = 38 * scale;
 
@@ -644,7 +880,6 @@ function renderFestivalWristband(
   drawSquircle(ctx, x + 8 * scale, bandY, cardW - 16 * scale, bandH, 8 * scale);
   ctx.fill();
 
-  // Bold Punchy Festival Text
   ctx.fillStyle = "#000000";
   ctx.font = `900 ${11 * scale}px 'Impact', sans-serif`;
   ctx.textAlign = "center";
@@ -658,7 +893,7 @@ function renderFestivalWristband(
   ctx.restore();
 }
 
-// ── Template 3: Streetwear Poster ────────────────────────────
+// ── Template: Streetwear Poster ──────────────────────────────
 function renderStreetwearPoster(
   ctx: CanvasRenderingContext2D,
   img: HTMLImageElement | null,
@@ -681,13 +916,11 @@ function renderStreetwearPoster(
   ctx.fillStyle = "#000000";
   ctx.fillRect(px, py, pWidth, pHeight);
 
-  // Big Bold Top Typography
   ctx.fillStyle = "#ffffff";
   ctx.font = `900 ${16 * scale}px 'Impact', sans-serif`;
   ctx.textAlign = "center";
   ctx.fillText("I AM COMING TO HH GOA '26", 0, py + 22 * scale);
 
-  // Photo
   const photoW = pWidth - 24 * scale;
   const photoH = pHeight - 90 * scale;
   const photox = -photoW / 2;
@@ -705,7 +938,6 @@ function renderStreetwearPoster(
   }
   ctx.restore();
 
-  // Bottom text & coordinates
   const by = py + pHeight - 42 * scale;
   ctx.fillStyle = "#facc15";
   ctx.font = `900 ${14 * scale}px 'Impact', sans-serif`;
@@ -718,7 +950,7 @@ function renderStreetwearPoster(
   ctx.restore();
 }
 
-// ── Template 4: Admit One Cinema Ticket ──────────────────────
+// ── Template: Cinema Ticket ──────────────────────────────────
 function renderCinemaTicket(
   ctx: CanvasRenderingContext2D,
   img: HTMLImageElement | null,
@@ -741,12 +973,11 @@ function renderCinemaTicket(
   ctx.shadowColor = "rgba(0,0,0,0.4)";
   ctx.shadowBlur = 20 * scale;
 
-  ctx.fillStyle = "#f59e0b"; // Warm golden cinema ticket
+  ctx.fillStyle = "#f59e0b";
   drawSquircle(ctx, tx, ty, tWidth, tHeight, 14 * scale);
   ctx.fill();
   ctx.shadowColor = "transparent";
 
-  // Ticket Notch Cutouts on left & right
   ctx.fillStyle = "#0c0c0c";
   ctx.beginPath();
   ctx.arc(tx, 0, 16 * scale, 0, Math.PI * 2);
@@ -755,20 +986,17 @@ function renderCinemaTicket(
   ctx.arc(tx + tWidth, 0, 16 * scale, 0, Math.PI * 2);
   ctx.fill();
 
-  // Inner border
   ctx.strokeStyle = "#78350f";
   ctx.lineWidth = 1.5 * scale;
   ctx.setLineDash([4 * scale, 4 * scale]);
   ctx.strokeRect(tx + 12 * scale, ty + 12 * scale, tWidth - 24 * scale, tHeight - 24 * scale);
   ctx.setLineDash([]);
 
-  // Header
   ctx.fillStyle = "#78350f";
   ctx.font = `bold ${10 * scale}px 'Impact', sans-serif`;
   ctx.textAlign = "center";
   ctx.fillText("★ ADMIT ONE BUILDER // HH GOA 2026 ★", 0, ty + 28 * scale);
 
-  // Photo
   const pw = tWidth - 50 * scale;
   const ph = pw * 0.9;
   const pxx = -pw / 2;
@@ -785,7 +1013,6 @@ function renderCinemaTicket(
   }
   ctx.restore();
 
-  // Bottom Ticket Info
   const by = pyy + ph + 24 * scale;
   ctx.fillStyle = "#451a03";
   ctx.font = `bold italic ${13 * scale}px 'Georgia', serif`;
@@ -797,7 +1024,7 @@ function renderCinemaTicket(
   ctx.restore();
 }
 
-// ── Template 5: Cyber Biometric Scanner ──────────────────────
+// ── Template: Cyber Scanner ──────────────────────────────────
 function renderCyberScanner(
   ctx: CanvasRenderingContext2D,
   img: HTMLImageElement | null,
@@ -826,7 +1053,6 @@ function renderCyberScanner(
   drawSquircle(ctx, x, y, cardW, cardH, 12 * scale);
   ctx.stroke();
 
-  // Header HUD
   ctx.fillStyle = "#06b6d4";
   ctx.font = `bold ${9 * scale}px monospace`;
   ctx.textAlign = "left";
@@ -834,7 +1060,6 @@ function renderCyberScanner(
   ctx.textAlign = "right";
   ctx.fillText("HH_GOA // 2026", x + cardW - 16 * scale, y + 22 * scale);
 
-  // Photo Window
   const photoMargin = 16 * scale;
   const photoW = cardW - photoMargin * 2;
   const photoH = cardH - 85 * scale;
@@ -849,13 +1074,11 @@ function renderCyberScanner(
   }
   ctx.restore();
 
-  // HUD Crosshairs & Target Box
   ctx.strokeStyle = "rgba(6, 182, 212, 0.7)";
   ctx.lineWidth = 1 * scale;
   const boxS = 80 * scale;
   ctx.strokeRect(-boxS / 2, py + photoH / 2 - boxS / 2, boxS, boxS);
 
-  // Bottom Status
   const by = y + cardH - 30 * scale;
   ctx.fillStyle = "#10b981";
   ctx.font = `bold ${12 * scale}px monospace`;
@@ -869,7 +1092,7 @@ function renderCyberScanner(
   ctx.restore();
 }
 
-// ── Template 6: Perforated Postage Stamp (Air Mail) ──────────
+// ── Template: Postage Stamp ──────────────────────────────────
 function renderPostageStamp(
   ctx: CanvasRenderingContext2D,
   img: HTMLImageElement | null,
@@ -943,7 +1166,7 @@ function renderPostageStamp(
   ctx.restore();
 }
 
-// ── Template 7: Retro Music Player / Cassette ────────────────
+// ── Template: Retro Music Player ─────────────────────────────
 function renderRetroMusicPlayer(
   ctx: CanvasRenderingContext2D,
   img: HTMLImageElement | null,
@@ -1045,7 +1268,7 @@ function renderRetroMusicPlayer(
   ctx.restore();
 }
 
-// ── Template 8: Editorial Magazine Cover ─────────────────────
+// ── Template: Magazine Editorial ─────────────────────────────
 function renderEditorialMagazine(
   ctx: CanvasRenderingContext2D,
   img: HTMLImageElement | null,
@@ -1123,7 +1346,7 @@ function renderEditorialMagazine(
   ctx.restore();
 }
 
-// ── Template 9: Minimal Gallery Passe-Partout ────────────────
+// ── Template: Gallery Passe-Partout ──────────────────────────
 function renderMinimalGallery(
   ctx: CanvasRenderingContext2D,
   img: HTMLImageElement | null,
@@ -1183,7 +1406,7 @@ function renderMinimalGallery(
   ctx.restore();
 }
 
-// ── Circular PFP Frame (Branded X Profile) ───────────────────
+// ── Circular PFP Frame ───────────────────────────────────────
 function renderCircularPfp(
   ctx: CanvasRenderingContext2D,
   img: HTMLImageElement | null,
@@ -1264,27 +1487,322 @@ export function renderBuilderCard(
   const ctx = canvas.getContext("2d")!;
   ctx.clearRect(0, 0, W, H);
 
-  drawCanvasBackground(ctx, W, H, card.bgStyle || "dark-minimal", scale);
+  drawCanvasBackground(ctx, W, H, card.bgStyle || "hh-goa-emerald", scale);
 
   const tmpl = CARD_TEMPLATES.find((t) => t.id === templateId)!;
-  const pad = 22 * scale;
+  const pad = 20 * scale;
   const cardX = pad;
   const cardY = pad;
   const cardW = W - pad * 2;
   const cardH = H - pad * 2;
 
-  if (templateId === "scrapbook-pass") {
+  if (templateId === "hh-goa-emerald-badge") {
+    renderHhGoaEmeraldCard(ctx, img, photo, card, W, H, cardX, cardY, cardW, cardH, scale);
+  } else if (templateId === "boarding-pass") {
+    renderBoardingPassCard(ctx, img, photo, card, W, H, cardX, cardY, cardW, cardH, scale);
+  } else if (templateId === "scrapbook-pass") {
     renderScrapbookCard(ctx, img, photo, card, W, H, cardX, cardY, cardW, cardH, scale);
   } else if (templateId === "festival-access") {
     renderFestivalAccessCard(ctx, img, photo, card, W, H, cardX, cardY, cardW, cardH, scale);
-  } else if (templateId === "boarding-pass") {
-    renderBoardingPassCard(ctx, img, photo, card, W, H, cardX, cardY, cardW, cardH, scale);
   } else {
     renderStandardIdCard(ctx, img, photo, card, tmpl, W, H, cardX, cardY, cardW, cardH, scale);
   }
 }
 
-// ── Card Template 1: Scrapbook Pass ──────────────────────────
+// ── Card 1: Official HH Goa Emerald & Gold Card ──────────────
+function renderHhGoaEmeraldCard(
+  ctx: CanvasRenderingContext2D,
+  img: HTMLImageElement | null,
+  photo: PhotoState,
+  card: CardData,
+  w: number,
+  h: number,
+  cardX: number,
+  cardY: number,
+  cardW: number,
+  cardH: number,
+  scale: number
+) {
+  ctx.save();
+  ctx.shadowColor = "rgba(0,0,0,0.6)";
+  ctx.shadowBlur = 24 * scale;
+  ctx.shadowOffsetY = 10 * scale;
+
+  ctx.fillStyle = "#0d4a2b";
+  drawSquircle(ctx, cardX, cardY, cardW, cardH, 18 * scale);
+  ctx.fill();
+  ctx.shadowColor = "transparent";
+
+  ctx.strokeStyle = "#facc15";
+  ctx.lineWidth = 2 * scale;
+  drawSquircle(ctx, cardX, cardY, cardW, cardH, 18 * scale);
+  ctx.stroke();
+
+  // Top Sunburst & Header
+  let y = cardY + 28 * scale;
+  ctx.fillStyle = "#fde047";
+  ctx.font = `900 ${16 * scale}px 'Georgia', serif`;
+  ctx.textAlign = "center";
+  ctx.fillText("HACKER HOUSE GOA", w / 2, y);
+
+  // Hot pink "OF HACKER HOUSES" pill
+  y += 14 * scale;
+  ctx.fillStyle = "#ec4899";
+  drawSquircle(ctx, w / 2 - 45 * scale, y - 9 * scale, 90 * scale, 14 * scale, 4 * scale);
+  ctx.fill();
+  ctx.fillStyle = "#fefce8";
+  ctx.font = `bold ${7.5 * scale}px sans-serif`;
+  ctx.fillText("OFFICIAL BUILDER", w / 2, y);
+
+  // Photo Window
+  y += 24 * scale;
+  const photoSize = 105 * scale;
+  const px = w / 2 - photoSize / 2;
+
+  ctx.save();
+  drawSquircle(ctx, px, y, photoSize, photoSize, 12 * scale);
+  ctx.clip();
+  if (img) {
+    drawUserPhoto(ctx, img, photo, w / 2, y + photoSize / 2, photoSize, photoSize);
+  } else {
+    ctx.fillStyle = "#08331e";
+    ctx.fillRect(px, y, photoSize, photoSize);
+    ctx.fillStyle = "rgba(254, 252, 232, 0.4)";
+    ctx.font = `600 ${11 * scale}px sans-serif`;
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText("Upload Photo", w / 2, y + photoSize / 2);
+  }
+  ctx.restore();
+
+  ctx.strokeStyle = "#fde047";
+  ctx.lineWidth = 2 * scale;
+  drawSquircle(ctx, px, y, photoSize, photoSize, 12 * scale);
+  ctx.stroke();
+
+  // Name & Fun Title
+  y += photoSize + 22 * scale;
+  ctx.fillStyle = "#fefce8";
+  ctx.font = `bold ${18 * scale}px sans-serif`;
+  ctx.fillText(card.name || "Your Name", w / 2, y);
+
+  y += 16 * scale;
+  ctx.fillStyle = "#fde047";
+  ctx.font = `italic 600 ${9.5 * scale}px 'Georgia', serif`;
+  ctx.fillText(`"${card.funTitle || "10x Builder"}"`, w / 2, y);
+
+  // Handle & Role
+  y += 16 * scale;
+  ctx.fillStyle = "#fefce8";
+  ctx.font = `600 ${9 * scale}px monospace`;
+  const handle = card.handle ? `@${card.handle.replace("@", "")}` : "@handle";
+  ctx.fillText(`${handle}  ·  ${card.role || "Fullstack"}`, w / 2, y);
+
+  // Tech stack in sunburst yellow pills
+  y += 22 * scale;
+  const stack = card.techStack.length > 0 ? card.techStack : ["React", "Next.js", "Solana", "TypeScript"];
+  const pillH = 14 * scale;
+  const pillGap = 5 * scale;
+  ctx.font = `bold ${7.5 * scale}px sans-serif`;
+
+  const widths = stack.map((t) => ctx.measureText(t).width + 12 * scale);
+  const totalW = widths.reduce((a, b) => a + b, 0) + (stack.length - 1) * pillGap;
+  let sx = w / 2 - Math.min(totalW, cardW - 30 * scale) / 2;
+
+  for (let i = 0; i < stack.length; i++) {
+    const pw = widths[i];
+    ctx.fillStyle = "#fde047";
+    drawSquircle(ctx, sx, y - pillH / 2, pw, pillH, 4 * scale);
+    ctx.fill();
+    ctx.fillStyle = "#0d4a2b";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText(stack[i], sx + pw / 2, y);
+    sx += pw + pillGap;
+  }
+
+  // Slogan & Barcode
+  y = cardY + cardH - 42 * scale;
+  ctx.fillStyle = "#fde047";
+  ctx.font = `italic 600 ${8.5 * scale}px 'Georgia', serif`;
+  ctx.fillText("Everything intentional. Shipping by the beach.", w / 2, y);
+
+  y += 16 * scale;
+  drawSticker(ctx, "barcode", w / 2, y, 70 * scale, scale);
+
+  ctx.restore();
+}
+
+// ── Card 2: Perfectly Balanced Goa Air Boarding Ticket ────────
+function renderBoardingPassCard(
+  ctx: CanvasRenderingContext2D,
+  img: HTMLImageElement | null,
+  photo: PhotoState,
+  card: CardData,
+  w: number,
+  h: number,
+  cardX: number,
+  cardY: number,
+  cardW: number,
+  cardH: number,
+  scale: number
+) {
+  ctx.save();
+  ctx.shadowColor = "rgba(0,0,0,0.5)";
+  ctx.shadowBlur = 24 * scale;
+
+  ctx.fillStyle = "#141414";
+  drawSquircle(ctx, cardX, cardY, cardW, cardH, 16 * scale);
+  ctx.fill();
+  ctx.shadowColor = "transparent";
+
+  ctx.strokeStyle = "#2e2e2e";
+  ctx.lineWidth = 1.5 * scale;
+  drawSquircle(ctx, cardX, cardY, cardW, cardH, 16 * scale);
+  ctx.stroke();
+
+  // Top Yellow Accent Line
+  ctx.fillStyle = "#f59e0b";
+  ctx.fillRect(cardX + 16 * scale, cardY + 8 * scale, cardW - 32 * scale, 3 * scale);
+
+  // Airline Header
+  let y = cardY + 28 * scale;
+  ctx.fillStyle = "#f59e0b";
+  ctx.font = `bold ${9.5 * scale}px monospace`;
+  ctx.textAlign = "left";
+  ctx.fillText("HH AIRWAYS // FLIGHT HH-2026", cardX + 18 * scale, y);
+
+  ctx.textAlign = "right";
+  ctx.fillText("BOARDING PASS // VIP", cardX + cardW - 18 * scale, y);
+
+  // Flight Route: ANY -> GOI
+  y += 28 * scale;
+  ctx.fillStyle = "#ffffff";
+  ctx.font = `bold ${24 * scale}px sans-serif`;
+  ctx.textAlign = "left";
+  ctx.fillText("ANY", cardX + 22 * scale, y);
+
+  ctx.fillStyle = "#f59e0b";
+  ctx.font = `bold ${16 * scale}px sans-serif`;
+  ctx.fillText("✈ ────────", cardX + 85 * scale, y - 4 * scale);
+
+  ctx.fillStyle = "#ffffff";
+  ctx.fillText("GOI", cardX + cardW - 65 * scale, y);
+
+  // Flight Metrics
+  y += 18 * scale;
+  ctx.fillStyle = "#737373";
+  ctx.font = `500 ${8 * scale}px monospace`;
+  ctx.fillText("DATE: AUG 13, 2026", cardX + 22 * scale, y);
+  ctx.fillText("BOARDING: 09:00 AM", cardX + 130 * scale, y);
+  ctx.fillText("GATE: BEACH-04", cardX + cardW - 95 * scale, y);
+
+  // Passenger & Photo Row (Well-proportioned)
+  y += 22 * scale;
+  const photoSize = 90 * scale;
+  const px = cardX + 20 * scale;
+
+  ctx.save();
+  drawSquircle(ctx, px, y, photoSize, photoSize, 10 * scale);
+  ctx.clip();
+  if (img) {
+    drawUserPhoto(ctx, img, photo, px + photoSize / 2, y + photoSize / 2, photoSize, photoSize);
+  } else {
+    ctx.fillStyle = "#222";
+    ctx.fillRect(px, y, photoSize, photoSize);
+    ctx.fillStyle = "rgba(255,255,255,0.3)";
+    ctx.font = `bold ${9 * scale}px sans-serif`;
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText("Photo", px + photoSize / 2, y + photoSize / 2);
+  }
+  ctx.restore();
+
+  ctx.strokeStyle = "#333";
+  ctx.lineWidth = 1 * scale;
+  drawSquircle(ctx, px, y, photoSize, photoSize, 10 * scale);
+  ctx.stroke();
+
+  // Passenger Details
+  const textX = px + photoSize + 16 * scale;
+  ctx.fillStyle = "#ffffff";
+  ctx.font = `bold ${16 * scale}px sans-serif`;
+  ctx.textAlign = "left";
+  ctx.fillText(card.name || "PASSENGER NAME", textX, y + 20 * scale);
+
+  ctx.fillStyle = "#f59e0b";
+  ctx.font = `italic ${9.5 * scale}px 'Georgia', serif`;
+  ctx.fillText(`"${card.funTitle || "10x Builder"}"`, textX, y + 38 * scale);
+
+  ctx.fillStyle = "#a3a3a3";
+  ctx.font = `500 ${8.5 * scale}px monospace`;
+  ctx.fillText(`ROLE: ${card.role || "FULLSTACK"}`, textX, y + 54 * scale);
+  ctx.fillText(`HANDLE: @${card.handle?.replace("@", "") || "BUILDER"}`, textX, y + 68 * scale);
+
+  // Tech stack pills filling the passenger section
+  y += photoSize + 22 * scale;
+  const stack = card.techStack.length > 0 ? card.techStack : ["React", "Next.js", "Solana", "TypeScript"];
+  const pillH = 14 * scale;
+  const pillGap = 5 * scale;
+  ctx.font = `bold ${7.5 * scale}px sans-serif`;
+
+  const widths = stack.map((t) => ctx.measureText(t).width + 12 * scale);
+  let sx = cardX + 20 * scale;
+
+  for (let i = 0; i < stack.length; i++) {
+    const pw = widths[i];
+    ctx.fillStyle = "#222222";
+    drawSquircle(ctx, sx, y - pillH / 2, pw, pillH, 4 * scale);
+    ctx.fill();
+    ctx.fillStyle = "#f59e0b";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText(stack[i], sx + pw / 2, y);
+    sx += pw + pillGap;
+  }
+
+  // Perforated Dashed Tear Line with Circular Notches
+  y += 26 * scale;
+  ctx.strokeStyle = "#383838";
+  ctx.lineWidth = 1.5 * scale;
+  ctx.setLineDash([5 * scale, 5 * scale]);
+  ctx.beginPath();
+  ctx.moveTo(cardX + 16 * scale, y);
+  ctx.lineTo(cardX + cardW - 16 * scale, y);
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Ticket Notch Cutouts
+  ctx.fillStyle = "#0c0c0c";
+  ctx.beginPath();
+  ctx.arc(cardX, y, 10 * scale, 0, Math.PI * 2);
+  ctx.arc(cardX + cardW, y, 10 * scale, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Bottom Tear-off Stub (Filled nicely!)
+  y += 24 * scale;
+  ctx.fillStyle = "#f5f5f5";
+  ctx.font = `bold ${10 * scale}px monospace`;
+  ctx.textAlign = "left";
+  ctx.fillText("SEAT: 01A", cardX + 22 * scale, y);
+  ctx.fillText("ZONE: VIP", cardX + 120 * scale, y);
+  ctx.textAlign = "right";
+  ctx.fillText(`PASS: ${card.badgeId || "HHG-26-8420"}`, cardX + cardW - 22 * scale, y);
+
+  // Full-width Barcode
+  y += 40 * scale;
+  drawSticker(ctx, "barcode", w / 2, y, 120 * scale, scale);
+
+  y += 24 * scale;
+  ctx.fillStyle = "#525252";
+  ctx.font = `500 ${7.5 * scale}px monospace`;
+  ctx.textAlign = "center";
+  ctx.fillText("HACKER HOUSE GOA 2026 · KEEP THIS STUB FOR ENTRY", w / 2, y);
+
+  ctx.restore();
+}
+
+// ── Card 3: Scrapbook Pass ───────────────────────────────────
 function renderScrapbookCard(
   ctx: CanvasRenderingContext2D,
   img: HTMLImageElement | null,
@@ -1313,7 +1831,6 @@ function renderScrapbookCard(
   const tw = 120 * scale;
   ctx.fillRect(w / 2 - tw / 2, cardY - 6 * scale, tw, 18 * scale);
 
-  // Header
   let y = cardY + 28 * scale;
   ctx.fillStyle = "#171717";
   ctx.font = `bold ${12 * scale}px sans-serif`;
@@ -1324,7 +1841,6 @@ function renderScrapbookCard(
   ctx.font = `bold ${8 * scale}px monospace`;
   ctx.fillText("★ I AM COMING TO HH GOA 26 ★", w / 2, y + 12 * scale);
 
-  // Photo Area
   y += 24 * scale;
   const photoSize = 110 * scale;
   const px = w / 2 - photoSize / 2;
@@ -1354,7 +1870,6 @@ function renderScrapbookCard(
   drawSquircle(ctx, px, y, photoSize, photoSize, 8 * scale);
   ctx.stroke();
 
-  // Name & Fun Title
   y += photoSize + 22 * scale;
   ctx.fillStyle = "#171717";
   ctx.font = `bold ${18 * scale}px sans-serif`;
@@ -1365,14 +1880,12 @@ function renderScrapbookCard(
   ctx.font = `italic 600 ${9.5 * scale}px 'Georgia', serif`;
   ctx.fillText(`"${card.funTitle || "10x Caffeine-to-Code Pipeline"}"`, w / 2, y);
 
-  // Handle & Role
   y += 16 * scale;
   ctx.fillStyle = "#525252";
   ctx.font = `600 ${9 * scale}px monospace`;
   const handle = card.handle ? `@${card.handle.replace("@", "")}` : "@handle";
   ctx.fillText(`${handle}  ·  ${card.role || "Fullstack"}`, w / 2, y);
 
-  // Tech stack pills
   y += 22 * scale;
   const stack = card.techStack.length > 0 ? card.techStack : ["React", "Next.js", "Solana"];
   const pillH = 14 * scale;
@@ -1395,7 +1908,6 @@ function renderScrapbookCard(
     sx += pw + pillGap;
   }
 
-  // Bottom Barcode & Verification
   y = cardY + cardH - 36 * scale;
   drawSticker(ctx, "barcode", w / 2, y, 70 * scale, scale);
 
@@ -1407,7 +1919,7 @@ function renderScrapbookCard(
   ctx.restore();
 }
 
-// ── Card Template 2: Festival Access Pass ────────────────────
+// ── Card 4: Festival Access Pass ─────────────────────────────
 function renderFestivalAccessCard(
   ctx: CanvasRenderingContext2D,
   img: HTMLImageElement | null,
@@ -1431,18 +1943,15 @@ function renderFestivalAccessCard(
   drawSquircle(ctx, cardX, cardY, cardW, cardH, 16 * scale);
   ctx.stroke();
 
-  // Top Yellow Lanyard Ribbon
   ctx.fillStyle = "#facc15";
   ctx.fillRect(cardX, cardY, cardW, 8 * scale);
 
-  // Big Header
   let y = cardY + 36 * scale;
   ctx.fillStyle = "#facc15";
   ctx.font = `900 ${14 * scale}px 'Impact', sans-serif`;
   ctx.textAlign = "center";
   ctx.fillText("HH GOA 2026 // ALL-ACCESS PASS", w / 2, y);
 
-  // Photo
   y += 24 * scale;
   const photoSize = 100 * scale;
   const px = w / 2 - photoSize / 2;
@@ -1463,7 +1972,6 @@ function renderFestivalAccessCard(
   drawSquircle(ctx, px, y, photoSize, photoSize, 10 * scale);
   ctx.stroke();
 
-  // Name & Slogan
   y += photoSize + 22 * scale;
   ctx.fillStyle = "#ffffff";
   ctx.font = `bold ${18 * scale}px sans-serif`;
@@ -1480,110 +1988,13 @@ function renderFestivalAccessCard(
   const handle = card.handle ? `@${card.handle.replace("@", "")}` : "@handle";
   ctx.fillText(`${handle}  ·  ${card.role || "Fullstack"}`, w / 2, y);
 
-  // Barcode at bottom
   y = cardY + cardH - 36 * scale;
   drawSticker(ctx, "barcode", w / 2, y, 70 * scale, scale);
 
   ctx.restore();
 }
 
-// ── Card Template 3: Boarding Pass ───────────────────────────
-function renderBoardingPassCard(
-  ctx: CanvasRenderingContext2D,
-  img: HTMLImageElement | null,
-  photo: PhotoState,
-  card: CardData,
-  w: number,
-  h: number,
-  cardX: number,
-  cardY: number,
-  cardW: number,
-  cardH: number,
-  scale: number
-) {
-  ctx.save();
-  ctx.fillStyle = "#141414";
-  drawSquircle(ctx, cardX, cardY, cardW, cardH, 14 * scale);
-  ctx.fill();
-
-  ctx.strokeStyle = "#262626";
-  ctx.lineWidth = 1.5 * scale;
-  drawSquircle(ctx, cardX, cardY, cardW, cardH, 14 * scale);
-  ctx.stroke();
-
-  ctx.fillStyle = "#f59e0b";
-  ctx.font = `bold ${10 * scale}px monospace`;
-  ctx.textAlign = "left";
-  ctx.fillText("HH AIRWAYS // GOA FLIGHT 2026", cardX + 16 * scale, cardY + 24 * scale);
-
-  ctx.textAlign = "right";
-  ctx.fillText("PRIORITY BOARDING", cardX + cardW - 16 * scale, cardY + 24 * scale);
-
-  let y = cardY + 54 * scale;
-  ctx.fillStyle = "#f5f5f5";
-  ctx.font = `bold ${24 * scale}px sans-serif`;
-  ctx.textAlign = "left";
-  ctx.fillText("ANY", cardX + 20 * scale, y);
-
-  ctx.fillStyle = "#f59e0b";
-  ctx.font = `bold ${16 * scale}px sans-serif`;
-  ctx.fillText("✈ ────", cardX + 90 * scale, y - 4 * scale);
-
-  ctx.fillStyle = "#f5f5f5";
-  ctx.fillText("GOI", cardX + 180 * scale, y);
-
-  y += 24 * scale;
-  const photoSize = 84 * scale;
-  const px = cardX + 18 * scale;
-
-  ctx.save();
-  drawSquircle(ctx, px, y, photoSize, photoSize, 8 * scale);
-  ctx.clip();
-  if (img) {
-    drawUserPhoto(ctx, img, photo, px + photoSize / 2, y + photoSize / 2, photoSize, photoSize);
-  } else {
-    ctx.fillStyle = "#222";
-    ctx.fillRect(px, y, photoSize, photoSize);
-  }
-  ctx.restore();
-
-  const textX = px + photoSize + 18 * scale;
-  ctx.fillStyle = "#f5f5f5";
-  ctx.font = `bold ${15 * scale}px sans-serif`;
-  ctx.textAlign = "left";
-  ctx.fillText(card.name || "PASSENGER NAME", textX, y + 20 * scale);
-
-  ctx.fillStyle = "#f59e0b";
-  ctx.font = `italic ${9 * scale}px 'Georgia', serif`;
-  ctx.fillText(`"${card.funTitle || "10x Builder"}"`, textX, y + 38 * scale);
-
-  ctx.fillStyle = "#737373";
-  ctx.font = `500 ${8.5 * scale}px monospace`;
-  ctx.fillText(`ROLE: ${card.role || "FULLSTACK"}`, textX, y + 54 * scale);
-  ctx.fillText(`HANDLE: @${card.handle?.replace("@", "") || "BUILDER"}`, textX, y + 68 * scale);
-
-  y += photoSize + 28 * scale;
-  ctx.strokeStyle = "#333333";
-  ctx.lineWidth = 1.5 * scale;
-  ctx.setLineDash([6 * scale, 6 * scale]);
-  ctx.beginPath();
-  ctx.moveTo(cardX + 10 * scale, y);
-  ctx.lineTo(cardX + cardW - 10 * scale, y);
-  ctx.stroke();
-  ctx.setLineDash([]);
-
-  y += 20 * scale;
-  ctx.fillStyle = "#a3a3a3";
-  ctx.font = `bold ${7 * scale}px monospace`;
-  ctx.fillText("SEAT: 01A  ·  GATE: BEACH 04  ·  ZONE: VIP", cardX + 18 * scale, y);
-
-  y += 38 * scale;
-  drawSticker(ctx, "barcode", w / 2, y, 90 * scale, scale);
-
-  ctx.restore();
-}
-
-// ── Card Template 4: Standard / Holographic / Cyber / Swiss ──
+// ── Card 5: Standard / Holographic / Cyber / Swiss ───────────
 function renderStandardIdCard(
   ctx: CanvasRenderingContext2D,
   img: HTMLImageElement | null,
