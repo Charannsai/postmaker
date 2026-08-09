@@ -31,11 +31,11 @@ const DEFAULT_PHOTO: PhotoState = {
 
 const DEFAULT_FRAME: FrameSettings = {
   templateId: "hh-goa-official",
-  caption: "I am coming to HH GOA 26, Are you? 🌴",
+  caption: "I AM COMING TO HH GOA '26 · ARE YOU?",
   subcaption: "HH GOA 2026",
   captionStyle: "bold-street",
   badgeEnabled: true,
-  badgeText: "SEE YOU IN GOA 🌴",
+  badgeText: "SEE YOU IN GOA",
   stickers: ["sun-rising"],
   bgStyle: "hh-goa-emerald",
   aspectRatio: "1:1",
@@ -47,7 +47,7 @@ const DEFAULT_CARD: CardData = {
   role: "Fullstack",
   techStack: ["Next.js", "TypeScript", "Solana", "Tailwind"],
   funTitle: "10x Caffeine-to-Code Pipeline",
-  tagline: "Everything intentional. Shipping by the beach.",
+  tagline: "Everything intentional. Shipping in Goa.",
   badgeId: "HHG-26-8420",
   stickers: ["barcode"],
   bgStyle: "hh-goa-emerald",

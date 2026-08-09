@@ -204,7 +204,7 @@ export default function PfpFrameControls({
                         : "bg-[#072e1a] text-[#fefce8]/70 border-[#facc15]/15 hover:border-[#facc15]/40"
                     }`}
                   >
-                    <span className="text-sm">{st.emoji}</span>
+                    <span className="text-[9px] font-mono text-[#facc15]">★</span>
                     <span className="truncate">{st.label}</span>
                   </button>
                 );

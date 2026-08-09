@@ -63,8 +63,8 @@ export default function PhotoUploader({
     const ctx = canvas.getContext("2d")!;
     const grads = [
       ["#0d4a2b", "#facc15"],
-      ["#ec4899", "#78350f"],
-      ["#06b6d4", "#10b981"],
+      ["#1f2937", "#111827"],
+      ["#78350f", "#f59e0b"],
     ];
     const [c1, c2] = grads[index];
     const grad = ctx.createLinearGradient(0, 0, 512, 512);
@@ -72,11 +72,11 @@ export default function PhotoUploader({
     grad.addColorStop(1, c2);
     ctx.fillStyle = grad;
     ctx.fillRect(0, 0, 512, 512);
-    ctx.font = "bold 90px sans-serif";
-    ctx.fillStyle = "rgba(254,252,232,0.6)";
+    ctx.font = "bold 120px sans-serif";
+    ctx.fillStyle = "rgba(254,252,232,0.85)";
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
-    ctx.fillText(["🌴", "⚡", "🚀"][index], 256, 256);
+    ctx.fillText(["A", "B", "C"][index], 256, 256);
     canvas.toBlob((blob) => {
       if (blob) onPhotoLoaded(URL.createObjectURL(blob));
     });
@@ -122,7 +122,7 @@ export default function PhotoUploader({
                 Click or Drop photo here
               </p>
               <p className="text-[10px] text-[#fefce8]/60 mt-0.5 font-mono">
-                Supports PNG, JPG, WebP, iPhone HEIC
+                PNG, JPG, WebP, iPhone HEIC
               </p>
             </div>
           </>
@@ -138,16 +138,16 @@ export default function PhotoUploader({
 
       <div className="flex items-center gap-2 pt-1">
         <span className="text-[10px] text-[#fefce8]/60 font-mono">
-          Demo Avatars:
+          Sample Avatars:
         </span>
         {[0, 1, 2].map((i) => (
           <button
             key={i}
             onClick={() => handleSample(i)}
-            className="w-8 h-8 rounded-lg bg-[#0d4a2b] border border-[#facc15]/30 hover:border-[#facc15] transition-all flex items-center justify-center text-sm shadow-sm"
-            title={`Sample ${i + 1}`}
+            className="w-8 h-8 rounded-lg bg-[#0d4a2b] border border-[#facc15]/30 hover:border-[#facc15] transition-all flex items-center justify-center text-xs font-bold text-[#fde047] shadow-sm"
+            title={`Sample ${["A", "B", "C"][i]}`}
           >
-            {["🌴", "⚡", "🚀"][i]}
+            {["A", "B", "C"][i]}
           </button>
         ))}
       </div>
