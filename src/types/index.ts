@@ -20,11 +20,11 @@ export interface FilterDef {
 export type CanvasAspectRatio = "1:1" | "9:16" | "4:5";
 
 export type BackgroundStyleId =
+  | "paper-wrinkled"
   | "hh-goa-emerald"
+  | "kraft-paper"
   | "dark-minimal"
   | "yellow-gingham"
-  | "red-texture"
-  | "kraft-paper"
   | "clean-white"
   | "blueprint-grid";
 
@@ -35,8 +35,8 @@ export interface BackgroundStyle {
 }
 
 export type CaptionStyleId =
-  | "handwritten"
   | "bold-street"
+  | "handwritten"
   | "typewriter-tape"
   | "hacker-mono"
   | "golden-serif";
@@ -48,6 +48,7 @@ export interface CaptionStyleDef {
 
 // ── Format A: Aesthetic Frames ────────────────────────────────
 export type FrameTemplateId =
+  | "hh-goa-paper-collage"
   | "hh-goa-official"
   | "hh-goa-signpost"
   | "polaroid-tape"
@@ -66,7 +67,7 @@ export interface FrameTemplate {
   id: FrameTemplateId;
   label: string;
   description: string;
-  category: "official" | "aesthetic" | "festival" | "street" | "retro" | "cyber" | "minimal";
+  category: "collage" | "official" | "aesthetic" | "festival" | "street" | "retro" | "cyber" | "minimal";
   colors: {
     primary: string;
     secondary: string;
@@ -100,6 +101,7 @@ export interface FrameSettings {
 
 // ── Format B: Builder ID Cards ────────────────────────────────
 export type CardTemplateId =
+  | "hh-goa-paper-scrapbook"
   | "hh-goa-emerald-badge"
   | "boarding-pass"
   | "scrapbook-pass"

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Download, Copy, Share2, Check, Loader2, Sparkles } from "lucide-react";
+import { Download, Copy, Share2, Check, Loader2 } from "lucide-react";
 import confetti from "canvas-confetti";
 import { canvasToBlob } from "@/lib/canvasRenderer";
 import type { AppMode } from "@/types";
@@ -31,17 +31,17 @@ export default function ExportActions({
       a.href = url;
       a.download =
         mode === "pfp-frame"
-          ? "hh-goa-2026-pfp.png"
+          ? "hh-goa-2026-poster.png"
           : "hh-goa-2026-builder-pass.png";
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
       confetti({
-        particleCount: 90,
-        spread: 70,
+        particleCount: 80,
+        spread: 60,
         origin: { y: 0.6 },
-        colors: ["#facc15", "#ec4899", "#10b981", "#fefce8", "#fde047"],
+        colors: ["#171717", "#d97706", "#fde047", "#0d4a2b", "#fed7aa"],
       });
     } finally {
       setDownloading(false);
@@ -75,7 +75,7 @@ export default function ExportActions({
         ) : (
           <Download className="w-4 h-4" />
         )}
-        {downloading ? "Exporting HD PNG…" : "Download HD PNG (2x)"}
+        {downloading ? "Exporting High-Res PNG…" : "Download High-Res PNG (2x)"}
       </button>
 
       <div className="flex gap-2">
@@ -85,8 +85,8 @@ export default function ExportActions({
         >
           {copied ? (
             <>
-              <Check className="w-3.5 h-3.5 text-[#facc15]" />
-              <span className="text-[#facc15]">Copied to Clipboard!</span>
+              <Check className="w-3.5 h-3.5 text-[#15803d]" />
+              <span className="text-[#15803d] font-bold">Copied!</span>
             </>
           ) : (
             <>
@@ -97,10 +97,10 @@ export default function ExportActions({
         </button>
         <button
           onClick={onShareClick}
-          className="btn-pink flex-1 flex items-center justify-center gap-2 text-[12px]"
+          className="btn-ghost flex-1 flex items-center justify-center gap-2 text-[12px] !border-[#171717] !bg-[#faf8f3]"
         >
           <Share2 className="w-3.5 h-3.5" />
-          Share to X (#FrameInGoa)
+          Share to 𝕏 (#FrameInGoa)
         </button>
       </div>
     </div>

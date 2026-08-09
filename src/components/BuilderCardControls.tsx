@@ -28,7 +28,6 @@ const FUN_TITLES = [
   "Chief Git Conflict Resolver",
   "Full-Stack Caffeine Engine",
   "Solana Transaction Wizard",
-  "AI Prompt Whisperer",
   "Building the Future on the Beach",
   "Ship First, Sleep Later",
 ];
@@ -61,13 +60,13 @@ export default function BuilderCardControls({
   return (
     <div className="space-y-4 animate-fade-in">
       {/* Clean Segmented Sub-Tabs */}
-      <div className="grid grid-cols-3 p-1 rounded-xl bg-[#052012] border border-[#facc15]/20">
+      <div className="grid grid-cols-3 p-1 rounded-xl bg-[#ffffff] border border-[#e6dfd2] shadow-sm">
         <button
           onClick={() => setActiveTab("layout")}
           className={`flex items-center justify-center gap-1.5 py-2 rounded-lg text-[11px] font-bold transition-all ${
             activeTab === "layout"
-              ? "bg-[#facc15] text-[#072e1a] shadow-sm"
-              : "text-[#fefce8]/60 hover:text-[#fefce8]"
+              ? "bg-[#171717] text-[#ffffff] shadow-sm"
+              : "text-[#737373] hover:text-[#171717]"
           }`}
         >
           <LayoutGrid className="w-3 h-3" />
@@ -77,8 +76,8 @@ export default function BuilderCardControls({
           onClick={() => setActiveTab("profile")}
           className={`flex items-center justify-center gap-1.5 py-2 rounded-lg text-[11px] font-bold transition-all ${
             activeTab === "profile"
-              ? "bg-[#facc15] text-[#072e1a] shadow-sm"
-              : "text-[#fefce8]/60 hover:text-[#fefce8]"
+              ? "bg-[#171717] text-[#ffffff] shadow-sm"
+              : "text-[#737373] hover:text-[#171717]"
           }`}
         >
           <User className="w-3 h-3" />
@@ -88,8 +87,8 @@ export default function BuilderCardControls({
           onClick={() => setActiveTab("stack")}
           className={`flex items-center justify-center gap-1.5 py-2 rounded-lg text-[11px] font-bold transition-all ${
             activeTab === "stack"
-              ? "bg-[#facc15] text-[#072e1a] shadow-sm"
-              : "text-[#fefce8]/60 hover:text-[#fefce8]"
+              ? "bg-[#171717] text-[#ffffff] shadow-sm"
+              : "text-[#737373] hover:text-[#171717]"
           }`}
         >
           <Cpu className="w-3 h-3" />
@@ -100,7 +99,7 @@ export default function BuilderCardControls({
       {/* Tab 1: Layout Selection */}
       {activeTab === "layout" && (
         <div className="space-y-2 animate-fade-in">
-          <label className="text-[11px] font-bold text-[#fde047] uppercase tracking-wider block">
+          <label className="text-[11px] font-bold text-[#171717] uppercase tracking-wider block">
             Choose Pass Template ({CARD_TEMPLATES.length})
           </label>
           <div className="space-y-1.5 max-h-[380px] overflow-y-auto pr-1">
@@ -112,14 +111,14 @@ export default function BuilderCardControls({
                   onClick={() => onTemplateChange(tmpl.id)}
                   className={`w-full p-2.5 rounded-xl text-left border transition-all ${
                     selected
-                      ? "bg-[#0d4a2b] border-[#facc15] text-[#fefce8] shadow-md shadow-[#facc15]/10"
-                      : "bg-[#072e1a]/60 border-[#facc15]/15 text-[#fefce8]/70 hover:border-[#facc15]/40 hover:bg-[#072e1a]"
+                      ? "bg-[#ffffff] border-[#171717] text-[#171717] ring-1 ring-[#171717] shadow-sm"
+                      : "bg-[#ffffff]/60 border-[#e6dfd2] text-[#525252] hover:border-[#171717] hover:bg-[#ffffff]"
                   }`}
                 >
-                  <p className="text-[12px] font-bold truncate text-[#fefce8]">
+                  <p className="text-[12px] font-bold truncate text-[#171717]">
                     {tmpl.label}
                   </p>
-                  <p className="text-[10px] text-[#fefce8]/60 truncate mt-0.5">
+                  <p className="text-[10px] text-[#737373] truncate mt-0.5">
                     {tmpl.description}
                   </p>
                 </button>
@@ -133,7 +132,7 @@ export default function BuilderCardControls({
       {activeTab === "profile" && (
         <div className="space-y-3.5 animate-fade-in">
           <div className="space-y-1">
-            <label className="text-[11px] font-bold text-[#fde047] uppercase tracking-wider block">
+            <label className="text-[11px] font-bold text-[#171717] uppercase tracking-wider block">
               Full Name
             </label>
             <input
@@ -147,7 +146,7 @@ export default function BuilderCardControls({
           </div>
 
           <div className="space-y-1">
-            <label className="text-[11px] font-bold text-[#fde047] uppercase tracking-wider block">
+            <label className="text-[11px] font-bold text-[#171717] uppercase tracking-wider block">
               X / GitHub Handle
             </label>
             <input
@@ -162,7 +161,7 @@ export default function BuilderCardControls({
 
           {/* Builder Role */}
           <div className="space-y-1.5">
-            <label className="text-[11px] font-bold text-[#fde047] uppercase tracking-wider block">
+            <label className="text-[11px] font-bold text-[#171717] uppercase tracking-wider block">
               Role
             </label>
             <div className="flex flex-wrap gap-1.5">
@@ -181,14 +180,14 @@ export default function BuilderCardControls({
           </div>
 
           {/* Fun Title */}
-          <div className="space-y-1 pt-1 border-t border-[#facc15]/15">
+          <div className="space-y-1 pt-1 border-t border-[#e6dfd2]">
             <div className="flex items-center justify-between">
-              <label className="text-[11px] font-bold text-[#fde047] uppercase tracking-wider">
+              <label className="text-[11px] font-bold text-[#171717] uppercase tracking-wider">
                 Fun Title
               </label>
               <button
                 onClick={randomizeTitle}
-                className="flex items-center gap-1 text-[10.5px] text-[#facc15] hover:text-[#fde047] font-semibold"
+                className="flex items-center gap-1 text-[10.5px] text-[#b45309] hover:text-[#78350f] font-semibold"
               >
                 <Shuffle className="w-3 h-3" />
                 Randomize
@@ -211,10 +210,10 @@ export default function BuilderCardControls({
         <div className="space-y-4 animate-fade-in">
           <div className="space-y-1.5">
             <div className="flex items-center justify-between">
-              <label className="text-[11px] font-bold text-[#fde047] uppercase tracking-wider">
+              <label className="text-[11px] font-bold text-[#171717] uppercase tracking-wider">
                 Tech Stack (Max 5)
               </label>
-              <span className="text-[10px] font-mono text-[#fde047]">
+              <span className="text-[10px] font-mono text-[#b45309] font-semibold">
                 {card.techStack?.length || 0}/5 selected
               </span>
             </div>
@@ -237,8 +236,8 @@ export default function BuilderCardControls({
           </div>
 
           {/* Backdrop Selection */}
-          <div className="space-y-1.5 pt-2 border-t border-[#facc15]/15">
-            <label className="text-[11px] font-bold text-[#fde047] uppercase tracking-wider block">
+          <div className="space-y-1.5 pt-2 border-t border-[#e6dfd2]">
+            <label className="text-[11px] font-bold text-[#171717] uppercase tracking-wider block">
               Backdrop Pattern
             </label>
             <div className="grid grid-cols-2 gap-1.5">
@@ -249,9 +248,9 @@ export default function BuilderCardControls({
                     onCardChange({ bgStyle: bg.id as BackgroundStyleId })
                   }
                   className={`p-2 rounded-xl text-[11px] font-semibold border text-center transition-all ${
-                    (card.bgStyle || "hh-goa-emerald") === bg.id
-                      ? "bg-[#0d4a2b] text-[#fde047] border-[#facc15] shadow-sm font-bold"
-                      : "bg-[#072e1a] text-[#fefce8]/60 border-[#facc15]/15 hover:border-[#facc15]/40"
+                    (card.bgStyle || "paper-wrinkled") === bg.id
+                      ? "bg-[#ffffff] text-[#171717] border-[#171717] ring-1 ring-[#171717] shadow-sm font-bold"
+                      : "bg-[#ffffff] text-[#737373] border-[#e6dfd2] hover:border-[#171717]"
                   }`}
                 >
                   {bg.label}

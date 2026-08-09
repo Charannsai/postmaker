@@ -1,6 +1,5 @@
 /* ──────────────────────────────────────────────────────────────
    Template Definitions & Presets – HH Goa 2026 Paper Studio
-   Clean typographic presets with zero emojis.
    ────────────────────────────────────────────────────────────── */
 
 import type {
@@ -54,12 +53,12 @@ export function getFilterCss(id: FilterType): string {
 
 // ── Canvas Background Styles ─────────────────────────────────
 export const BACKGROUND_STYLES: BackgroundStyle[] = [
+  { id: "paper-wrinkled", label: "Wrinkled Paper", preview: "#f5f2eb" },
   { id: "hh-goa-emerald", label: "HH Goa Emerald", preview: "#0d4a2b" },
-  { id: "dark-minimal", label: "Dark Studio", preview: "#0a0a0a" },
-  { id: "yellow-gingham", label: "Yellow Gingham", preview: "repeating-linear-gradient(45deg, #fef08a 0, #fef08a 10px, #fef9c3 10px, #fef9c3 20px)" },
-  { id: "red-texture", label: "Red Dot Canvas", preview: "#b91c1c" },
   { id: "kraft-paper", label: "Kraft Cardstock", preview: "#d7c4a3" },
   { id: "clean-white", label: "Studio White", preview: "#f5f5f5" },
+  { id: "dark-minimal", label: "Dark Studio", preview: "#0a0a0a" },
+  { id: "yellow-gingham", label: "Yellow Gingham", preview: "repeating-linear-gradient(45deg, #fef08a 0, #fef08a 10px, #fef9c3 10px, #fef9c3 20px)" },
   { id: "blueprint-grid", label: "Blueprint Grid", preview: "#0f172a" },
 ];
 
@@ -75,6 +74,13 @@ export const CAPTION_STYLES: CaptionStyleDef[] = [
 // ── Format A: Frame Templates ────────────────────────────────
 export const FRAME_TEMPLATES: FrameTemplate[] = [
   {
+    id: "hh-goa-paper-collage",
+    label: "Scrapbook Paper Collage",
+    description: "White sticker cutout with spiral notebook stack, taped polaroid & doodles",
+    category: "collage",
+    colors: { primary: "#f5f2eb", secondary: "#171717", accent: "#d97706" },
+  },
+  {
     id: "hh-goa-official",
     label: "HH Goa Official Poster",
     description: "Emerald green cardstock, radiant sunburst rays & hot pink ribbon",
@@ -89,18 +95,18 @@ export const FRAME_TEMPLATES: FrameTemplate[] = [
     colors: { primary: "#08331e", secondary: "#fde047", accent: "#f43f5e" },
   },
   {
-    id: "festival-wristband",
-    label: "Festival VIP Wristband",
-    description: "Heavy woven event ribbon with metallic gold header",
-    category: "festival",
-    colors: { primary: "#171717", secondary: "#facc15", accent: "#f59e0b" },
-  },
-  {
     id: "polaroid-tape",
     label: "Matte Paper Polaroid",
     description: "Textured photo paper with washi tape & handwritten ink",
     category: "aesthetic",
     colors: { primary: "#faf9f5", secondary: "#e5e5dc", accent: "#d97706" },
+  },
+  {
+    id: "festival-wristband",
+    label: "Festival VIP Wristband",
+    description: "Heavy woven event ribbon with metallic gold header",
+    category: "festival",
+    colors: { primary: "#171717", secondary: "#facc15", accent: "#f59e0b" },
   },
   {
     id: "streetwear-poster",
@@ -151,17 +157,16 @@ export const FRAME_TEMPLATES: FrameTemplate[] = [
     category: "minimal",
     colors: { primary: "#1c1c1c", secondary: "#f5f5f5", accent: "#a3a3a3" },
   },
-  {
-    id: "goa-neon-sunset",
-    label: "Goa Sunset Profile Ring",
-    description: "Circular social avatar ring with gradient border",
-    category: "cyber",
-    colors: { primary: "#ff6b35", secondary: "#f857a6", accent: "#00f2fe" },
-  },
 ];
 
 // ── Format B: Card Templates ─────────────────────────────────
 export const CARD_TEMPLATES: CardTemplate[] = [
+  {
+    id: "hh-goa-paper-scrapbook",
+    label: "Paper Scrapbook Profile",
+    description: "Editorial collage card with spiral notebook stack, taped polaroid & notes",
+    colors: { bg: "#f5f2eb", card: "#faf8f3", accent: "#d97706", text: "#171717" },
+  },
   {
     id: "hh-goa-emerald-badge",
     label: "HH Goa Official Pass",
@@ -210,13 +215,13 @@ export const CARD_TEMPLATES: CardTemplate[] = [
 export const PRESET_CAPTIONS = [
   "I AM COMING TO HH GOA '26 · ARE YOU?",
   "EVERYTHING INTENTIONAL · SHIPPING IN GOA",
-  "PACKED & READY FOR HH GOA 2026",
+  "FULLSTACK BUILDER · HH GOA 2026",
   "CONFIRMED ATTENDEE · HH GOA '26",
-  "SEE YOU ON THE SHORE, BUILDERS",
+  "PACKED & READY FOR HH GOA 2026",
   "10X CAFFEINE · 100X SUNSHINE",
   "SHIP HARD, VIBE HARDER · #FrameInGoa",
   "FROM COMMITS TO COCONUTS · GOA 2026",
-  "LESS TALK, MORE SHIP · HH GOA",
+  "BEYOND CREATIVITY · SHIP FIRST",
   "SUDO SHIP --DESTINATION=GOA_2026",
 ] as const;
 

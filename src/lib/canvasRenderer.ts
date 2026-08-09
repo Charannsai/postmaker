@@ -1,7 +1,7 @@
 /* ──────────────────────────────────────────────────────────────
    Aesthetic Canvas Engine – HH Goa 2026 Paper Studio
-   Clean typographic aesthetics, tactile paper feel, and
-   realistic double-overlay drop shadows (zero emojis).
+   Featuring the Editorial Paper Scrapbook Collage (Sticker Cutout,
+   Spiral Notebook Stack, Taped Mini Polaroid, & Doodles).
    ────────────────────────────────────────────────────────────── */
 
 import type {
@@ -57,16 +57,14 @@ function drawDoubleShadowCard(
   scale: number
 ) {
   ctx.save();
-  // Pass 1: Deep Ambient Diffuse Shadow
-  ctx.shadowColor = "rgba(0, 0, 0, 0.4)";
-  ctx.shadowBlur = 32 * scale;
-  ctx.shadowOffsetY = 16 * scale;
+  ctx.shadowColor = "rgba(0, 0, 0, 0.35)";
+  ctx.shadowBlur = 30 * scale;
+  ctx.shadowOffsetY = 14 * scale;
   drawSquircle(ctx, x, y, w, h, r);
   ctx.fillStyle = fillColor;
   ctx.fill();
 
-  // Pass 2: Tight Crisp Contact Shadow
-  ctx.shadowColor = "rgba(0, 0, 0, 0.35)";
+  ctx.shadowColor = "rgba(0, 0, 0, 0.25)";
   ctx.shadowBlur = 8 * scale;
   ctx.shadowOffsetY = 3 * scale;
   drawSquircle(ctx, x, y, w, h, r);
@@ -84,12 +82,36 @@ export function drawCanvasBackground(
   scale: number
 ) {
   ctx.save();
-  if (styleId === "hh-goa-emerald") {
-    // Official Website Emerald Green (#0d4a2b) with matte cotton paper tone
+  if (styleId === "paper-wrinkled" || !styleId) {
+    // Realistic Off-White Wrinkled Paper Sheet
+    ctx.fillStyle = "#f5f2eb";
+    ctx.fillRect(0, 0, w, h);
+
+    // Subtle paper creases & grain
+    ctx.fillStyle = "rgba(0, 0, 0, 0.02)";
+    ctx.beginPath();
+    ctx.moveTo(0, h * 0.3);
+    ctx.lineTo(w, h * 0.25);
+    ctx.lineTo(w, h * 0.27);
+    ctx.lineTo(0, h * 0.32);
+    ctx.fill();
+
+    ctx.beginPath();
+    ctx.moveTo(0, h * 0.65);
+    ctx.lineTo(w, h * 0.7);
+    ctx.lineTo(w, h * 0.72);
+    ctx.lineTo(0, h * 0.67);
+    ctx.fill();
+
+    const vig = ctx.createRadialGradient(w / 2, h / 2, w * 0.4, w / 2, h / 2, w * 0.8);
+    vig.addColorStop(0, "transparent");
+    vig.addColorStop(1, "rgba(0, 0, 0, 0.06)");
+    ctx.fillStyle = vig;
+    ctx.fillRect(0, 0, w, h);
+  } else if (styleId === "hh-goa-emerald") {
     ctx.fillStyle = "#0d4a2b";
     ctx.fillRect(0, 0, w, h);
 
-    // Subtle sunburst rays from top center
     const cx = w / 2;
     const rayCount = 20;
     ctx.fillStyle = "rgba(250, 204, 21, 0.04)";
@@ -120,22 +142,6 @@ export function drawCanvasBackground(
         ctx.fillRect(x, y, step, step);
       }
     }
-  } else if (styleId === "red-texture") {
-    ctx.fillStyle = "#991b1b";
-    ctx.fillRect(0, 0, w, h);
-
-    ctx.fillStyle = "#7f1d1d";
-    const dotStep = 6 * scale;
-    for (let x = 0; x < w; x += dotStep) {
-      for (let y = 0; y < h; y += dotStep) {
-        ctx.fillRect(x + ((y / dotStep) % 2) * (dotStep / 2), y, 1.5 * scale, 1.5 * scale);
-      }
-    }
-    const vig = ctx.createRadialGradient(w / 2, h / 2, w * 0.3, w / 2, h / 2, w * 0.75);
-    vig.addColorStop(0, "transparent");
-    vig.addColorStop(1, "rgba(0,0,0,0.45)");
-    ctx.fillStyle = vig;
-    ctx.fillRect(0, 0, w, h);
   } else if (styleId === "kraft-paper") {
     ctx.fillStyle = "#d7c4a3";
     ctx.fillRect(0, 0, w, h);
@@ -151,26 +157,7 @@ export function drawCanvasBackground(
   } else if (styleId === "clean-white") {
     ctx.fillStyle = "#f8f9fa";
     ctx.fillRect(0, 0, w, h);
-  } else if (styleId === "blueprint-grid") {
-    ctx.fillStyle = "#090d16";
-    ctx.fillRect(0, 0, w, h);
-    ctx.strokeStyle = "rgba(56, 189, 248, 0.08)";
-    ctx.lineWidth = 1 * scale;
-    const gStep = 24 * scale;
-    for (let x = 0; x < w; x += gStep) {
-      ctx.beginPath();
-      ctx.moveTo(x, 0);
-      ctx.lineTo(x, h);
-      ctx.stroke();
-    }
-    for (let y = 0; y < h; y += gStep) {
-      ctx.beginPath();
-      ctx.moveTo(0, y);
-      ctx.lineTo(w, y);
-      ctx.stroke();
-    }
   } else {
-    // Dark Studio Minimal
     ctx.fillStyle = "#0c0c0c";
     ctx.fillRect(0, 0, w, h);
     const vig = ctx.createRadialGradient(w / 2, h / 2, 0, w / 2, h / 2, w * 0.7);
@@ -308,7 +295,7 @@ function drawStyledCaption(
     ctx.fillText(text, cx, cy);
   } else if (style === "hacker-mono") {
     ctx.font = `bold ${11.5 * scale}px monospace`;
-    ctx.fillStyle = "#facc15";
+    ctx.fillStyle = "#d97706";
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
     ctx.fillText(`> ${text.toUpperCase()}`, cx, cy);
@@ -319,7 +306,6 @@ function drawStyledCaption(
     ctx.textBaseline = "middle";
     ctx.fillText(`✦ ${text} ✦`, cx, cy);
   } else {
-    // Default Handwritten / Aesthetic script
     ctx.font = `bold italic ${14.5 * scale}px 'Georgia', serif`;
     ctx.fillStyle = "#d97706";
     ctx.textAlign = "center";
@@ -342,7 +328,6 @@ export function drawSticker(
   ctx.translate(x, y);
 
   if (type === "signpost") {
-    // Clean wooden directional signpost arrows
     ctx.fillStyle = "#78350f";
     ctx.fillRect(-2 * scale, -size * 0.45, 4 * scale, size * 0.9);
 
@@ -362,7 +347,6 @@ export function drawSticker(
     ctx.fillStyle = "#facc15";
     ctx.fillText("GOA '26 ➔", -size * 0.04, size * 0.1 + 8 * scale);
   } else if (type === "sun-rising") {
-    // Radiant Half-Sun symbol
     ctx.fillStyle = "#fde047";
     ctx.beginPath();
     ctx.arc(0, 0, size * 0.38, Math.PI, 0);
@@ -385,7 +369,6 @@ export function drawSticker(
     ctx.fillStyle = "rgba(255, 255, 255, 0.3)";
     ctx.fillRect(-tw / 2, -th / 2, tw, 2 * scale);
   } else if (type === "verified") {
-    // Clean Verified Builder Stamp
     ctx.strokeStyle = "#facc15";
     ctx.lineWidth = 1.5 * scale;
     drawSquircle(ctx, -size * 0.7, -size * 0.22, size * 1.4, size * 0.44, 4 * scale);
@@ -502,7 +485,9 @@ export function renderPfpFrame(
   const cx = W / 2;
   const cy = H / 2;
 
-  if (frame.templateId === "hh-goa-official") {
+  if (frame.templateId === "hh-goa-paper-collage") {
+    renderPaperCollage(ctx, img, photo, frame, W, H, scale);
+  } else if (frame.templateId === "hh-goa-official") {
     renderHhGoaOfficial(ctx, img, photo, frame, W, H, cx, cy, scale);
   } else if (frame.templateId === "hh-goa-signpost") {
     renderHhGoaSignpost(ctx, img, photo, frame, W, H, cx, cy, scale);
@@ -549,7 +534,294 @@ export function renderPfpFrame(
   }
 }
 
-// ── Official Template 1: HH Goa Poster (Paper & Double Shadow) ─
+// ── FLAGSHIP TEMPLATE: Editorial Paper Scrapbook Collage ──────
+// Directly reproduction of the reference image layout:
+// Die-cut white sticker cutout, spiral notebook stack, taped polaroid & doodles!
+function renderPaperCollage(
+  ctx: CanvasRenderingContext2D,
+  img: HTMLImageElement | null,
+  photo: PhotoState,
+  frame: FrameSettings,
+  w: number,
+  h: number,
+  scale: number
+) {
+  ctx.save();
+
+  // 1. Top Header Bar (Category on left, Date on right)
+  ctx.fillStyle = "#171717";
+  ctx.font = `600 ${9.5 * scale}px sans-serif`;
+  ctx.textAlign = "left";
+  ctx.fillText("Hacker House Goa 2026", 28 * scale, 30 * scale);
+
+  ctx.textAlign = "right";
+  ctx.fillText("08.13.2026", w - 28 * scale, 30 * scale);
+
+  ctx.strokeStyle = "rgba(0,0,0,0.15)";
+  ctx.lineWidth = 1 * scale;
+  ctx.beginPath();
+  ctx.moveTo(28 * scale, 38 * scale);
+  ctx.lineTo(w - 28 * scale, 38 * scale);
+  ctx.stroke();
+
+  // 2. Bold Top Title & Kraft Highlight Badge
+  ctx.fillStyle = "#171717";
+  ctx.font = `900 ${28 * scale}px 'Impact', sans-serif`;
+  ctx.textAlign = "left";
+  ctx.fillText("BUILDER", 28 * scale, 72 * scale);
+  ctx.fillText("PORTFOLIO", 28 * scale, 100 * scale);
+
+  // Kraft Name Highlight Box
+  const nameText = "Alex Rivera";
+  ctx.font = `bold ${12 * scale}px sans-serif`;
+  const nW = ctx.measureText(nameText).width + 16 * scale;
+  const nH = 22 * scale;
+  ctx.fillStyle = "#fed7aa"; // Kraft peach highlight
+  ctx.fillRect(28 * scale, 110 * scale, nW, nH);
+  ctx.fillStyle = "#7c2d12";
+  ctx.textBaseline = "middle";
+  ctx.fillText(nameText, 36 * scale, 110 * scale + nH / 2);
+  ctx.textBaseline = "alphabetic";
+
+  ctx.fillStyle = "#525252";
+  ctx.font = `500 ${8 * scale}px sans-serif`;
+  ctx.fillText("Everything Intentional · Shipping in Goa", 28 * scale, 144 * scale);
+
+  // 3. Right Side: Spiral Notebook Page ("Developer Stack")
+  const noteW = 140 * scale;
+  const noteH = 175 * scale;
+  const noteX = w - noteW - 24 * scale;
+  const noteY = 56 * scale;
+
+  ctx.save();
+  ctx.translate(noteX, noteY);
+  ctx.rotate(0.02);
+
+  // Notebook double shadow
+  ctx.shadowColor = "rgba(0,0,0,0.15)";
+  ctx.shadowBlur = 16 * scale;
+  ctx.shadowOffsetY = 8 * scale;
+  ctx.fillStyle = "#ffffff";
+  ctx.fillRect(0, 0, noteW, noteH);
+  ctx.shadowColor = "transparent";
+
+  // Lined paper rules
+  ctx.strokeStyle = "rgba(14, 165, 233, 0.2)";
+  ctx.lineWidth = 1 * scale;
+  for (let ly = 32 * scale; ly < noteH - 10 * scale; ly += 16 * scale) {
+    ctx.beginPath();
+    ctx.moveTo(18 * scale, ly);
+    ctx.lineTo(noteW - 10 * scale, ly);
+    ctx.stroke();
+  }
+
+  // Left red margin
+  ctx.strokeStyle = "rgba(239, 68, 68, 0.3)";
+  ctx.beginPath();
+  ctx.moveTo(22 * scale, 0);
+  ctx.lineTo(22 * scale, noteH);
+  ctx.stroke();
+
+  // Spiral Wire Holes along left spine
+  for (let sy = 12 * scale; sy < noteH - 8 * scale; sy += 14 * scale) {
+    ctx.fillStyle = "#e5e5e5";
+    ctx.beginPath();
+    ctx.arc(8 * scale, sy, 3 * scale, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = "#a3a3a3";
+    ctx.lineWidth = 1 * scale;
+    ctx.stroke();
+  }
+
+  // Notebook Header
+  ctx.fillStyle = "#171717";
+  ctx.font = `900 ${11 * scale}px sans-serif`;
+  ctx.fillText("Goa Stack", 28 * scale, 24 * scale);
+
+  // Stack Items with Clean Square Badges
+  const stackItems = [
+    { tag: "Re", name: "React", bg: "#0284c7" },
+    { tag: "Nx", name: "Next.js", bg: "#171717" },
+    { tag: "Ts", name: "TypeScript", bg: "#2563eb" },
+    { tag: "So", name: "Solana", bg: "#7c3aed" },
+    { tag: "Tw", name: "Tailwind", bg: "#0d9488" },
+  ];
+
+  let iy = 44 * scale;
+  for (const item of stackItems) {
+    // Square icon badge
+    ctx.fillStyle = item.bg;
+    drawSquircle(ctx, 26 * scale, iy - 8 * scale, 12 * scale, 12 * scale, 2.5 * scale);
+    ctx.fill();
+    ctx.fillStyle = "#ffffff";
+    ctx.font = `bold ${6 * scale}px sans-serif`;
+    ctx.textAlign = "center";
+    ctx.fillText(item.tag, 32 * scale, iy);
+
+    ctx.fillStyle = "#171717";
+    ctx.font = `600 ${8 * scale}px sans-serif`;
+    ctx.textAlign = "left";
+    ctx.fillText(item.name, 44 * scale, iy);
+    iy += 16 * scale;
+  }
+
+  // Top washi tape on notebook
+  ctx.fillStyle = "rgba(254, 215, 170, 0.85)";
+  ctx.fillRect(noteW / 2 - 25 * scale, -8 * scale, 50 * scale, 16 * scale);
+
+  ctx.restore();
+
+  // 4. Center Hero: White Die-Cut Sticker Cutout (Photo)
+  const heroCX = w * 0.48;
+  const heroCY = h * 0.54;
+  const heroSize = Math.min(w * 0.52, 250 * scale);
+
+  // Die-cut white border + Double Overlay Drop Shadow
+  ctx.save();
+  ctx.translate(heroCX, heroCY);
+
+  // Deep shadow pass
+  ctx.shadowColor = "rgba(0, 0, 0, 0.28)";
+  ctx.shadowBlur = 28 * scale;
+  ctx.shadowOffsetY = 14 * scale;
+
+  ctx.fillStyle = "#ffffff";
+  drawSquircle(ctx, -heroSize / 2 - 8 * scale, -heroSize / 2 - 8 * scale, heroSize + 16 * scale, heroSize + 16 * scale, 18 * scale);
+  ctx.fill();
+
+  // Tight contact shadow pass
+  ctx.shadowColor = "rgba(0, 0, 0, 0.22)";
+  ctx.shadowBlur = 6 * scale;
+  ctx.shadowOffsetY = 2 * scale;
+  drawSquircle(ctx, -heroSize / 2 - 8 * scale, -heroSize / 2 - 8 * scale, heroSize + 16 * scale, heroSize + 16 * scale, 18 * scale);
+  ctx.fill();
+  ctx.shadowColor = "transparent";
+
+  // Photo Window
+  ctx.save();
+  drawSquircle(ctx, -heroSize / 2, -heroSize / 2, heroSize, heroSize, 12 * scale);
+  ctx.clip();
+  if (img) {
+    drawUserPhoto(ctx, img, photo, 0, 0, heroSize, heroSize);
+  } else {
+    ctx.fillStyle = "#1e293b";
+    ctx.fillRect(-heroSize / 2, -heroSize / 2, heroSize, heroSize);
+    ctx.fillStyle = "rgba(255,255,255,0.4)";
+    ctx.font = `bold ${14 * scale}px sans-serif`;
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText("Upload Photo", 0, 0);
+  }
+  ctx.restore();
+
+  ctx.restore();
+
+  // 5. Bottom Left: Taped Mini Polaroid
+  const polW = 110 * scale;
+  const polH = 135 * scale;
+  const polX = 24 * scale;
+  const polY = h - polH - 30 * scale;
+
+  ctx.save();
+  ctx.translate(polX + polW / 2, polY + polH / 2);
+  ctx.rotate(-0.07);
+
+  // Polaroid shadow
+  ctx.shadowColor = "rgba(0,0,0,0.18)";
+  ctx.shadowBlur = 18 * scale;
+  ctx.shadowOffsetY = 8 * scale;
+  ctx.fillStyle = "#faf9f5";
+  ctx.fillRect(-polW / 2, -polH / 2, polW, polH);
+  ctx.shadowColor = "transparent";
+
+  // Polaroid inner photo
+  const inMargin = 8 * scale;
+  const inW = polW - inMargin * 2;
+  const inH = inW;
+  ctx.fillStyle = "#171717";
+  ctx.fillRect(-inW / 2, -polH / 2 + inMargin, inW, inH);
+
+  ctx.save();
+  ctx.beginPath();
+  ctx.rect(-inW / 2, -polH / 2 + inMargin, inW, inH);
+  ctx.clip();
+  if (img) {
+    drawUserPhoto(ctx, img, photo, 0, -polH / 2 + inMargin + inH / 2, inW, inH);
+  }
+  ctx.restore();
+
+  // Handwritten note on polaroid
+  ctx.fillStyle = "#d97706";
+  ctx.font = `bold italic ${7.5 * scale}px 'Georgia', serif`;
+  ctx.textAlign = "center";
+  ctx.fillText("See you in Goa", 0, polH / 2 - 10 * scale);
+
+  // Washi tape at top of polaroid
+  ctx.fillStyle = "rgba(254, 240, 138, 0.85)";
+  ctx.fillRect(-22 * scale, -polH / 2 - 6 * scale, 44 * scale, 14 * scale);
+
+  ctx.restore();
+
+  // 6. Bottom Right: Sticky Note & Doodles
+  const stickW = 100 * scale;
+  const stickH = 45 * scale;
+  const stickX = w - stickW - 28 * scale;
+  const stickY = h - stickH - 55 * scale;
+
+  ctx.save();
+  ctx.translate(stickX, stickY);
+  ctx.rotate(0.04);
+  ctx.shadowColor = "rgba(0,0,0,0.12)";
+  ctx.shadowBlur = 10 * scale;
+  ctx.shadowOffsetY = 4 * scale;
+  ctx.fillStyle = "#fef08a"; // Yellow post-it
+  ctx.fillRect(0, 0, stickW, stickH);
+  ctx.shadowColor = "transparent";
+
+  ctx.fillStyle = "#171717";
+  ctx.font = `bold ${7.5 * scale}px monospace`;
+  ctx.textAlign = "center";
+  ctx.fillText("CONFIRMED ATTENDEE", stickW / 2, 18 * scale);
+  ctx.font = `600 ${6.5 * scale}px monospace`;
+  ctx.fillStyle = "#854d0e";
+  ctx.fillText("HH GOA · AUG 2026", stickW / 2, 32 * scale);
+  ctx.restore();
+
+  // Doodles & Arrows
+  ctx.save();
+  ctx.strokeStyle = "#171717";
+  ctx.lineWidth = 1.5 * scale;
+
+  // Hand-drawn star doodles
+  ctx.font = `bold ${14 * scale}px sans-serif`;
+  ctx.fillStyle = "#171717";
+  ctx.fillText("✦", w - 40 * scale, 40 * scale);
+  ctx.fillText("★", 28 * scale, h * 0.42);
+
+  // Motion marks around hero
+  ctx.lineWidth = 1.5 * scale;
+  ctx.beginPath();
+  ctx.arc(heroCX - heroSize / 2 - 14 * scale, heroCY - 30 * scale, 12 * scale, -0.6, 0.6);
+  ctx.stroke();
+
+  ctx.beginPath();
+  ctx.arc(heroCX - heroSize / 2 - 20 * scale, heroCY - 30 * scale, 18 * scale, -0.6, 0.6);
+  ctx.stroke();
+
+  // Hand-drawn arrow to photo
+  ctx.beginPath();
+  ctx.moveTo(w - 70 * scale, h - 35 * scale);
+  ctx.quadraticCurveTo(w - 90 * scale, h - 20 * scale, w - 120 * scale, h - 30 * scale);
+  ctx.stroke();
+
+  // Bottom Text Ribbon
+  const botCaption = frame.caption || "I AM COMING TO HH GOA '26 · ARE YOU?";
+  drawStyledCaption(ctx, botCaption, frame.captionStyle || "bold-street", w / 2, h - 20 * scale, w - 40 * scale, scale);
+
+  ctx.restore();
+}
+
+// ── Official Template 2: HH Goa Poster ───────────────────────
 function renderHhGoaOfficial(
   ctx: CanvasRenderingContext2D,
   img: HTMLImageElement | null,
@@ -569,7 +841,6 @@ function renderHhGoaOfficial(
   const x = -cardW / 2;
   const y = -cardH / 2;
 
-  // Double Overlay Drop Shadow Pass
   drawDoubleShadowCard(ctx, x, y, cardW, cardH, 18 * scale, "#0d4a2b", scale);
 
   ctx.strokeStyle = "#facc15";
@@ -577,19 +848,16 @@ function renderHhGoaOfficial(
   drawSquircle(ctx, x, y, cardW, cardH, 18 * scale);
   ctx.stroke();
 
-  // Radiant Golden Setting Sun at Top Center
   ctx.fillStyle = "#fde047";
   ctx.beginPath();
   ctx.arc(0, y + 40 * scale, 30 * scale, Math.PI, 0);
   ctx.fill();
 
-  // Condensed serif: HACKER HOUSE with hot pink GOA badge
   ctx.fillStyle = "#fde047";
   ctx.font = `900 ${22 * scale}px 'Georgia', serif`;
   ctx.textAlign = "center";
   ctx.fillText("HACKER HOUSE", 0, y + 36 * scale);
 
-  // Pink "GOA '26" Tag
   ctx.fillStyle = "#ec4899";
   drawSquircle(ctx, -26 * scale, y + 40 * scale, 52 * scale, 14 * scale, 4 * scale);
   ctx.fill();
@@ -597,7 +865,6 @@ function renderHhGoaOfficial(
   ctx.font = `bold ${8 * scale}px sans-serif`;
   ctx.fillText("GOA '26", 0, y + 50 * scale);
 
-  // Photo Frame in Center with debossed shadow border
   const photoW = cardW - 36 * scale;
   const photoH = photoW * 0.95;
   const px = -photoW / 2;
@@ -628,7 +895,6 @@ function renderHhGoaOfficial(
   drawSquircle(ctx, px, py, photoW, photoH, 10 * scale);
   ctx.stroke();
 
-  // Bottom Slogan / Caption Ribbon
   const by = py + photoH + 20 * scale;
   const caption = frame.caption || "I AM COMING TO HH GOA '26 · ARE YOU?";
 
@@ -651,7 +917,7 @@ function renderHhGoaOfficial(
   ctx.restore();
 }
 
-// ── Official Template 2: Beach Signpost Frame ────────────────
+// ── Official Template 3: Beach Signpost Frame ────────────────
 function renderHhGoaSignpost(
   ctx: CanvasRenderingContext2D,
   img: HTMLImageElement | null,
@@ -727,7 +993,6 @@ function renderVintagePolaroid(
   const px = -pWidth / 2;
   const py = -pHeight / 2;
 
-  // Double Overlay Drop Shadow Pass
   drawDoubleShadowCard(ctx, px, py, pWidth, pHeight, 6 * scale, "#faf9f5", scale);
 
   const photoMargin = 16 * scale;
@@ -918,7 +1183,7 @@ function renderCinemaTicket(
 
   drawDoubleShadowCard(ctx, tx, ty, tWidth, tHeight, 14 * scale, "#f59e0b", scale);
 
-  ctx.fillStyle = "#072e1a";
+  ctx.fillStyle = "#f5f2eb";
   ctx.beginPath();
   ctx.arc(tx, 0, 16 * scale, 0, Math.PI * 2);
   ctx.fill();
@@ -1050,7 +1315,7 @@ function renderPostageStamp(
   const sx = -stampW / 2;
   const sy = -stampH / 2;
 
-  ctx.shadowColor = "rgba(0, 0, 0, 0.35)";
+  ctx.shadowColor = "rgba(0, 0, 0, 0.25)";
   ctx.shadowBlur = 24 * scale;
   ctx.shadowOffsetY = 12 * scale;
 
@@ -1410,7 +1675,7 @@ export function renderBuilderCard(
   const ctx = canvas.getContext("2d")!;
   ctx.clearRect(0, 0, W, H);
 
-  drawCanvasBackground(ctx, W, H, card.bgStyle || "hh-goa-emerald", scale);
+  drawCanvasBackground(ctx, W, H, card.bgStyle || "paper-wrinkled", scale);
 
   const tmpl = CARD_TEMPLATES.find((t) => t.id === templateId)!;
   const pad = 20 * scale;
@@ -1419,7 +1684,9 @@ export function renderBuilderCard(
   const cardW = W - pad * 2;
   const cardH = H - pad * 2;
 
-  if (templateId === "hh-goa-emerald-badge") {
+  if (templateId === "hh-goa-paper-scrapbook") {
+    renderPaperScrapbookCard(ctx, img, photo, card, W, H, scale);
+  } else if (templateId === "hh-goa-emerald-badge") {
     renderHhGoaEmeraldCard(ctx, img, photo, card, W, H, cardX, cardY, cardW, cardH, scale);
   } else if (templateId === "boarding-pass") {
     renderBoardingPassCard(ctx, img, photo, card, W, H, cardX, cardY, cardW, cardH, scale);
@@ -1430,6 +1697,169 @@ export function renderBuilderCard(
   } else {
     renderStandardIdCard(ctx, img, photo, card, tmpl, W, H, cardX, cardY, cardW, cardH, scale);
   }
+}
+
+// ── Card Flagship: Paper Scrapbook Profile Card ───────────────
+function renderPaperScrapbookCard(
+  ctx: CanvasRenderingContext2D,
+  img: HTMLImageElement | null,
+  photo: PhotoState,
+  card: CardData,
+  w: number,
+  h: number,
+  scale: number
+) {
+  ctx.save();
+
+  // Top Rule & Header
+  ctx.fillStyle = "#171717";
+  ctx.font = `600 ${9 * scale}px sans-serif`;
+  ctx.textAlign = "left";
+  ctx.fillText("Hacker House Goa 2026", 24 * scale, 28 * scale);
+
+  ctx.textAlign = "right";
+  ctx.fillText("08.13.2026", w - 24 * scale, 28 * scale);
+
+  ctx.strokeStyle = "rgba(0,0,0,0.12)";
+  ctx.lineWidth = 1 * scale;
+  ctx.beginPath();
+  ctx.moveTo(24 * scale, 34 * scale);
+  ctx.lineTo(w - 24 * scale, 34 * scale);
+  ctx.stroke();
+
+  // Top Big Title & Name
+  ctx.fillStyle = "#171717";
+  ctx.font = `900 ${22 * scale}px 'Impact', sans-serif`;
+  ctx.textAlign = "left";
+  ctx.fillText(card.role ? `${card.role.toUpperCase()} BUILDER` : "FULLSTACK BUILDER", 24 * scale, 62 * scale);
+
+  // Kraft Name Highlight Box
+  const nameText = card.name || "Alex Rivera";
+  ctx.font = `bold ${13 * scale}px sans-serif`;
+  const nW = ctx.measureText(nameText).width + 16 * scale;
+  const nH = 22 * scale;
+  ctx.fillStyle = "#fed7aa";
+  ctx.fillRect(24 * scale, 72 * scale, nW, nH);
+  ctx.fillStyle = "#7c2d12";
+  ctx.textBaseline = "middle";
+  ctx.fillText(nameText, 32 * scale, 72 * scale + nH / 2);
+  ctx.textBaseline = "alphabetic";
+
+  ctx.fillStyle = "#525252";
+  ctx.font = `italic 500 ${8.5 * scale}px 'Georgia', serif`;
+  ctx.fillText(`"${card.funTitle || "10x Caffeine-to-Code Pipeline"}"`, 24 * scale, 108 * scale);
+
+  // Center Hero: White Die-Cut Sticker Cutout
+  const heroCX = w * 0.5;
+  const heroCY = h * 0.44;
+  const heroSize = 190 * scale;
+
+  ctx.save();
+  ctx.translate(heroCX, heroCY);
+
+  // Deep shadow pass
+  ctx.shadowColor = "rgba(0, 0, 0, 0.28)";
+  ctx.shadowBlur = 24 * scale;
+  ctx.shadowOffsetY = 12 * scale;
+
+  ctx.fillStyle = "#ffffff";
+  drawSquircle(ctx, -heroSize / 2 - 8 * scale, -heroSize / 2 - 8 * scale, heroSize + 16 * scale, heroSize + 16 * scale, 16 * scale);
+  ctx.fill();
+
+  ctx.shadowColor = "rgba(0, 0, 0, 0.18)";
+  ctx.shadowBlur = 6 * scale;
+  ctx.shadowOffsetY = 2 * scale;
+  drawSquircle(ctx, -heroSize / 2 - 8 * scale, -heroSize / 2 - 8 * scale, heroSize + 16 * scale, heroSize + 16 * scale, 16 * scale);
+  ctx.fill();
+  ctx.shadowColor = "transparent";
+
+  // Photo
+  ctx.save();
+  drawSquircle(ctx, -heroSize / 2, -heroSize / 2, heroSize, heroSize, 10 * scale);
+  ctx.clip();
+  if (img) {
+    drawUserPhoto(ctx, img, photo, 0, 0, heroSize, heroSize);
+  } else {
+    ctx.fillStyle = "#1e293b";
+    ctx.fillRect(-heroSize / 2, -heroSize / 2, heroSize, heroSize);
+    ctx.fillStyle = "rgba(255,255,255,0.4)";
+    ctx.font = `bold ${12 * scale}px sans-serif`;
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText("Upload Photo", 0, 0);
+  }
+  ctx.restore();
+
+  ctx.restore();
+
+  // Bottom Left: Taped Mini Polaroid with Handle
+  const polW = 100 * scale;
+  const polH = 120 * scale;
+  const polX = 24 * scale;
+  const polY = h - polH - 24 * scale;
+
+  ctx.save();
+  ctx.translate(polX + polW / 2, polY + polH / 2);
+  ctx.rotate(-0.06);
+
+  ctx.shadowColor = "rgba(0,0,0,0.18)";
+  ctx.shadowBlur = 16 * scale;
+  ctx.shadowOffsetY = 6 * scale;
+  ctx.fillStyle = "#faf9f5";
+  ctx.fillRect(-polW / 2, -polH / 2, polW, polH);
+  ctx.shadowColor = "transparent";
+
+  const inMargin = 6 * scale;
+  const inW = polW - inMargin * 2;
+  const inH = inW * 0.9;
+  ctx.fillStyle = "#171717";
+  ctx.fillRect(-inW / 2, -polH / 2 + inMargin, inW, inH);
+
+  ctx.save();
+  ctx.beginPath();
+  ctx.rect(-inW / 2, -polH / 2 + inMargin, inW, inH);
+  ctx.clip();
+  if (img) {
+    drawUserPhoto(ctx, img, photo, 0, -polH / 2 + inMargin + inH / 2, inW, inH);
+  }
+  ctx.restore();
+
+  ctx.fillStyle = "#525252";
+  ctx.font = `bold ${7 * scale}px monospace`;
+  ctx.textAlign = "center";
+  const handle = card.handle ? `@${card.handle.replace("@", "")}` : "@handle";
+  ctx.fillText(handle, 0, polH / 2 - 8 * scale);
+
+  ctx.fillStyle = "rgba(254, 240, 138, 0.85)";
+  ctx.fillRect(-18 * scale, -polH / 2 - 5 * scale, 36 * scale, 12 * scale);
+
+  ctx.restore();
+
+  // Bottom Right: Tech Stack Pills & Barcode
+  const rightX = w - 160 * scale;
+  let ry = h - 140 * scale;
+
+  ctx.fillStyle = "#171717";
+  ctx.font = `bold ${9 * scale}px sans-serif`;
+  ctx.textAlign = "left";
+  ctx.fillText("Goa Tech Stack", rightX, ry);
+
+  ry += 12 * scale;
+  const stack = card.techStack.length > 0 ? card.techStack : ["React", "Next.js", "Solana", "TypeScript"];
+  for (const t of stack.slice(0, 4)) {
+    ctx.fillStyle = "#fed7aa";
+    drawSquircle(ctx, rightX, ry, ctx.measureText(t).width + 12 * scale, 15 * scale, 3 * scale);
+    ctx.fill();
+    ctx.fillStyle = "#7c2d12";
+    ctx.font = `bold ${7.5 * scale}px sans-serif`;
+    ctx.fillText(t, rightX + 6 * scale, ry + 11 * scale);
+    ry += 18 * scale;
+  }
+
+  // Barcode
+  drawSticker(ctx, "barcode", w - 70 * scale, h - 30 * scale, 65 * scale, scale);
+
+  ctx.restore();
 }
 
 // ── Card 1: Official HH Goa Emerald & Gold Card ──────────────
@@ -1667,7 +2097,7 @@ function renderBoardingPassCard(
   ctx.stroke();
   ctx.setLineDash([]);
 
-  ctx.fillStyle = "#0c0c0c";
+  ctx.fillStyle = "#f5f2eb";
   ctx.beginPath();
   ctx.arc(cardX, y, 10 * scale, 0, Math.PI * 2);
   ctx.arc(cardX + cardW, y, 10 * scale, 0, Math.PI * 2);

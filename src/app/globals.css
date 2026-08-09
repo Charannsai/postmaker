@@ -1,32 +1,23 @@
 @import "tailwindcss";
 
-/* ── HH Goa Official Website Design Tokens ───────────────── */
+/* ── HH Goa Tactile Paper Studio Tokens ──────────────────── */
 @theme inline {
-  --color-hh-emerald-950: #052012;
-  --color-hh-emerald-900: #072e1a;
-  --color-hh-emerald-850: #0a3820;
-  --color-hh-emerald-800: #0d4a2b;
-  --color-hh-emerald-700: #105c36;
-  --color-hh-emerald-600: #167a48;
-  --color-hh-emerald-500: #1fb36b;
+  --color-paper-bg: #f5f2eb;
+  --color-paper-card: #faf8f3;
+  --color-paper-border: #e6dfd2;
+  --color-paper-dark: #171717;
 
-  --color-hh-gold-500: #f59e0b;
-  --color-hh-gold-400: #facc15;
-  --color-hh-gold-300: #fde047;
-  --color-hh-gold-200: #fef08a;
-  --color-hh-gold-100: #fef9c3;
-
-  --color-hh-pink-600: #db2777;
-  --color-hh-pink-500: #ec4899;
-  --color-hh-pink-400: #f472b6;
-
-  --color-hh-cream-100: #fbf8ee;
-  --color-hh-cream-50: #fefce8;
+  --color-hh-emerald: #0d4a2b;
+  --color-hh-emerald-dark: #072e1a;
+  --color-hh-gold: #facc15;
+  --color-hh-amber: #d97706;
+  --color-hh-pink: #ec4899;
+  --color-hh-kraft: #fed7aa;
 }
 
 :root {
-  --background: #072e1a;
-  --foreground: #fefce8;
+  --background: #f5f2eb;
+  --foreground: #171717;
 }
 
 * {
@@ -34,69 +25,89 @@
 }
 
 body {
-  background: #072e1a;
-  color: #fefce8;
+  background: #f5f2eb;
+  color: #171717;
   font-family: var(--font-geist-sans), system-ui, -apple-system, sans-serif;
   background-image: 
-    radial-gradient(ellipse 80% 50% at 50% -20%, rgba(250, 204, 21, 0.12), transparent),
-    radial-gradient(circle at 100% 100%, rgba(236, 72, 153, 0.08), transparent);
+    radial-gradient(circle at 100% 0%, rgba(217, 119, 6, 0.06), transparent 40%),
+    radial-gradient(circle at 0% 100%, rgba(13, 74, 43, 0.06), transparent 40%);
   min-height: 100vh;
 }
 
 ::selection {
-  background: rgba(250, 204, 21, 0.3);
-  color: #fefce8;
+  background: #fed7aa;
+  color: #7c2d12;
 }
 
 /* ── Scrollbar ──────────────────────────────────────────── */
 ::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-track { background: #072e1a; }
-::-webkit-scrollbar-thumb { background: #105c36; border-radius: 999px; }
-::-webkit-scrollbar-thumb:hover { background: #167a48; }
+::-webkit-scrollbar-track { background: #f5f2eb; }
+::-webkit-scrollbar-thumb { background: #d7d0c2; border-radius: 999px; }
+::-webkit-scrollbar-thumb:hover { background: #b8b0a0; }
 
-/* ── Surfaces ───────────────────────────────────────────── */
+/* ── Tactile Paper Surfaces & Double Overlay Shadows ───── */
 .surface {
-  background: #0a3820;
-  border: 1.5px solid rgba(250, 204, 21, 0.2);
+  background: #faf8f3;
+  border: 1.5px solid #e6dfd2;
   border-radius: 16px;
-  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3), 0 8px 10px -6px rgba(0, 0, 0, 0.3);
+  box-shadow: 
+    0 1px 3px rgba(0, 0, 0, 0.05),
+    0 10px 24px -4px rgba(0, 0, 0, 0.08),
+    0 20px 40px -8px rgba(0, 0, 0, 0.06);
 }
 
 .surface-raised {
-  background: #0d4a2b;
-  border: 1.5px solid rgba(250, 204, 21, 0.3);
+  background: #ffffff;
+  border: 1.5px solid #e6dfd2;
   border-radius: 16px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
 }
 
-.surface-cream {
-  background: #fbf8ee;
-  color: #072e1a;
-  border: 1.5px solid rgba(13, 74, 43, 0.2);
-  border-radius: 16px;
+.paper-card {
+  background: #ffffff;
+  border: 1px solid #e5dfd3;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05), 0 1px 3px rgba(0, 0, 0, 0.04);
 }
 
 /* ── Buttons ────────────────────────────────────────────── */
 .btn-primary {
-  background: #facc15;
-  color: #072e1a;
+  background: #171717;
+  color: #faf8f3;
   font-weight: 800;
   font-size: 13px;
   letter-spacing: 0.02em;
   border-radius: 10px;
   padding: 10px 20px;
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-  border: 1px solid rgba(0, 0, 0, 0.1);
+  border: 1px solid #171717;
   cursor: pointer;
-  box-shadow: 0 4px 12px rgba(250, 204, 21, 0.3);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
 }
 .btn-primary:hover {
-  background: #fde047;
+  background: #262626;
   transform: translateY(-1px);
-  box-shadow: 0 6px 16px rgba(250, 204, 21, 0.4);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
 }
 .btn-primary:active {
   transform: translateY(0);
-  background: #f59e0b;
+  background: #0a0a0a;
+}
+
+.btn-emerald {
+  background: #0d4a2b;
+  color: #fefce8;
+  font-weight: 800;
+  font-size: 13px;
+  border-radius: 10px;
+  padding: 10px 20px;
+  transition: all 0.2s ease;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(13, 74, 43, 0.25);
+}
+.btn-emerald:hover {
+  background: #105c36;
+  transform: translateY(-1px);
 }
 
 .btn-pink {
@@ -109,7 +120,7 @@ body {
   transition: all 0.2s ease;
   border: none;
   cursor: pointer;
-  box-shadow: 0 4px 12px rgba(236, 72, 153, 0.35);
+  box-shadow: 0 4px 12px rgba(236, 72, 153, 0.25);
 }
 .btn-pink:hover {
   background: #f472b6;
@@ -117,38 +128,38 @@ body {
 }
 
 .btn-ghost {
-  background: rgba(13, 74, 43, 0.6);
-  color: #fde047;
+  background: #ffffff;
+  color: #171717;
   font-weight: 600;
   font-size: 13px;
   border-radius: 10px;
   padding: 10px 20px;
   transition: all 0.2s ease;
-  border: 1px solid rgba(250, 204, 21, 0.25);
+  border: 1.5px solid #e6dfd2;
   cursor: pointer;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
 }
 .btn-ghost:hover {
-  background: #0d4a2b;
-  color: #ffffff;
-  border-color: rgba(250, 204, 21, 0.5);
+  background: #f5f2eb;
+  border-color: #d7d0c2;
 }
 
 /* ── Inputs ─────────────────────────────────────────────── */
 .input {
   width: 100%;
-  background: #072e1a;
-  border: 1.5px solid rgba(250, 204, 21, 0.2);
+  background: #ffffff;
+  border: 1.5px solid #e6dfd2;
   border-radius: 10px;
   padding: 9px 12px;
   font-size: 13px;
-  color: #fefce8;
+  color: #171717;
   transition: all 0.15s ease;
   outline: none;
 }
-.input::placeholder { color: rgba(254, 252, 232, 0.35); }
+.input::placeholder { color: #a3a3a3; }
 .input:focus {
-  border-color: #facc15;
-  box-shadow: 0 0 0 2px rgba(250, 204, 21, 0.15);
+  border-color: #171717;
+  box-shadow: 0 0 0 2px rgba(23, 23, 23, 0.08);
 }
 
 /* ── Range slider ───────────────────────────────────────── */
@@ -162,24 +173,24 @@ input[type="range"] {
 input[type="range"]::-webkit-slider-track {
   height: 4px;
   border-radius: 2px;
-  background: rgba(250, 204, 21, 0.2);
+  background: #e6dfd2;
 }
 input[type="range"]::-webkit-slider-thumb {
   -webkit-appearance: none;
   width: 16px;
   height: 16px;
   border-radius: 50%;
-  background: #facc15;
-  border: 2px solid #072e1a;
+  background: #171717;
+  border: 2px solid #ffffff;
   margin-top: -6px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
 }
 
 /* ── Pill / Tag ─────────────────────────────────────────── */
 .pill {
-  background: rgba(13, 74, 43, 0.7);
-  border: 1px solid rgba(250, 204, 21, 0.2);
-  color: #fefce8;
+  background: #ffffff;
+  border: 1.5px solid #e6dfd2;
+  color: #525252;
   border-radius: 8px;
   padding: 5px 10px;
   font-size: 11px;
@@ -189,58 +200,39 @@ input[type="range"]::-webkit-slider-thumb {
   white-space: nowrap;
 }
 .pill:hover {
-  border-color: #facc15;
-  color: #fde047;
-  background: #0d4a2b;
+  border-color: #171717;
+  color: #171717;
+  background: #f5f2eb;
 }
 .pill.active {
-  background: #facc15;
-  border-color: #facc15;
-  color: #072e1a;
-  box-shadow: 0 2px 8px rgba(250, 204, 21, 0.25);
-}
-
-/* ── Template card ──────────────────────────────────────── */
-.tmpl-card {
-  transition: all 0.15s cubic-bezier(0.16, 1, 0.3, 1);
-  cursor: pointer;
-  border: 1.5px solid rgba(250, 204, 21, 0.15);
-  border-radius: 12px;
-  background: rgba(10, 56, 32, 0.6);
-}
-.tmpl-card:hover {
-  border-color: rgba(250, 204, 21, 0.4);
-  background: #0d4a2b;
-  transform: translateY(-1px);
-}
-.tmpl-card.selected {
-  border-color: #facc15;
-  background: #0d4a2b;
-  box-shadow: 0 0 0 1px #facc15, 0 4px 12px rgba(0, 0, 0, 0.3);
+  background: #171717;
+  border-color: #171717;
+  color: #ffffff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
 /* ── Upload zone ────────────────────────────────────────── */
 .dropzone {
-  border: 2px dashed rgba(250, 204, 21, 0.3);
+  border: 2px dashed #d7d0c2;
   border-radius: 12px;
-  background: rgba(7, 46, 26, 0.5);
+  background: #ffffff;
   transition: all 0.2s ease;
   cursor: pointer;
 }
 .dropzone:hover,
 .dropzone.drag-over {
-  border-color: #facc15;
-  background: rgba(13, 74, 43, 0.8);
+  border-color: #171717;
+  background: #fdfcfa;
 }
 
 /* ── Divider ────────────────────────────────────────────── */
 .divider {
   height: 1px;
-  background: rgba(250, 204, 21, 0.15);
+  background: #e6dfd2;
 }
 
 /* ── Modal overlay ──────────────────────────────────────── */
 .modal-overlay {
-  background: rgba(5, 32, 18, 0.85);
+  background: rgba(23, 23, 23, 0.5);
   backdrop-filter: blur(8px);
 }
