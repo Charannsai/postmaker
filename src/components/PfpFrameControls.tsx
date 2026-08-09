@@ -1,100 +1,174 @@
 "use client";
 
-import type { FrameSettings, FrameShape, FrameTemplateId } from "@/types";
-import { FRAME_TEMPLATES, BADGE_PRESETS } from "@/lib/templates";
+import type {
+  FrameSettings,
+  FrameTemplateId,
+  BackgroundStyleId,
+  CanvasAspectRatio,
+  StickerType,
+} from "@/types";
+import {
+  FRAME_TEMPLATES,
+  BACKGROUND_STYLES,
+  STICKERS,
+  PRESET_CAPTIONS,
+} from "@/lib/templates";
 
 interface PfpFrameControlsProps {
   frame: FrameSettings;
   onChange: (updates: Partial<FrameSettings>) => void;
 }
 
-export default function PfpFrameControls({ frame, onChange }: PfpFrameControlsProps) {
+export default function PfpFrameControls({
+  frame,
+  onChange,
+}: PfpFrameControlsProps) {
+  const toggleSticker = (id: StickerType) => {
+    const current = frame.stickers || [];
+    if (current.includes(id)) {
+      onChange({ stickers: current.filter((s) => s !== id) });
+    } else {
+      onChange({ stickers: [...current, id] });
+    }
+  };
+
   return (
-    <div className="space-y-5 animate-fade-in" style={{ animationDelay: "0.1s" }}>
-      {/* Frame style */}
-      <div className="space-y-2">
-        <label className="text-[11px] font-medium text-neutral-500 uppercase tracking-wider">
-          Frame Style
+    <div className="space-y-6 animate-fade-in">
+      {/* 1. Frame Style Selection */}
+      <div className="space-y-2.5">
+        <label className="text-[11px] font-semibold text-neutral-400 uppercase tracking-wider">
+          Aesthetic Frame Style
         </label>
-        <div className="space-y-1.5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
           {FRAME_TEMPLATES.map((t) => (
             <button
               key={t.id}
               onClick={() => onChange({ templateId: t.id as FrameTemplateId })}
-              className={`tmpl-card w-full p-3 flex items-center gap-3 text-left ${
-                frame.templateId === t.id ? "selected" : ""
+              className={`tmpl-card p-3 flex flex-col text-left transition-all ${
+                frame.templateId === t.id ? "selected !border-neutral-400 !bg-neutral-900" : ""
               }`}
             >
-              <div
-                className="w-7 h-7 rounded-md shrink-0 border border-[#333]"
-                style={{
-                  background: `linear-gradient(135deg, ${t.colors.primary}40, ${t.colors.secondary}30)`,
-                }}
-              />
-              <div className="min-w-0">
-                <p className="text-[12px] font-medium text-neutral-300 truncate">{t.label}</p>
-                <p className="text-[10px] text-neutral-600 truncate">{t.description}</p>
+              <div className="flex items-center justify-between w-full mb-1">
+                <span className="text-[12px] font-semibold text-neutral-200">
+                  {t.label}
+                </span>
+                <span className="text-[9px] uppercase font-mono px-1.5 py-0.5 rounded bg-neutral-800 text-neutral-400">
+                  {t.category}
+                </span>
               </div>
+              <p className="text-[10px] text-neutral-500 leading-tight">
+                {t.description}
+              </p>
             </button>
           ))}
         </div>
       </div>
 
-      {/* Shape */}
-      <div className="space-y-2">
-        <label className="text-[11px] font-medium text-neutral-500 uppercase tracking-wider">Shape</label>
-        <div className="flex gap-1.5">
-          {(["circle", "squircle"] as FrameShape[]).map((s) => (
+      {/* 2. Custom Caption & Presets */}
+      <div className="space-y-2.5">
+        <div className="flex items-center justify-between">
+          <label className="text-[11px] font-semibold text-neutral-400 uppercase tracking-wider">
+            Frame Caption / Text
+          </label>
+          <span className="text-[10px] text-neutral-500 font-mono">Editable</span>
+        </div>
+        <input
+          type="text"
+          value={frame.caption}
+          onChange={(e) => onChange({ caption: e.target.value })}
+          placeholder="e.g. see the good 🌴, She sparkles like sunshine..."
+          maxLength={45}
+          className="input !text-[13px]"
+        />
+
+        {/* Quick Caption Suggestions */}
+        <div className="flex flex-wrap gap-1.5 pt-1">
+          {PRESET_CAPTIONS.map((cap) => (
             <button
-              key={s}
-              onClick={() => onChange({ shape: s })}
-              className={`flex-1 py-2 rounded-lg text-[12px] font-medium transition-all border ${
-                frame.shape === s
-                  ? "bg-[#1f1f1f] text-neutral-200 border-[#333]"
-                  : "text-neutral-600 border-[#1a1a1a] hover:border-[#262626]"
+              key={cap}
+              onClick={() => onChange({ caption: cap })}
+              className={`pill !text-[10px] ${
+                frame.caption === cap ? "active" : ""
               }`}
             >
-              {s === "circle" ? "Circle" : "Squircle"}
+              {cap}
             </button>
           ))}
         </div>
       </div>
 
-      {/* Badge */}
-      <div className="space-y-2">
-        <div className="flex items-center justify-between">
-          <label className="text-[11px] font-medium text-neutral-500 uppercase tracking-wider">Badge</label>
-          <div
-            className={`toggle-track ${frame.badgeEnabled ? "on" : ""}`}
-            onClick={() => onChange({ badgeEnabled: !frame.badgeEnabled })}
-          >
-            <div className="toggle-knob" />
-          </div>
+      {/* 3. Aesthetic Stickers & Accents */}
+      <div className="space-y-2.5">
+        <label className="text-[11px] font-semibold text-neutral-400 uppercase tracking-wider">
+          Aesthetic Stickers & Details
+        </label>
+        <div className="flex flex-wrap gap-1.5">
+          {STICKERS.map((st) => {
+            const active = frame.stickers?.includes(st.id);
+            return (
+              <button
+                key={st.id}
+                onClick={() => toggleSticker(st.id)}
+                className={`pill flex items-center gap-1.5 !text-[11px] !py-1.5 ${
+                  active ? "active !border-amber-400/50 !text-amber-300" : ""
+                }`}
+              >
+                <span>{st.emoji}</span>
+                <span>{st.label}</span>
+              </button>
+            );
+          })}
         </div>
+      </div>
 
-        {frame.badgeEnabled && (
-          <div className="space-y-2 animate-scale-in">
-            <div className="flex flex-wrap gap-1">
-              {BADGE_PRESETS.map((text) => (
-                <button
-                  key={text}
-                  onClick={() => onChange({ badgeText: text })}
-                  className={`pill !text-[10px] ${frame.badgeText === text ? "active" : ""}`}
-                >
-                  {text}
-                </button>
-              ))}
-            </div>
-            <input
-              type="text"
-              value={frame.badgeText}
-              onChange={(e) => onChange({ badgeText: e.target.value })}
-              placeholder="Custom text..."
-              maxLength={30}
-              className="input !text-[12px]"
-            />
-          </div>
-        )}
+      {/* 4. Canvas Background Style */}
+      <div className="space-y-2.5">
+        <label className="text-[11px] font-semibold text-neutral-400 uppercase tracking-wider">
+          Canvas Backdrop
+        </label>
+        <div className="grid grid-cols-3 gap-1.5">
+          {BACKGROUND_STYLES.map((bg) => (
+            <button
+              key={bg.id}
+              onClick={() => onChange({ bgStyle: bg.id as BackgroundStyleId })}
+              className={`p-2 rounded-lg text-[11px] font-medium border text-center transition-all ${
+                frame.bgStyle === bg.id
+                  ? "bg-neutral-800 text-neutral-100 border-neutral-400"
+                  : "bg-neutral-950 text-neutral-500 border-neutral-800 hover:border-neutral-700"
+              }`}
+            >
+              {bg.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* 5. Format & Aspect Ratio */}
+      <div className="space-y-2.5">
+        <label className="text-[11px] font-semibold text-neutral-400 uppercase tracking-wider">
+          Export Aspect Ratio
+        </label>
+        <div className="flex gap-2">
+          {(
+            [
+              { id: "1:1", label: "1:1 Square (PFP / Post)" },
+              { id: "9:16", label: "9:16 Story / Wallpaper" },
+              { id: "4:5", label: "4:5 Portrait" },
+            ] as const
+          ).map((asp) => (
+            <button
+              key={asp.id}
+              onClick={() => onChange({ aspectRatio: asp.id as CanvasAspectRatio })}
+              className={`flex-1 py-2 rounded-lg text-[11px] font-semibold transition-all border ${
+                frame.aspectRatio === asp.id
+                  ? "bg-neutral-800 text-neutral-100 border-neutral-400"
+                  : "bg-neutral-950 text-neutral-500 border-neutral-850 hover:border-neutral-700"
+              }`}
+            >
+              {asp.label}
+            </button>
+          ))}
+        </div>
       </div>
     </div>
   );

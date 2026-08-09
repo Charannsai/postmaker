@@ -1,63 +1,88 @@
 /* ──────────────────────────────────────────────────────────────
-   Types & Data Models – HH Goa 2026 Frame & ID Card Generator
+   Types & Data Models – HH Goa 2026 Aesthetic Frame & ID Generator
    ────────────────────────────────────────────────────────────── */
 
-// ── Photo filters ────────────────────────────────────────────
 export type FilterType =
   | "original"
   | "goa-sunset"
-  | "cyber-neon"
   | "golden-hour"
+  | "vintage-warm"
+  | "cyber-neon"
   | "monochrome"
   | "high-contrast";
 
 export interface FilterDef {
   id: FilterType;
   label: string;
-  css: string; // CSS filter string applied to the canvas image
+  css: string;
 }
 
-// ── PFP Frame (Format A) ────────────────────────────────────
-export type FrameShape = "circle" | "squircle";
+export type CanvasAspectRatio = "1:1" | "9:16" | "4:5";
 
+export type BackgroundStyleId =
+  | "dark-minimal"
+  | "yellow-gingham"
+  | "red-texture"
+  | "kraft-paper"
+  | "clean-white"
+  | "blueprint-grid";
+
+export interface BackgroundStyle {
+  id: BackgroundStyleId;
+  label: string;
+  preview: string;
+}
+
+// ── Format A: Aesthetic Frames ────────────────────────────────
 export type FrameTemplateId =
+  | "polaroid-tape"
+  | "postage-stamp"
+  | "music-player"
+  | "magazine-editorial"
+  | "minimal-gallery"
   | "goa-neon-sunset"
-  | "cyber-matrix"
-  | "holographic-foil"
-  | "minimal-luxury"
-  | "beach-vibes-retro";
+  | "cyber-matrix";
 
 export interface FrameTemplate {
   id: FrameTemplateId;
   label: string;
   description: string;
+  category: "aesthetic" | "retro" | "minimal" | "cyber";
+  previewIcon?: string;
   colors: {
     primary: string;
     secondary: string;
     accent: string;
-    glow: string;
+    bg?: string;
   };
 }
 
-export type BadgeText =
-  | "SEE YOU IN GOA 🌴"
-  | "VIP BUILDER"
-  | "SPEAKER"
-  | "custom";
+export type StickerType =
+  | "washi-tape"
+  | "sunflower"
+  | "palm"
+  | "postmark"
+  | "barcode"
+  | "sparkles";
 
 export interface FrameSettings {
   templateId: FrameTemplateId;
-  shape: FrameShape;
+  caption: string;
+  subcaption: string;
   badgeEnabled: boolean;
   badgeText: string;
+  stickers: StickerType[];
+  bgStyle: BackgroundStyleId;
+  aspectRatio: CanvasAspectRatio;
 }
 
-// ── Builder ID Card (Format B) ──────────────────────────────
+// ── Format B: Builder ID Cards ────────────────────────────────
 export type CardTemplateId =
+  | "scrapbook-pass"
+  | "boarding-pass"
   | "holographic-vip"
   | "cyber-terminal"
-  | "goa-sunset-pass"
-  | "indie-minimalist";
+  | "swiss-minimal";
 
 export interface CardTemplate {
   id: CardTemplateId;
@@ -68,7 +93,6 @@ export interface CardTemplate {
     card: string;
     accent: string;
     text: string;
-    glow: string;
   };
 }
 
@@ -86,30 +110,30 @@ export type BuilderRole =
 
 export interface CardData {
   name: string;
-  handle: string; // @twitter / @github
+  handle: string;
   role: BuilderRole;
   techStack: string[];
   funTitle: string;
   tagline: string;
-  badgeId: string; // auto-generated e.g. HHG-26-4819
+  badgeId: string;
+  stickers: StickerType[];
+  bgStyle: BackgroundStyleId;
 }
 
-// ── Photo state ─────────────────────────────────────────────
+// ── Photo State ───────────────────────────────────────────────
 export interface PhotoState {
-  src: string | null; // object URL or data URL
+  src: string | null;
   offsetX: number;
   offsetY: number;
-  zoom: number; // 1 = 100%
-  rotation: number; // degrees
+  zoom: number;
+  rotation: number;
   flipH: boolean;
   flipV: boolean;
   filter: FilterType;
 }
 
-// ── App-level mode ──────────────────────────────────────────
 export type AppMode = "pfp-frame" | "builder-card";
 
-// ── Aggregate app state (used by page.tsx) ──────────────────
 export interface AppState {
   mode: AppMode;
   photo: PhotoState;

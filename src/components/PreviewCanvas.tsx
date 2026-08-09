@@ -1,7 +1,13 @@
 "use client";
 
 import { useEffect, useRef, useCallback } from "react";
-import type { PhotoState, FrameSettings, CardData, CardTemplateId, AppMode } from "@/types";
+import type {
+  PhotoState,
+  FrameSettings,
+  CardData,
+  CardTemplateId,
+  AppMode,
+} from "@/types";
 import { renderPfpFrame, renderBuilderCard } from "@/lib/canvasRenderer";
 
 interface PreviewCanvasProps {
@@ -28,10 +34,17 @@ export default function PreviewCanvas({
   const lastPos = useRef({ x: 0, y: 0 });
 
   useEffect(() => {
-    if (!photo.src) { imgRef.current = null; return; }
+    if (!photo.src) {
+      imgRef.current = null;
+      render();
+      return;
+    }
     const img = new Image();
     img.crossOrigin = "anonymous";
-    img.onload = () => { imgRef.current = img; render(); };
+    img.onload = () => {
+      imgRef.current = img;
+      render();
+    };
     img.src = photo.src;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [photo.src]);
@@ -46,7 +59,9 @@ export default function PreviewCanvas({
     }
   }, [mode, photo, frame, card, cardTemplateId, canvasRef]);
 
-  useEffect(() => { render(); }, [render]);
+  useEffect(() => {
+    render();
+  }, [render]);
 
   const handlePointerDown = useCallback((e: React.PointerEvent) => {
     isDragging.current = true;
@@ -54,36 +69,56 @@ export default function PreviewCanvas({
     (e.target as HTMLElement).setPointerCapture(e.pointerId);
   }, []);
 
-  const handlePointerMove = useCallback((e: React.PointerEvent) => {
-    if (!isDragging.current) return;
-    const dx = e.clientX - lastPos.current.x;
-    const dy = e.clientY - lastPos.current.y;
-    lastPos.current = { x: e.clientX, y: e.clientY };
-    onPhotoOffsetChange(photo.offsetX + dx, photo.offsetY + dy);
-  }, [photo.offsetX, photo.offsetY, onPhotoOffsetChange]);
+  const handlePointerMove = useCallback(
+    (e: React.PointerEvent) => {
+      if (!isDragging.current) return;
+      const dx = e.clientX - lastPos.current.x;
+      const dy = e.clientY - lastPos.current.y;
+      lastPos.current = { x: e.clientX, y: e.clientY };
+      onPhotoOffsetChange(photo.offsetX + dx, photo.offsetY + dy);
+    },
+    [photo.offsetX, photo.offsetY, onPhotoOffsetChange]
+  );
 
-  const handlePointerUp = useCallback(() => { isDragging.current = false; }, []);
+  const handlePointerUp = useCallback(() => {
+    isDragging.current = false;
+  }, []);
 
   const isPfp = mode === "pfp-frame";
+  let aspectRatioStyle = "1 / 1";
+  let maxWStyle = "max-w-[440px] sm:max-w-[480px] lg:max-w-[500px]";
+
+  if (isPfp) {
+    if (frame.aspectRatio === "9:16") {
+      aspectRatioStyle = "9 / 16";
+      maxWStyle = "max-w-[340px] sm:max-w-[380px]";
+    } else if (frame.aspectRatio === "4:5") {
+      aspectRatioStyle = "4 / 5";
+      maxWStyle = "max-w-[380px] sm:max-w-[420px]";
+    }
+  } else {
+    aspectRatioStyle = "440 / 600";
+    maxWStyle = "max-w-[360px] sm:max-w-[400px]";
+  }
 
   return (
-    <div className="relative flex items-center justify-center animate-scale-in">
-      <canvas
-        ref={canvasRef}
-        className={`relative ${
-          isPfp ? "w-full max-w-[360px] aspect-square" : "w-full max-w-[300px]"
-        } rounded-lg cursor-grab active:cursor-grabbing`}
-        style={{ aspectRatio: isPfp ? "1/1" : "440/580" }}
-        onPointerDown={handlePointerDown}
-        onPointerMove={handlePointerMove}
-        onPointerUp={handlePointerUp}
-        onPointerLeave={handlePointerUp}
-      />
-      {photo.src && (
-        <div className="absolute bottom-2 left-1/2 -translate-x-1/2 text-[10px] text-neutral-600 font-mono bg-black/50 px-2 py-0.5 rounded">
-          drag to reposition
-        </div>
-      )}
+    <div className="relative flex flex-col items-center justify-center w-full animate-scale-in">
+      <div className="relative w-full flex items-center justify-center p-3 sm:p-5 rounded-2xl bg-[#111111] border border-[#1f1f1f] shadow-2xl">
+        <canvas
+          ref={canvasRef}
+          className={`relative w-full ${maxWStyle} rounded-xl shadow-2xl cursor-grab active:cursor-grabbing border border-white/5`}
+          style={{ aspectRatio: aspectRatioStyle }}
+          onPointerDown={handlePointerDown}
+          onPointerMove={handlePointerMove}
+          onPointerUp={handlePointerUp}
+          onPointerLeave={handlePointerUp}
+        />
+        {photo.src && (
+          <div className="absolute bottom-6 left-1/2 -translate-x-1/2 text-[11px] text-neutral-400 font-mono bg-black/80 px-3 py-1 rounded-full border border-white/10 backdrop-blur-md pointer-events-none shadow-lg">
+            ✦ drag photo to reposition
+          </div>
+        )}
+      </div>
     </div>
   );
 }
