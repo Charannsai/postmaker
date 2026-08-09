@@ -50,9 +50,9 @@ const DEFAULT_CARD: CardData = {
   handle: "alexbuilds",
   role: "Fullstack",
   techStack: ["Next.js", "TypeScript", "Solana", "Tailwind"],
-  funTitle: getRandomTitle(),
+  funTitle: "10x Caffeine-to-Code Pipeline",
   tagline: "Shipping by the beach",
-  badgeId: genBadgeId(),
+  badgeId: "HHG-26-8420",
   stickers: ["barcode"],
   bgStyle: "dark-minimal",
 };
