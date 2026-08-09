@@ -1,5 +1,5 @@
 /* ──────────────────────────────────────────────────────────────
-   Types & Data Models – HH Goa 2026 Aesthetic Studio
+   Types & Data Models – HH Goa 2026 Paper Studio
    ────────────────────────────────────────────────────────────── */
 
 export type FilterType =
@@ -78,10 +78,7 @@ export interface FrameTemplate {
 export type StickerType =
   | "signpost"
   | "sun-rising"
-  | "scooter"
   | "washi-tape"
-  | "sunflower"
-  | "palm"
   | "postmark"
   | "barcode"
   | "sparkles"
