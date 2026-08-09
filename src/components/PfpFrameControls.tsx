@@ -43,13 +43,13 @@ export default function PfpFrameControls({
   return (
     <div className="space-y-4 animate-fade-in">
       {/* Clean Segmented Sub-Tabs */}
-      <div className="grid grid-cols-3 p-1 rounded-xl bg-neutral-900 border border-neutral-800">
+      <div className="grid grid-cols-3 p-1 rounded-xl bg-[#052012] border border-[#facc15]/20">
         <button
           onClick={() => setActiveTab("style")}
-          className={`flex items-center justify-center gap-1.5 py-1.5 rounded-lg text-[11px] font-semibold transition-all ${
+          className={`flex items-center justify-center gap-1.5 py-2 rounded-lg text-[11px] font-bold transition-all ${
             activeTab === "style"
-              ? "bg-neutral-800 text-neutral-100 shadow-sm"
-              : "text-neutral-500 hover:text-neutral-300"
+              ? "bg-[#facc15] text-[#072e1a] shadow-sm"
+              : "text-[#fefce8]/60 hover:text-[#fefce8]"
           }`}
         >
           <LayoutGrid className="w-3 h-3" />
@@ -57,21 +57,21 @@ export default function PfpFrameControls({
         </button>
         <button
           onClick={() => setActiveTab("text")}
-          className={`flex items-center justify-center gap-1.5 py-1.5 rounded-lg text-[11px] font-semibold transition-all ${
+          className={`flex items-center justify-center gap-1.5 py-2 rounded-lg text-[11px] font-bold transition-all ${
             activeTab === "text"
-              ? "bg-neutral-800 text-neutral-100 shadow-sm"
-              : "text-neutral-500 hover:text-neutral-300"
+              ? "bg-[#facc15] text-[#072e1a] shadow-sm"
+              : "text-[#fefce8]/60 hover:text-[#fefce8]"
           }`}
         >
           <Type className="w-3 h-3" />
-          Text & Style
+          Text & Slogan
         </button>
         <button
           onClick={() => setActiveTab("canvas")}
-          className={`flex items-center justify-center gap-1.5 py-1.5 rounded-lg text-[11px] font-semibold transition-all ${
+          className={`flex items-center justify-center gap-1.5 py-2 rounded-lg text-[11px] font-bold transition-all ${
             activeTab === "canvas"
-              ? "bg-neutral-800 text-neutral-100 shadow-sm"
-              : "text-neutral-500 hover:text-neutral-300"
+              ? "bg-[#facc15] text-[#072e1a] shadow-sm"
+              : "text-[#fefce8]/60 hover:text-[#fefce8]"
           }`}
         >
           <Palette className="w-3 h-3" />
@@ -82,7 +82,7 @@ export default function PfpFrameControls({
       {/* Tab 1: Style Selection */}
       {activeTab === "style" && (
         <div className="space-y-2 animate-fade-in">
-          <label className="text-[11px] font-semibold text-neutral-400 uppercase tracking-wider block">
+          <label className="text-[11px] font-bold text-[#fde047] uppercase tracking-wider block">
             Choose Frame Style ({FRAME_TEMPLATES.length})
           </label>
           <div className="space-y-1.5 max-h-[380px] overflow-y-auto pr-1">
@@ -96,23 +96,23 @@ export default function PfpFrameControls({
                   }
                   className={`w-full p-2.5 rounded-xl text-left border transition-all flex items-center justify-between ${
                     selected
-                      ? "bg-neutral-800/90 border-neutral-400 text-neutral-100 shadow-sm"
-                      : "bg-neutral-900/40 border-neutral-800/60 text-neutral-400 hover:border-neutral-700 hover:bg-neutral-900/80"
+                      ? "bg-[#0d4a2b] border-[#facc15] text-[#fefce8] shadow-md shadow-[#facc15]/10"
+                      : "bg-[#072e1a]/60 border-[#facc15]/15 text-[#fefce8]/70 hover:border-[#facc15]/40 hover:bg-[#072e1a]"
                   }`}
                 >
                   <div className="min-w-0 pr-2">
-                    <p className="text-[12px] font-semibold truncate">
+                    <p className="text-[12px] font-bold truncate text-[#fefce8]">
                       {t.label}
                     </p>
-                    <p className="text-[10px] text-neutral-500 truncate mt-0.5">
+                    <p className="text-[10px] text-[#fefce8]/60 truncate mt-0.5">
                       {t.description}
                     </p>
                   </div>
                   <span
-                    className={`text-[9px] uppercase font-mono px-1.5 py-0.5 rounded shrink-0 ${
+                    className={`text-[9px] uppercase font-mono px-1.5 py-0.5 rounded shrink-0 font-bold ${
                       selected
-                        ? "bg-neutral-700 text-neutral-200"
-                        : "bg-neutral-800 text-neutral-600"
+                        ? "bg-[#ec4899] text-white"
+                        : "bg-[#0a3820] text-[#fde047]"
                     }`}
                   >
                     {t.category}
@@ -129,7 +129,7 @@ export default function PfpFrameControls({
         <div className="space-y-4 animate-fade-in">
           {/* Custom Caption Input */}
           <div className="space-y-1.5">
-            <label className="text-[11px] font-semibold text-neutral-400 uppercase tracking-wider block">
+            <label className="text-[11px] font-bold text-[#fde047] uppercase tracking-wider block">
               Frame Caption / Slogan
             </label>
             <input
@@ -137,27 +137,27 @@ export default function PfpFrameControls({
               value={frame.caption}
               onChange={(e) => onChange({ caption: e.target.value })}
               placeholder="e.g. I am coming to HH GOA 26, Are you?"
-              maxLength={50}
+              maxLength={55}
               className="input !text-[13px]"
             />
           </div>
 
           {/* Typography Font Design */}
           <div className="space-y-1.5">
-            <label className="text-[11px] font-semibold text-neutral-400 uppercase tracking-wider block">
-              Text Graphic Design
+            <label className="text-[11px] font-bold text-[#fde047] uppercase tracking-wider block">
+              Text Graphic Style
             </label>
-            <div className="grid grid-cols-2 gap-1">
+            <div className="grid grid-cols-2 gap-1.5">
               {CAPTION_STYLES.map((cs) => (
                 <button
                   key={cs.id}
                   onClick={() =>
                     onChange({ captionStyle: cs.id as CaptionStyleId })
                   }
-                  className={`p-2 rounded-lg text-[11px] font-semibold border text-center transition-all ${
-                    (frame.captionStyle || "handwritten") === cs.id
-                      ? "bg-neutral-800 text-amber-300 border-amber-400/50 shadow-sm"
-                      : "bg-neutral-950 text-neutral-500 border-neutral-800 hover:border-neutral-700"
+                  className={`p-2 rounded-lg text-[11px] font-bold border text-center transition-all ${
+                    (frame.captionStyle || "bold-street") === cs.id
+                      ? "bg-[#facc15] text-[#072e1a] border-[#facc15] shadow-sm"
+                      : "bg-[#072e1a] text-[#fefce8]/70 border-[#facc15]/20 hover:border-[#facc15]/50"
                   }`}
                 >
                   {cs.label}
@@ -168,16 +168,16 @@ export default function PfpFrameControls({
 
           {/* Quick Caption Suggestions */}
           <div className="space-y-1.5 pt-1">
-            <span className="text-[10px] text-neutral-500 font-mono block">
-              Popular Slogans & Badges:
+            <span className="text-[10px] text-[#fde047] font-mono block">
+              Popular Presets (1-Click):
             </span>
-            <div className="flex flex-wrap gap-1">
+            <div className="flex flex-wrap gap-1.5">
               {PRESET_CAPTIONS.map((cap) => (
                 <button
                   key={cap}
                   onClick={() => onChange({ caption: cap })}
-                  className={`pill !text-[10px] !py-1 ${
-                    frame.caption === cap ? "active !border-amber-400/40 !text-amber-300" : ""
+                  className={`pill !text-[10.5px] !py-1 ${
+                    frame.caption === cap ? "active" : ""
                   }`}
                 >
                   {cap}
@@ -187,9 +187,9 @@ export default function PfpFrameControls({
           </div>
 
           {/* Aesthetic Stickers */}
-          <div className="space-y-1.5 pt-2 border-t border-neutral-800">
-            <label className="text-[11px] font-semibold text-neutral-400 uppercase tracking-wider block">
-              Stickers & Accents
+          <div className="space-y-1.5 pt-2 border-t border-[#facc15]/15">
+            <label className="text-[11px] font-bold text-[#fde047] uppercase tracking-wider block">
+              Event Motifs & Stickers
             </label>
             <div className="grid grid-cols-3 gap-1.5">
               {STICKERS.map((st) => {
@@ -198,10 +198,10 @@ export default function PfpFrameControls({
                   <button
                     key={st.id}
                     onClick={() => toggleSticker(st.id)}
-                    className={`flex items-center gap-1.5 p-2 rounded-lg text-[11px] font-medium border text-left transition-all ${
+                    className={`flex items-center gap-1.5 p-2 rounded-lg text-[11px] font-semibold border text-left transition-all ${
                       active
-                        ? "bg-neutral-800 text-amber-300 border-amber-400/40"
-                        : "bg-neutral-950 text-neutral-500 border-neutral-800 hover:border-neutral-700"
+                        ? "bg-[#ec4899] text-white border-[#ec4899] shadow-sm"
+                        : "bg-[#072e1a] text-[#fefce8]/70 border-[#facc15]/15 hover:border-[#facc15]/40"
                     }`}
                   >
                     <span className="text-sm">{st.emoji}</span>
@@ -219,7 +219,7 @@ export default function PfpFrameControls({
         <div className="space-y-4 animate-fade-in">
           {/* Backdrop Selection */}
           <div className="space-y-1.5">
-            <label className="text-[11px] font-semibold text-neutral-400 uppercase tracking-wider block">
+            <label className="text-[11px] font-bold text-[#fde047] uppercase tracking-wider block">
               Backdrop Pattern
             </label>
             <div className="grid grid-cols-2 gap-1.5">
@@ -229,10 +229,10 @@ export default function PfpFrameControls({
                   onClick={() =>
                     onChange({ bgStyle: bg.id as BackgroundStyleId })
                   }
-                  className={`p-2.5 rounded-xl text-[11px] font-medium border text-center transition-all ${
+                  className={`p-2.5 rounded-xl text-[11px] font-semibold border text-center transition-all ${
                     frame.bgStyle === bg.id
-                      ? "bg-neutral-800 text-neutral-100 border-neutral-400 shadow-sm"
-                      : "bg-neutral-900/50 text-neutral-500 border-neutral-800 hover:border-neutral-700"
+                      ? "bg-[#0d4a2b] text-[#fde047] border-[#facc15] shadow-sm font-bold"
+                      : "bg-[#072e1a] text-[#fefce8]/60 border-[#facc15]/15 hover:border-[#facc15]/40"
                   }`}
                 >
                   {bg.label}
@@ -242,9 +242,9 @@ export default function PfpFrameControls({
           </div>
 
           {/* Aspect Ratio */}
-          <div className="space-y-1.5 pt-2 border-t border-neutral-800">
-            <label className="text-[11px] font-semibold text-neutral-400 uppercase tracking-wider block">
-              Canvas Size / Ratio
+          <div className="space-y-1.5 pt-2 border-t border-[#facc15]/15">
+            <label className="text-[11px] font-bold text-[#fde047] uppercase tracking-wider block">
+              Canvas Ratio
             </label>
             <div className="flex gap-1.5">
               {(
@@ -259,10 +259,10 @@ export default function PfpFrameControls({
                   onClick={() =>
                     onChange({ aspectRatio: asp.id as CanvasAspectRatio })
                   }
-                  className={`flex-1 py-2 rounded-lg text-[11px] font-semibold transition-all border ${
+                  className={`flex-1 py-2 rounded-lg text-[11px] font-bold transition-all border ${
                     frame.aspectRatio === asp.id
-                      ? "bg-neutral-800 text-neutral-100 border-neutral-400"
-                      : "bg-neutral-950 text-neutral-500 border-neutral-850 hover:border-neutral-700"
+                      ? "bg-[#facc15] text-[#072e1a] border-[#facc15]"
+                      : "bg-[#072e1a] text-[#fefce8]/60 border-[#facc15]/15 hover:border-[#facc15]/40"
                   }`}
                 >
                   {asp.label}

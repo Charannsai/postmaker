@@ -1,17 +1,17 @@
 "use client";
 
 import { useCallback, useRef, useState } from "react";
-import { Upload, Loader2 } from "lucide-react";
+import { Upload, Loader2, ImagePlus } from "lucide-react";
 import { isHeicFile, convertHeicToBlob } from "@/lib/heicConverter";
 
 interface PhotoUploaderProps {
   photoSrc: string | null;
-  onPhotoChange: (src: string) => void;
+  onPhotoLoaded: (src: string) => void;
 }
 
 export default function PhotoUploader({
   photoSrc,
-  onPhotoChange,
+  onPhotoLoaded,
 }: PhotoUploaderProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [loading, setLoading] = useState(false);
@@ -26,14 +26,14 @@ export default function PhotoUploader({
           blob = await convertHeicToBlob(file);
         }
         const url = URL.createObjectURL(blob);
-        onPhotoChange(url);
+        onPhotoLoaded(url);
       } catch (err) {
         console.error("Error processing image:", err);
       } finally {
         setLoading(false);
       }
     },
-    [onPhotoChange]
+    [onPhotoLoaded]
   );
 
   const handleDrop = useCallback(
@@ -62,9 +62,9 @@ export default function PhotoUploader({
     canvas.height = 512;
     const ctx = canvas.getContext("2d")!;
     const grads = [
-      ["#333", "#111"],
-      ["#444", "#1a1a1a"],
-      ["#555", "#222"],
+      ["#0d4a2b", "#facc15"],
+      ["#ec4899", "#78350f"],
+      ["#06b6d4", "#10b981"],
     ];
     const [c1, c2] = grads[index];
     const grad = ctx.createLinearGradient(0, 0, 512, 512);
@@ -72,47 +72,58 @@ export default function PhotoUploader({
     grad.addColorStop(1, c2);
     ctx.fillStyle = grad;
     ctx.fillRect(0, 0, 512, 512);
-    ctx.font = "bold 100px sans-serif";
-    ctx.fillStyle = "rgba(255,255,255,0.12)";
+    ctx.font = "bold 90px sans-serif";
+    ctx.fillStyle = "rgba(254,252,232,0.6)";
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
-    ctx.fillText(["A", "B", "C"][index], 256, 256);
+    ctx.fillText(["🌴", "⚡", "🚀"][index], 256, 256);
     canvas.toBlob((blob) => {
-      if (blob) onPhotoChange(URL.createObjectURL(blob));
+      if (blob) onPhotoLoaded(URL.createObjectURL(blob));
     });
   };
 
   return (
     <div className="space-y-3 animate-fade-in">
-      <label className="text-[11px] font-medium text-neutral-500 uppercase tracking-wider">
-        Photo
-      </label>
-
       <div
-        className={`dropzone flex flex-col items-center justify-center gap-2.5 p-5 min-h-[100px] ${
+        className={`dropzone flex flex-col items-center justify-center gap-2.5 p-5 min-h-[110px] ${
           dragOver ? "drag-over" : ""
         }`}
-        onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
+        onDragOver={(e) => {
+          e.preventDefault();
+          setDragOver(true);
+        }}
         onDragLeave={() => setDragOver(false)}
         onDrop={handleDrop}
         onClick={() => inputRef.current?.click()}
       >
         {loading ? (
-          <Loader2 className="w-5 h-5 text-neutral-500 animate-spin" />
+          <Loader2 className="w-5 h-5 text-[#facc15] animate-spin" />
         ) : photoSrc ? (
           <div className="flex flex-col items-center gap-2">
-            <div className="w-14 h-14 rounded-lg overflow-hidden border border-[#222]">
+            <div className="w-16 h-16 rounded-xl overflow-hidden border-2 border-[#facc15]/40 shadow-md">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={photoSrc} alt="Uploaded" className="w-full h-full object-cover" />
+              <img
+                src={photoSrc}
+                alt="Uploaded"
+                className="w-full h-full object-cover"
+              />
             </div>
-            <span className="text-[11px] text-neutral-600">Click to replace</span>
+            <span className="text-[11px] text-[#fde047] font-semibold">
+              Click to replace photo
+            </span>
           </div>
         ) : (
           <>
-            <Upload className="w-5 h-5 text-neutral-600" />
+            <div className="w-10 h-10 rounded-full bg-[#0d4a2b] border border-[#facc15]/30 flex items-center justify-center text-[#facc15]">
+              <ImagePlus className="w-5 h-5" />
+            </div>
             <div className="text-center">
-              <p className="text-[13px] text-neutral-400">Drop photo here</p>
-              <p className="text-[11px] text-neutral-600 mt-0.5">PNG, JPG, WebP, HEIC</p>
+              <p className="text-[13px] font-semibold text-[#fefce8]">
+                Click or Drop photo here
+              </p>
+              <p className="text-[10px] text-[#fefce8]/60 mt-0.5 font-mono">
+                Supports PNG, JPG, WebP, iPhone HEIC
+              </p>
             </div>
           </>
         )}
@@ -125,15 +136,19 @@ export default function PhotoUploader({
         />
       </div>
 
-      <div className="flex items-center gap-2">
-        <span className="text-[10px] text-neutral-600 font-mono">Samples</span>
+      <div className="flex items-center gap-2 pt-1">
+        <span className="text-[10px] text-[#fefce8]/60 font-mono">
+          Demo Avatars:
+        </span>
         {[0, 1, 2].map((i) => (
           <button
             key={i}
             onClick={() => handleSample(i)}
-            className="w-7 h-7 rounded-md bg-[#1a1a1a] border border-[#222] hover:border-[#333] transition-colors"
+            className="w-8 h-8 rounded-lg bg-[#0d4a2b] border border-[#facc15]/30 hover:border-[#facc15] transition-all flex items-center justify-center text-sm shadow-sm"
             title={`Sample ${i + 1}`}
-          />
+          >
+            {["🌴", "⚡", "🚀"][i]}
+          </button>
         ))}
       </div>
     </div>
