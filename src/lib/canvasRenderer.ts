@@ -54,19 +54,17 @@ export function drawCanvasBackground(
 ) {
   ctx.save();
   if (styleId === "yellow-gingham") {
-    // Vintage Yellow Gingham Check (like in Reference Image 1)
     ctx.fillStyle = "#fffbeb";
     ctx.fillRect(0, 0, w, h);
 
     const step = 28 * scale;
-    ctx.fillStyle = "rgba(253, 224, 71, 0.45)"; // soft yellow stripe
+    ctx.fillStyle = "rgba(253, 224, 71, 0.45)";
     for (let x = 0; x < w; x += step * 2) {
       ctx.fillRect(x, 0, step, h);
     }
     for (let y = 0; y < h; y += step * 2) {
       ctx.fillRect(0, y, w, step);
     }
-    // Intersection darker squares
     ctx.fillStyle = "rgba(250, 204, 21, 0.55)";
     for (let x = 0; x < w; x += step * 2) {
       for (let y = 0; y < h; y += step * 2) {
@@ -74,11 +72,9 @@ export function drawCanvasBackground(
       }
     }
   } else if (styleId === "red-texture") {
-    // Red Woven Dot Fabric Canvas (like in Reference Image 2)
     ctx.fillStyle = "#b91c1c";
     ctx.fillRect(0, 0, w, h);
 
-    // Fine woven dot matrix
     ctx.fillStyle = "#7f1d1d";
     const dotStep = 6 * scale;
     for (let x = 0; x < w; x += dotStep) {
@@ -86,17 +82,14 @@ export function drawCanvasBackground(
         ctx.fillRect(x + ((y / dotStep) % 2) * (dotStep / 2), y, 1.5 * scale, 1.5 * scale);
       }
     }
-    // Vignette
     const vig = ctx.createRadialGradient(w / 2, h / 2, w * 0.3, w / 2, h / 2, w * 0.75);
     vig.addColorStop(0, "transparent");
     vig.addColorStop(1, "rgba(0,0,0,0.45)");
     ctx.fillStyle = vig;
     ctx.fillRect(0, 0, w, h);
   } else if (styleId === "kraft-paper") {
-    // Warm Kraft Paper
     ctx.fillStyle = "#d7c4a3";
     ctx.fillRect(0, 0, w, h);
-    // Paper noise grain
     ctx.fillStyle = "rgba(0,0,0,0.03)";
     for (let i = 0; i < 400; i++) {
       ctx.fillRect(
@@ -108,8 +101,6 @@ export function drawCanvasBackground(
     }
   } else if (styleId === "clean-white") {
     ctx.fillStyle = "#f8f9fa";
-    ctx.fillRect(0, 0, w, h);
-    ctx.fillStyle = "rgba(0,0,0,0.02)";
     ctx.fillRect(0, 0, w, h);
   } else if (styleId === "blueprint-grid") {
     ctx.fillStyle = "#090d16";
@@ -130,7 +121,7 @@ export function drawCanvasBackground(
       ctx.stroke();
     }
   } else {
-    // Dark Minimal Studio (Default)
+    // Dark Studio Minimal
     ctx.fillStyle = "#0c0c0c";
     ctx.fillRect(0, 0, w, h);
     const vig = ctx.createRadialGradient(w / 2, h / 2, 0, w / 2, h / 2, w * 0.7);
@@ -160,8 +151,8 @@ function drawUserPhoto(
   const filterCss = getFilterCss(photo.filter);
   if (filterCss !== "none") ctx.filter = filterCss;
 
-  const zoom = photo.zoom;
-  const imgAspect = img.width / img.height;
+  const zoom = Math.max(0.1, photo.zoom);
+  const imgAspect = (img.naturalWidth || img.width) / (img.naturalHeight || img.height);
   const targetAspect = targetW / targetH;
 
   let dw: number, dh: number;
@@ -198,7 +189,6 @@ function drawPerforatedRect(
   const step = toothD + gap;
 
   ctx.beginPath();
-  // Top edge (left to right)
   ctx.moveTo(x, y);
   const numTeethX = Math.floor(w / step);
   const startOffsetX = (w - numTeethX * step) / 2;
@@ -209,7 +199,6 @@ function drawPerforatedRect(
   }
   ctx.lineTo(x + w, y);
 
-  // Right edge (top to bottom)
   const numTeethY = Math.floor(h / step);
   const startOffsetY = (h - numTeethY * step) / 2;
   for (let i = 0; i < numTeethY; i++) {
@@ -219,7 +208,6 @@ function drawPerforatedRect(
   }
   ctx.lineTo(x + w, y + h);
 
-  // Bottom edge (right to left)
   for (let i = numTeethX - 1; i >= 0; i--) {
     const tx = x + startOffsetX + i * step + gap / 2;
     ctx.lineTo(tx + toothD, y + h);
@@ -227,7 +215,6 @@ function drawPerforatedRect(
   }
   ctx.lineTo(x, y + h);
 
-  // Left edge (bottom to top)
   for (let i = numTeethY - 1; i >= 0; i--) {
     const ty = y + startOffsetY + i * step + gap / 2;
     ctx.lineTo(x, ty + toothD);
@@ -250,17 +237,14 @@ export function drawSticker(
   ctx.translate(x, y);
 
   if (type === "washi-tape") {
-    // Realistic translucent tape strip
     ctx.rotate(-0.06);
     ctx.fillStyle = "rgba(253, 224, 71, 0.75)";
     const tw = size * 1.8;
     const th = size * 0.45;
     ctx.fillRect(-tw / 2, -th / 2, tw, th);
-    // Subtle texture lines
     ctx.fillStyle = "rgba(255, 255, 255, 0.25)";
     ctx.fillRect(-tw / 2, -th / 2, tw, 2 * scale);
   } else if (type === "sunflower") {
-    // Lush Sunflower sticker with drop shadow (Matching Image 1 & 2)
     ctx.shadowColor = "rgba(0,0,0,0.3)";
     ctx.shadowBlur = 10 * scale;
     ctx.shadowOffsetY = 4 * scale;
@@ -280,7 +264,6 @@ export function drawSticker(
       ctx.fill();
       ctx.restore();
     }
-    // Sunflower dark brown seed center
     const centerGrad = ctx.createRadialGradient(0, 0, 0, 0, 0, r * 0.55);
     centerGrad.addColorStop(0, "#291305");
     centerGrad.addColorStop(0.8, "#451a03");
@@ -289,16 +272,7 @@ export function drawSticker(
     ctx.beginPath();
     ctx.arc(0, 0, r * 0.55, 0, Math.PI * 2);
     ctx.fill();
-
-    // Center ring texture
-    ctx.strokeStyle = "rgba(250, 204, 21, 0.4)";
-    ctx.lineWidth = 1.5 * scale;
-    ctx.setLineDash([2 * scale, 3 * scale]);
-    ctx.beginPath();
-    ctx.arc(0, 0, r * 0.4, 0, Math.PI * 2);
-    ctx.stroke();
   } else if (type === "postmark") {
-    // Air Mail Postmark Stamp (Circular ink cancellation mark)
     ctx.rotate(0.12);
     ctx.strokeStyle = "rgba(239, 68, 68, 0.75)";
     ctx.lineWidth = 2 * scale;
@@ -317,34 +291,12 @@ export function drawSticker(
     ctx.textBaseline = "middle";
     ctx.fillText("HH GOA AIR MAIL", 0, -size * 0.12);
     ctx.fillText("AUG 2026", 0, size * 0.12);
-
-    // Wavy cancellation lines extending to the right
-    ctx.beginPath();
-    for (let j = -2; j <= 2; j++) {
-      const ly = j * 6 * scale;
-      ctx.moveTo(size * 0.48, ly);
-      ctx.bezierCurveTo(
-        size * 0.7,
-        ly - 4 * scale,
-        size * 0.9,
-        ly + 4 * scale,
-        size * 1.1,
-        ly
-      );
-    }
-    ctx.stroke();
   } else if (type === "palm") {
-    // Tropical Palm Leaf
     ctx.fillStyle = "#15803d";
     ctx.beginPath();
     ctx.ellipse(0, 0, size * 0.15, size * 0.5, 0.4, 0, Math.PI * 2);
     ctx.fill();
-    ctx.fillStyle = "#22c55e";
-    ctx.beginPath();
-    ctx.ellipse(size * 0.15, -size * 0.1, size * 0.12, size * 0.4, 0.8, 0, Math.PI * 2);
-    ctx.fill();
   } else if (type === "barcode") {
-    // Barcode sticker
     ctx.fillStyle = "#ffffff";
     const bw = size * 1.4;
     const bh = size * 0.45;
@@ -362,7 +314,6 @@ export function drawSticker(
     ctx.font = `600 ${5 * scale}px monospace`;
     ctx.fillText("HH-GOA-2026", 0, bh / 2 - 3 * scale);
   } else if (type === "sparkles") {
-    // Gold Star Sparkle
     ctx.fillStyle = "#facc15";
     ctx.beginPath();
     const r1 = size * 0.35;
@@ -407,13 +358,11 @@ export function renderPfpFrame(
   const ctx = canvas.getContext("2d")!;
   ctx.clearRect(0, 0, W, H);
 
-  // 1. Draw Background
   drawCanvasBackground(ctx, W, H, frame.bgStyle, scale);
 
   const cx = W / 2;
   const cy = H / 2;
 
-  // 2. Render Specific Frame Template
   if (frame.templateId === "polaroid-tape") {
     renderVintagePolaroid(ctx, img, photo, frame, W, H, cx, cy, scale);
   } else if (frame.templateId === "postage-stamp") {
@@ -425,11 +374,9 @@ export function renderPfpFrame(
   } else if (frame.templateId === "minimal-gallery") {
     renderMinimalGallery(ctx, img, photo, frame, W, H, cx, cy, scale);
   } else {
-    // "goa-neon-sunset" or "cyber-matrix" (PFP circular frames)
     renderCircularPfp(ctx, img, photo, frame, W, H, cx, cy, scale);
   }
 
-  // 3. Render active Stickers
   if (frame.stickers && frame.stickers.length > 0) {
     frame.stickers.forEach((st) => {
       if (st === "sunflower") {
@@ -462,7 +409,6 @@ function renderVintagePolaroid(
   scale: number
 ) {
   ctx.save();
-  // Slight organic tilt
   ctx.translate(cx, cy);
   ctx.rotate(-0.015);
 
@@ -471,29 +417,24 @@ function renderVintagePolaroid(
   const px = -pWidth / 2;
   const py = -pHeight / 2;
 
-  // Realistic Polaroid drop shadow
   ctx.shadowColor = "rgba(0, 0, 0, 0.35)";
   ctx.shadowBlur = 24 * scale;
   ctx.shadowOffsetY = 12 * scale;
 
-  // Polaroid Paper Body (soft off-white with grain)
   ctx.fillStyle = "#faf9f5";
   drawSquircle(ctx, px, py, pWidth, pHeight, 6 * scale);
   ctx.fill();
   ctx.shadowColor = "transparent";
 
-  // Photo Window
   const photoMargin = 16 * scale;
   const photoW = pWidth - photoMargin * 2;
-  const photoH = photoW; // Square photo window
+  const photoH = photoW;
   const photoX = px + photoMargin;
   const photoY = py + photoMargin + 4 * scale;
 
-  // Inner inset border
   ctx.fillStyle = "#111111";
   ctx.fillRect(photoX, photoY, photoW, photoH);
 
-  // Clip photo
   ctx.save();
   ctx.beginPath();
   ctx.rect(photoX, photoY, photoW, photoH);
@@ -519,35 +460,29 @@ function renderVintagePolaroid(
   }
   ctx.restore();
 
-  // Polaroid subtle photo border line
   ctx.strokeStyle = "rgba(0,0,0,0.06)";
   ctx.lineWidth = 1 * scale;
   ctx.strokeRect(photoX, photoY, photoW, photoH);
 
-  // Handwritten / Aesthetic Caption in bottom area (like Image 1 "see the good")
   const captionY = photoY + photoH + (pHeight - (photoY + photoH - py)) / 2 + 4 * scale;
   const captionText = frame.caption || "see the good 🌴";
 
-  ctx.fillStyle = "#d97706"; // warm golden amber lettering
+  ctx.fillStyle = "#d97706";
   ctx.font = `bold italic ${16 * scale}px 'Georgia', serif`;
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
   ctx.fillText(captionText, 0, captionY - 6 * scale);
 
-  // Secondary subcaption / Event details
   ctx.fillStyle = "#a3a3a3";
   ctx.font = `500 ${8 * scale}px monospace`;
   ctx.fillText("HH GOA 2026 · 08.13.26", 0, captionY + 14 * scale);
 
-  // Top Washi Tape Strip
   ctx.save();
   ctx.rotate(0.03);
-  ctx.fillStyle = "rgba(254, 240, 138, 0.85)"; // semi-translucent soft yellow washi tape
+  ctx.fillStyle = "rgba(254, 240, 138, 0.85)";
   const tapeW = pWidth * 0.42;
   const tapeH = 22 * scale;
   ctx.fillRect(-tapeW / 2, py - tapeH / 2, tapeW, tapeH);
-  ctx.fillStyle = "rgba(234, 179, 8, 0.4)";
-  ctx.fillRect(-tapeW / 2, py - tapeH / 2, tapeW, 2 * scale);
   ctx.restore();
 
   ctx.restore();
@@ -573,35 +508,30 @@ function renderPostageStamp(
   const sx = -stampW / 2;
   const sy = -stampH / 2;
 
-  // Stamp shadow
   ctx.shadowColor = "rgba(0, 0, 0, 0.4)";
   ctx.shadowBlur = 20 * scale;
   ctx.shadowOffsetY = 10 * scale;
 
-  // Draw perforated stamp shape with tooth cutouts
   ctx.fillStyle = "#faf8f5";
   drawPerforatedRect(ctx, sx, sy, stampW, stampH, 5 * scale);
   ctx.fill();
   ctx.shadowColor = "transparent";
 
-  // Inner decorative border
   const margin = 14 * scale;
   const innerW = stampW - margin * 2;
   const innerH = stampH - margin * 2;
   const ix = sx + margin;
   const iy = sy + margin;
 
-  ctx.strokeStyle = "#b91c1c"; // vintage postal crimson
+  ctx.strokeStyle = "#b91c1c";
   ctx.lineWidth = 1.5 * scale;
   ctx.strokeRect(ix, iy, innerW, innerH);
 
-  // Top header text
   ctx.fillStyle = "#b91c1c";
   ctx.font = `bold ${8 * scale}px monospace`;
   ctx.textAlign = "center";
   ctx.fillText("★ HACKER HOUSE GOA · AIR MAIL ★", 0, iy + 12 * scale);
 
-  // Photo Area inside the stamp
   const photoW = innerW - 12 * scale;
   const photoH = innerH - 42 * scale;
   const px = -photoW / 2;
@@ -619,7 +549,6 @@ function renderPostageStamp(
   }
   ctx.restore();
 
-  // Bottom Denomination & Barcode
   ctx.fillStyle = "#1e3a8a";
   ctx.font = `bold ${11 * scale}px 'Georgia', serif`;
   ctx.textAlign = "left";
@@ -629,25 +558,6 @@ function renderPostageStamp(
   ctx.font = `italic ${8 * scale}px 'Georgia', serif`;
   ctx.textAlign = "right";
   ctx.fillText(frame.caption || "BUILDER EDITION", ix + innerW - 8 * scale, iy + innerH - 6 * scale);
-
-  // Circular Cancellation Ink Stamp overlay
-  ctx.save();
-  ctx.translate(stampW * 0.3, -stampH * 0.28);
-  ctx.rotate(-0.15);
-  ctx.strokeStyle = "rgba(185, 28, 28, 0.75)";
-  ctx.lineWidth = 2 * scale;
-  ctx.beginPath();
-  ctx.arc(0, 0, 32 * scale, 0, Math.PI * 2);
-  ctx.stroke();
-  ctx.beginPath();
-  ctx.arc(0, 0, 26 * scale, 0, Math.PI * 2);
-  ctx.stroke();
-  ctx.fillStyle = "rgba(185, 28, 28, 0.75)";
-  ctx.font = `bold ${6 * scale}px monospace`;
-  ctx.textAlign = "center";
-  ctx.fillText("GOA POST", 0, -6 * scale);
-  ctx.fillText("AUG 2026", 0, 6 * scale);
-  ctx.restore();
 
   ctx.restore();
 }
@@ -672,7 +582,6 @@ function renderRetroMusicPlayer(
   const x = -cardW / 2;
   const y = -cardH / 2;
 
-  // Outer dark media player surface
   ctx.shadowColor = "rgba(0,0,0,0.5)";
   ctx.shadowBlur = 24 * scale;
   ctx.shadowOffsetY = 10 * scale;
@@ -687,13 +596,11 @@ function renderRetroMusicPlayer(
   drawSquircle(ctx, x, y, cardW, cardH, 20 * scale);
   ctx.stroke();
 
-  // Top header status bar
   ctx.fillStyle = "#facc15";
   ctx.font = `bold ${9 * scale}px monospace`;
   ctx.textAlign = "center";
   ctx.fillText("● NOW PLAYING // HH GOA 2026", 0, y + 24 * scale);
 
-  // Album Artwork Photo Window
   const artMargin = 22 * scale;
   const artW = cardW - artMargin * 2;
   const artH = artW * 0.95;
@@ -711,7 +618,6 @@ function renderRetroMusicPlayer(
   }
   ctx.restore();
 
-  // Track Title & Artist (Like Reference Image 1 "Gal Sun / Sabat Batin")
   let py = artY + artH + 24 * scale;
   ctx.fillStyle = "#f5f5f5";
   ctx.font = `bold ${15 * scale}px sans-serif`;
@@ -722,13 +628,11 @@ function renderRetroMusicPlayer(
   ctx.font = `500 ${10 * scale}px sans-serif`;
   ctx.fillText("HH Goa 2026 · Beach Session", artX, py + 16 * scale);
 
-  // Like counter icon
   ctx.fillStyle = "#facc15";
   ctx.font = `bold ${10 * scale}px sans-serif`;
   ctx.textAlign = "right";
   ctx.fillText("♥ 1.2 lakh", artX + artW, py + 8 * scale);
 
-  // Progress scrub bar
   py += 36 * scale;
   ctx.fillStyle = "#262626";
   drawSquircle(ctx, artX, py, artW, 4 * scale, 2 * scale);
@@ -739,13 +643,11 @@ function renderRetroMusicPlayer(
   drawSquircle(ctx, artX, py, progressW, 4 * scale, 2 * scale);
   ctx.fill();
 
-  // Scrub handle dot
   ctx.fillStyle = "#ffffff";
   ctx.beginPath();
   ctx.arc(artX + progressW, py + 2 * scale, 5 * scale, 0, Math.PI * 2);
   ctx.fill();
 
-  // Time stamps
   ctx.fillStyle = "#525252";
   ctx.font = `500 ${8 * scale}px monospace`;
   ctx.textAlign = "left";
@@ -753,7 +655,6 @@ function renderRetroMusicPlayer(
   ctx.textAlign = "right";
   ctx.fillText("3:45", artX + artW, py + 14 * scale);
 
-  // Player controls icons (Shuffle, Prev, Play, Next, Repeat)
   py += 28 * scale;
   ctx.fillStyle = "#a3a3a3";
   ctx.font = `bold ${14 * scale}px sans-serif`;
@@ -792,14 +693,12 @@ function renderEditorialMagazine(
   ctx.fill();
   ctx.shadowColor = "transparent";
 
-  // Full photo bleed
   ctx.save();
   drawSquircle(ctx, mx, my, magW, magH, 8 * scale);
   ctx.clip();
   if (img) {
     drawUserPhoto(ctx, img, photo, 0, 0, magW, magH);
   }
-  // Soft dark gradient overlay for text readability
   const grad = ctx.createLinearGradient(0, my, 0, my + magH);
   grad.addColorStop(0, "rgba(0,0,0,0.7)");
   grad.addColorStop(0.3, "transparent");
@@ -809,7 +708,6 @@ function renderEditorialMagazine(
   ctx.fillRect(mx, my, magW, magH);
   ctx.restore();
 
-  // Big Magazine Masthead Typography
   ctx.fillStyle = "#ffffff";
   ctx.font = `900 ${44 * scale}px 'Impact', sans-serif`;
   ctx.textAlign = "center";
@@ -819,7 +717,6 @@ function renderEditorialMagazine(
   ctx.font = `600 ${8 * scale}px monospace`;
   ctx.fillText("THE BUILDER ISSUE // NO. 2026", 0, my + 62 * scale);
 
-  // Aesthetic quote banner (like yellow quote in Reference Image 1)
   const quoteY = my + magH * 0.35;
   ctx.fillStyle = "#fef08a";
   const qw = magW * 0.72;
@@ -831,7 +728,6 @@ function renderEditorialMagazine(
   ctx.font = `bold italic ${9 * scale}px 'Georgia', serif`;
   ctx.fillText(frame.caption || "She sparkles like sunshine.", 0, quoteY + 15 * scale);
 
-  // Bottom headlines
   ctx.fillStyle = "#ffffff";
   ctx.font = `bold ${14 * scale}px sans-serif`;
   ctx.textAlign = "left";
@@ -841,7 +737,6 @@ function renderEditorialMagazine(
   ctx.font = `500 ${8 * scale}px sans-serif`;
   ctx.fillText("Hacker House Goa · Official Pass · Aug 2026", mx + 16 * scale, my + magH - 22 * scale);
 
-  // Corner Barcode
   drawSticker(ctx, "barcode", mx + magW - 40 * scale, my + magH - 26 * scale, 45 * scale, scale);
 
   ctx.restore();
@@ -867,14 +762,12 @@ function renderMinimalGallery(
   const fx = -fWidth / 2;
   const fy = -fHeight / 2;
 
-  // Outer frame
   ctx.fillStyle = "#141414";
   ctx.fillRect(fx, fy, fWidth, fHeight);
   ctx.strokeStyle = "#262626";
   ctx.lineWidth = 1 * scale;
   ctx.strokeRect(fx, fy, fWidth, fHeight);
 
-  // Wide Matte Matting
   const matte = 28 * scale;
   const photoW = fWidth - matte * 2;
   const photoH = photoW * 1.05;
@@ -904,7 +797,6 @@ function renderMinimalGallery(
   ctx.strokeStyle = "#333333";
   ctx.strokeRect(photoX, photoY, photoW, photoH);
 
-  // Gallery Typography
   const textY = photoY + photoH + 28 * scale;
   ctx.fillStyle = "#e5e5e5";
   ctx.font = `600 ${11 * scale}px sans-serif`;
@@ -934,7 +826,6 @@ function renderCircularPfp(
   const ringWidth = 24 * scale;
   const photoR = outerR - ringWidth;
 
-  // Outer Ring with sunset/cyber gradient
   ctx.save();
   const grad = ctx.createConicGradient(0, cx, cy);
   grad.addColorStop(0, "#ff6b35");
@@ -949,7 +840,6 @@ function renderCircularPfp(
   ctx.arc(cx, cy, (outerR + photoR) / 2, 0, Math.PI * 2);
   ctx.stroke();
 
-  // Photo Circle
   ctx.save();
   ctx.beginPath();
   ctx.arc(cx, cy, photoR, 0, Math.PI * 2);
@@ -962,7 +852,6 @@ function renderCircularPfp(
   }
   ctx.restore();
 
-  // Badge Ribbon
   if (frame.badgeEnabled) {
     const badgeY = cy + outerR - 16 * scale;
     ctx.fillStyle = "#171717";
@@ -1002,7 +891,6 @@ export function renderBuilderCard(
   const ctx = canvas.getContext("2d")!;
   ctx.clearRect(0, 0, W, H);
 
-  // Background
   drawCanvasBackground(ctx, W, H, card.bgStyle || "dark-minimal", scale);
 
   const tmpl = CARD_TEMPLATES.find((t) => t.id === templateId)!;
@@ -1036,17 +924,17 @@ function renderScrapbookCard(
   scale: number
 ) {
   ctx.save();
-  ctx.shadowColor = "rgba(0,0,0,0.4)";
-  ctx.shadowBlur = 20 * scale;
-  ctx.shadowOffsetY = 8 * scale;
+  ctx.shadowColor = "rgba(0,0,0,0.45)";
+  ctx.shadowBlur = 22 * scale;
+  ctx.shadowOffsetY = 10 * scale;
 
-  ctx.fillStyle = "#faf9f5"; // Cream paper pass
+  ctx.fillStyle = "#faf9f5";
   drawSquircle(ctx, cardX, cardY, cardW, cardH, 16 * scale);
   ctx.fill();
   ctx.shadowColor = "transparent";
 
   // Washi Tape at Top
-  ctx.fillStyle = "rgba(250, 204, 21, 0.8)";
+  ctx.fillStyle = "rgba(250, 204, 21, 0.85)";
   const tw = 120 * scale;
   ctx.fillRect(w / 2 - tw / 2, cardY - 6 * scale, tw, 18 * scale);
 
@@ -1061,12 +949,12 @@ function renderScrapbookCard(
   ctx.font = `bold ${8 * scale}px monospace`;
   ctx.fillText("★ OFFICIAL BUILDER PASS ★", w / 2, y + 12 * scale);
 
-  // Photo
+  // Photo Area (Generous 110px size)
   y += 24 * scale;
-  const photoSize = 100 * scale;
+  const photoSize = 110 * scale;
   const px = w / 2 - photoSize / 2;
 
-  ctx.fillStyle = "#111";
+  ctx.fillStyle = "#111111";
   drawSquircle(ctx, px, y, photoSize, photoSize, 8 * scale);
   ctx.fill();
 
@@ -1075,8 +963,21 @@ function renderScrapbookCard(
   ctx.clip();
   if (img) {
     drawUserPhoto(ctx, img, photo, w / 2, y + photoSize / 2, photoSize, photoSize);
+  } else {
+    ctx.fillStyle = "#222222";
+    ctx.fillRect(px, y, photoSize, photoSize);
+    ctx.fillStyle = "rgba(255,255,255,0.25)";
+    ctx.font = `600 ${10 * scale}px sans-serif`;
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText("Upload Photo", w / 2, y + photoSize / 2);
   }
   ctx.restore();
+
+  ctx.strokeStyle = "rgba(0,0,0,0.1)";
+  ctx.lineWidth = 1 * scale;
+  drawSquircle(ctx, px, y, photoSize, photoSize, 8 * scale);
+  ctx.stroke();
 
   // Name & Fun Title
   y += photoSize + 22 * scale;
@@ -1180,7 +1081,7 @@ function renderBoardingPassCard(
 
   // Photo & Builder Details
   y += 24 * scale;
-  const photoSize = 80 * scale;
+  const photoSize = 84 * scale;
   const px = cardX + 18 * scale;
 
   ctx.save();
@@ -1191,6 +1092,11 @@ function renderBoardingPassCard(
   } else {
     ctx.fillStyle = "#222";
     ctx.fillRect(px, y, photoSize, photoSize);
+    ctx.fillStyle = "rgba(255,255,255,0.25)";
+    ctx.font = `600 ${9 * scale}px sans-serif`;
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText("Photo", px + photoSize / 2, y + photoSize / 2);
   }
   ctx.restore();
 
@@ -1279,9 +1185,9 @@ function renderStandardIdCard(
   ctx.font = `bold ${7.5 * scale}px monospace`;
   ctx.fillText("OFFICIAL BUILDER PASS", w / 2, y + 12 * scale);
 
-  // Photo
+  // Photo (Generous size 52px radius)
   y += 24 * scale;
-  const photoR = 45 * scale;
+  const photoR = 50 * scale;
   const photoCX = w / 2;
   const photoCY = y + photoR;
 
@@ -1300,6 +1206,11 @@ function renderStandardIdCard(
   } else {
     ctx.fillStyle = "#1e1e1e";
     ctx.fillRect(photoCX - photoR, photoCY - photoR, photoR * 2, photoR * 2);
+    ctx.fillStyle = "rgba(255,255,255,0.25)";
+    ctx.font = `600 ${9 * scale}px sans-serif`;
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText("Upload Photo", photoCX, photoCY);
   }
   ctx.restore();
 

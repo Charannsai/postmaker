@@ -33,6 +33,7 @@ export default function PreviewCanvas({
   const isDragging = useRef(false);
   const lastPos = useRef({ x: 0, y: 0 });
 
+  // Load image whenever photo.src changes
   useEffect(() => {
     if (!photo.src) {
       imgRef.current = null;
@@ -40,10 +41,16 @@ export default function PreviewCanvas({
       return;
     }
     const img = new Image();
-    img.crossOrigin = "anonymous";
+    // Only set crossOrigin for remote http/https images, not blob: or data:
+    if (photo.src.startsWith("http://") || photo.src.startsWith("https://")) {
+      img.crossOrigin = "anonymous";
+    }
     img.onload = () => {
       imgRef.current = img;
       render();
+    };
+    img.onerror = (e) => {
+      console.error("Failed to load image in canvas preview", e);
     };
     img.src = photo.src;
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -103,7 +110,7 @@ export default function PreviewCanvas({
 
   return (
     <div className="relative flex flex-col items-center justify-center w-full animate-scale-in">
-      <div className="relative w-full flex items-center justify-center p-3 sm:p-5 rounded-2xl bg-[#111111] border border-[#1f1f1f] shadow-2xl">
+      <div className="relative w-full flex items-center justify-center p-3 sm:p-6 rounded-2xl bg-[#111111] border border-[#1f1f1f] shadow-2xl">
         <canvas
           ref={canvasRef}
           className={`relative w-full ${maxWStyle} rounded-xl shadow-2xl cursor-grab active:cursor-grabbing border border-white/5`}
