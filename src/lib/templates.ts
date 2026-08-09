@@ -9,6 +9,7 @@ import type {
   FilterType,
   BackgroundStyle,
   StickerType,
+  CaptionStyleDef,
 } from "@/types";
 
 // ── Photo Filters ────────────────────────────────────────────
@@ -60,91 +61,93 @@ export const BACKGROUND_STYLES: BackgroundStyle[] = [
   { id: "blueprint-grid", label: "Blueprint Grid", preview: "#0f172a" },
 ];
 
+// ── Caption Styles ───────────────────────────────────────────
+export const CAPTION_STYLES: CaptionStyleDef[] = [
+  { id: "handwritten", label: "Aesthetic Script" },
+  { id: "bold-street", label: "Bold Street Banner" },
+  { id: "typewriter-tape", label: "Typewriter Tape" },
+  { id: "golden-serif", label: "Luxury Serif" },
+  { id: "hacker-mono", label: "Hacker Terminal" },
+];
+
 // ── Format A: Frame Templates ────────────────────────────────
 export const FRAME_TEMPLATES: FrameTemplate[] = [
   {
     id: "polaroid-tape",
     label: "Vintage Polaroid",
-    description: "Classic paper frame with washi tape & handwritten caption",
+    description: "Classic photo paper with washi tape & aesthetic script",
     category: "aesthetic",
-    colors: {
-      primary: "#f5f5f0",
-      secondary: "#e5e5dc",
-      accent: "#e2b714",
-      bg: "#111",
-    },
+    colors: { primary: "#faf9f5", secondary: "#e5e5dc", accent: "#d97706" },
+  },
+  {
+    id: "festival-wristband",
+    label: "Festival VIP Wristband",
+    description: "Official event wristband banner: I am coming to HH GOA 26",
+    category: "festival",
+    colors: { primary: "#171717", secondary: "#facc15", accent: "#f59e0b" },
+  },
+  {
+    id: "streetwear-poster",
+    label: "Streetwear Poster",
+    description: "Heavy typographic street poster wrapping the image",
+    category: "street",
+    colors: { primary: "#000000", secondary: "#ffffff", accent: "#ef4444" },
+  },
+  {
+    id: "cinema-ticket",
+    label: "Admit One Cinema Ticket",
+    description: "Golden retro admit-one ticket with perforated notches",
+    category: "retro",
+    colors: { primary: "#f59e0b", secondary: "#78350f", accent: "#fef3c7" },
   },
   {
     id: "postage-stamp",
-    label: "Postage Stamp",
-    description: "Serrated perforated stamp with postal cancellation mark",
+    label: "Air Mail Postage Stamp",
+    description: "Perforated serrated stamp with circular postmark cancellation",
     category: "aesthetic",
-    colors: {
-      primary: "#faf8f5",
-      secondary: "#c84338",
-      accent: "#1e3a8a",
-      bg: "#991b1b",
-    },
+    colors: { primary: "#faf8f5", secondary: "#b91c1c", accent: "#1e3a8a" },
   },
   {
     id: "music-player",
     label: "Retro Cassette / Player",
     description: "Vintage music player card with waveform & scrub bar",
     category: "retro",
-    colors: {
-      primary: "#141414",
-      secondary: "#facc15",
-      accent: "#facc15",
-      bg: "#0a0a0a",
-    },
+    colors: { primary: "#141414", secondary: "#facc15", accent: "#facc15" },
   },
   {
     id: "magazine-editorial",
-    label: "Editorial Magazine",
+    label: "Editorial Magazine Cover",
     description: "High-fashion aesthetic magazine cover with bold typography",
     category: "aesthetic",
-    colors: {
-      primary: "#0d0d0d",
-      secondary: "#fafafa",
-      accent: "#f43f5e",
-      bg: "#000",
-    },
+    colors: { primary: "#0d0d0d", secondary: "#fafafa", accent: "#f43f5e" },
+  },
+  {
+    id: "cyber-hud-scanner",
+    label: "Cyber Biometric Scan",
+    description: "Sci-fi HUD developer scanner with crosshairs & stats",
+    category: "cyber",
+    colors: { primary: "#050811", secondary: "#06b6d4", accent: "#10b981" },
   },
   {
     id: "minimal-gallery",
     label: "Gallery Passe-Partout",
     description: "Museum exhibition frame with fine matting & coordinates",
     category: "minimal",
-    colors: {
-      primary: "#1c1c1c",
-      secondary: "#f5f5f5",
-      accent: "#a3a3a3",
-      bg: "#0a0a0a",
-    },
+    colors: { primary: "#1c1c1c", secondary: "#f5f5f5", accent: "#a3a3a3" },
   },
   {
     id: "goa-neon-sunset",
     label: "Goa Sunset PFP Ring",
     description: "Branded circular profile ring with tropical sunset glow",
     category: "cyber",
-    colors: {
-      primary: "#ff6b35",
-      secondary: "#f857a6",
-      accent: "#00f2fe",
-      bg: "#0a0d14",
-    },
+    colors: { primary: "#ff6b35", secondary: "#f857a6", accent: "#00f2fe" },
   },
   {
     id: "cyber-matrix",
     label: "Hacker Terminal Ring",
     description: "Circuit traces, HUD accents, and monospace coordinates",
     category: "cyber",
-    colors: {
-      primary: "#00f2fe",
-      secondary: "#10b981",
-      accent: "#a78bfa",
-      bg: "#050a0e",
-    },
+    colors: { primary: "#00f2fe", secondary: "#10b981", accent: "#a78bfa" },
   },
 ];
 
@@ -154,69 +157,52 @@ export const CARD_TEMPLATES: CardTemplate[] = [
     id: "scrapbook-pass",
     label: "Scrapbook Polaroid Pass",
     description: "Aesthetic taped polaroid with badges & sticker tags",
-    colors: {
-      bg: "#0f0f0f",
-      card: "#f4f1ea",
-      accent: "#e2b714",
-      text: "#171717",
-    },
+    colors: { bg: "#0f0f0f", card: "#faf9f5", accent: "#d97706", text: "#171717" },
+  },
+  {
+    id: "festival-access",
+    label: "All-Access Festival Pass",
+    description: "Official fabric festival pass with RFID chip & lanyard clasp",
+    colors: { bg: "#080808", card: "#161616", accent: "#facc15", text: "#fafafa" },
   },
   {
     id: "boarding-pass",
     label: "Goa Air Boarding Pass",
     description: "Flight / event ticket with perforated tear-off barcode stub",
-    colors: {
-      bg: "#0a0a0a",
-      card: "#161616",
-      accent: "#f59e0b",
-      text: "#f5f5f5",
-    },
+    colors: { bg: "#0a0a0a", card: "#161616", accent: "#f59e0b", text: "#f5f5f5" },
   },
   {
     id: "holographic-vip",
     label: "Holographic Lanyard VIP",
     description: "Official conference lanyard badge with holographic shine",
-    colors: {
-      bg: "#0a0a0a",
-      card: "#12131a",
-      accent: "#c084fc",
-      text: "#e0e7ff",
-    },
+    colors: { bg: "#0a0a0a", card: "#12131a", accent: "#c084fc", text: "#e0e7ff" },
   },
   {
     id: "cyber-terminal",
     label: "Hacker Passport",
     description: "Cyberpunk developer passport with live stats & GPS coords",
-    colors: {
-      bg: "#050811",
-      card: "#0d1322",
-      accent: "#06b6d4",
-      text: "#e0f2fe",
-    },
+    colors: { bg: "#050811", card: "#0d1322", accent: "#06b6d4", text: "#e0f2fe" },
   },
   {
     id: "swiss-minimal",
     label: "Swiss Modernist",
     description: "Ultra-clean museum typography pass with precise layout",
-    colors: {
-      bg: "#080808",
-      card: "#141414",
-      accent: "#e5e5e5",
-      text: "#fafafa",
-    },
+    colors: { bg: "#080808", card: "#141414", accent: "#e5e5e5", text: "#fafafa" },
   },
 ];
 
 // ── Preset Captions ──────────────────────────────────────────
 export const PRESET_CAPTIONS = [
+  "I am coming to HH GOA 26, Are you? 🌴",
+  "PACKED & READY FOR HH GOA 2026 🚀",
+  "See you on the beach, hackers! 🏖️",
+  "CONFIRMED ATTENDEE · HH GOA '26 ✨",
+  "10x Caffeine, 100x Sunshine ☀️",
+  "Ship hard, vibe harder 🌊 #FrameInGoa",
   "see the good 🌴",
   "She sparkles like sunshine.",
-  "See you in Goa 2026 ☀️",
-  "building by the beach 🌊",
-  "10x builder energy ⚡",
-  "beach hackathon vibes ✨",
-  "hacker house goa · 2026",
-  "ship first, sunbathe later 🏖️",
+  "From commits to coconuts 🥥",
+  "sudo pack-bags --destination=goa",
 ] as const;
 
 // ── Stickers ─────────────────────────────────────────────────
@@ -229,10 +215,13 @@ export interface StickerDef {
 export const STICKERS: StickerDef[] = [
   { id: "washi-tape", label: "Washi Tape", emoji: "📼" },
   { id: "sunflower", label: "Sunflower", emoji: "🌻" },
-  { id: "palm", label: "Goa Palm", emoji: "🌴" },
+  { id: "verified", label: "VIP Verified", emoji: "⚡" },
+  { id: "ticket-stamp", label: "Admit One", emoji: "🎟️" },
+  { id: "hazard-tape", label: "Caution Strip", emoji: "🚧" },
   { id: "postmark", label: "Air Mail Stamp", emoji: "✉️" },
   { id: "barcode", label: "Barcode", emoji: "🏷️" },
   { id: "sparkles", label: "Sparkles", emoji: "✨" },
+  { id: "palm", label: "Goa Palm", emoji: "🌴" },
 ];
 
 // ── Tech Stack Options ───────────────────────────────────────

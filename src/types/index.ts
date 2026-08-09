@@ -1,5 +1,5 @@
 /* ──────────────────────────────────────────────────────────────
-   Types & Data Models – HH Goa 2026 Aesthetic Frame & ID Generator
+   Types & Data Models – HH Goa 2026 Aesthetic Studio
    ────────────────────────────────────────────────────────────── */
 
 export type FilterType =
@@ -33,12 +33,28 @@ export interface BackgroundStyle {
   preview: string;
 }
 
+export type CaptionStyleId =
+  | "handwritten"
+  | "bold-street"
+  | "typewriter-tape"
+  | "hacker-mono"
+  | "golden-serif";
+
+export interface CaptionStyleDef {
+  id: CaptionStyleId;
+  label: string;
+}
+
 // ── Format A: Aesthetic Frames ────────────────────────────────
 export type FrameTemplateId =
   | "polaroid-tape"
+  | "festival-wristband"
+  | "streetwear-poster"
+  | "cinema-ticket"
   | "postage-stamp"
   | "music-player"
   | "magazine-editorial"
+  | "cyber-hud-scanner"
   | "minimal-gallery"
   | "goa-neon-sunset"
   | "cyber-matrix";
@@ -47,8 +63,7 @@ export interface FrameTemplate {
   id: FrameTemplateId;
   label: string;
   description: string;
-  category: "aesthetic" | "retro" | "minimal" | "cyber";
-  previewIcon?: string;
+  category: "aesthetic" | "festival" | "street" | "retro" | "cyber" | "minimal";
   colors: {
     primary: string;
     secondary: string;
@@ -63,12 +78,16 @@ export type StickerType =
   | "palm"
   | "postmark"
   | "barcode"
-  | "sparkles";
+  | "sparkles"
+  | "verified"
+  | "hazard-tape"
+  | "ticket-stamp";
 
 export interface FrameSettings {
   templateId: FrameTemplateId;
   caption: string;
   subcaption: string;
+  captionStyle: CaptionStyleId;
   badgeEnabled: boolean;
   badgeText: string;
   stickers: StickerType[];
@@ -79,6 +98,7 @@ export interface FrameSettings {
 // ── Format B: Builder ID Cards ────────────────────────────────
 export type CardTemplateId =
   | "scrapbook-pass"
+  | "festival-access"
   | "boarding-pass"
   | "holographic-vip"
   | "cyber-terminal"

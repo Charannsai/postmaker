@@ -7,12 +7,14 @@ import type {
   BackgroundStyleId,
   CanvasAspectRatio,
   StickerType,
+  CaptionStyleId,
 } from "@/types";
 import {
   FRAME_TEMPLATES,
   BACKGROUND_STYLES,
   STICKERS,
   PRESET_CAPTIONS,
+  CAPTION_STYLES,
 } from "@/lib/templates";
 import { LayoutGrid, Type, Palette } from "lucide-react";
 
@@ -62,7 +64,7 @@ export default function PfpFrameControls({
           }`}
         >
           <Type className="w-3 h-3" />
-          Caption
+          Text & Style
         </button>
         <button
           onClick={() => setActiveTab("canvas")}
@@ -81,7 +83,7 @@ export default function PfpFrameControls({
       {activeTab === "style" && (
         <div className="space-y-2 animate-fade-in">
           <label className="text-[11px] font-semibold text-neutral-400 uppercase tracking-wider block">
-            Choose Frame Style
+            Choose Frame Style ({FRAME_TEMPLATES.length})
           </label>
           <div className="space-y-1.5 max-h-[380px] overflow-y-auto pr-1">
             {FRAME_TEMPLATES.map((t) => {
@@ -122,36 +124,60 @@ export default function PfpFrameControls({
         </div>
       )}
 
-      {/* Tab 2: Caption & Stickers */}
+      {/* Tab 2: Caption, Typography Style & Stickers */}
       {activeTab === "text" && (
         <div className="space-y-4 animate-fade-in">
           {/* Custom Caption Input */}
           <div className="space-y-1.5">
             <label className="text-[11px] font-semibold text-neutral-400 uppercase tracking-wider block">
-              Frame Caption
+              Frame Caption / Slogan
             </label>
             <input
               type="text"
               value={frame.caption}
               onChange={(e) => onChange({ caption: e.target.value })}
-              placeholder="e.g. see the good 🌴"
-              maxLength={45}
+              placeholder="e.g. I am coming to HH GOA 26, Are you?"
+              maxLength={50}
               className="input !text-[13px]"
             />
           </div>
 
-          {/* Quick Caption Suggestions */}
+          {/* Typography Font Design */}
           <div className="space-y-1.5">
+            <label className="text-[11px] font-semibold text-neutral-400 uppercase tracking-wider block">
+              Text Graphic Design
+            </label>
+            <div className="grid grid-cols-2 gap-1">
+              {CAPTION_STYLES.map((cs) => (
+                <button
+                  key={cs.id}
+                  onClick={() =>
+                    onChange({ captionStyle: cs.id as CaptionStyleId })
+                  }
+                  className={`p-2 rounded-lg text-[11px] font-semibold border text-center transition-all ${
+                    (frame.captionStyle || "handwritten") === cs.id
+                      ? "bg-neutral-800 text-amber-300 border-amber-400/50 shadow-sm"
+                      : "bg-neutral-950 text-neutral-500 border-neutral-800 hover:border-neutral-700"
+                  }`}
+                >
+                  {cs.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Quick Caption Suggestions */}
+          <div className="space-y-1.5 pt-1">
             <span className="text-[10px] text-neutral-500 font-mono block">
-              Quick Suggestions:
+              Popular Slogans & Badges:
             </span>
             <div className="flex flex-wrap gap-1">
-              {PRESET_CAPTIONS.slice(0, 6).map((cap) => (
+              {PRESET_CAPTIONS.map((cap) => (
                 <button
                   key={cap}
                   onClick={() => onChange({ caption: cap })}
                   className={`pill !text-[10px] !py-1 ${
-                    frame.caption === cap ? "active" : ""
+                    frame.caption === cap ? "active !border-amber-400/40 !text-amber-300" : ""
                   }`}
                 >
                   {cap}
@@ -165,14 +191,14 @@ export default function PfpFrameControls({
             <label className="text-[11px] font-semibold text-neutral-400 uppercase tracking-wider block">
               Stickers & Accents
             </label>
-            <div className="grid grid-cols-2 gap-1.5">
+            <div className="grid grid-cols-3 gap-1.5">
               {STICKERS.map((st) => {
                 const active = frame.stickers?.includes(st.id);
                 return (
                   <button
                     key={st.id}
                     onClick={() => toggleSticker(st.id)}
-                    className={`flex items-center gap-2 p-2 rounded-lg text-[11px] font-medium border text-left transition-all ${
+                    className={`flex items-center gap-1.5 p-2 rounded-lg text-[11px] font-medium border text-left transition-all ${
                       active
                         ? "bg-neutral-800 text-amber-300 border-amber-400/40"
                         : "bg-neutral-950 text-neutral-500 border-neutral-800 hover:border-neutral-700"

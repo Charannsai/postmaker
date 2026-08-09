@@ -35,12 +35,13 @@ const DEFAULT_PHOTO: PhotoState = {
 };
 
 const DEFAULT_FRAME: FrameSettings = {
-  templateId: "polaroid-tape",
-  caption: "see the good 🌴",
+  templateId: "festival-wristband",
+  caption: "I am coming to HH GOA 26, Are you? 🌴",
   subcaption: "HH GOA 2026",
+  captionStyle: "bold-street",
   badgeEnabled: true,
   badgeText: "SEE YOU IN GOA 🌴",
-  stickers: ["sunflower", "washi-tape"],
+  stickers: ["verified"],
   bgStyle: "dark-minimal",
   aspectRatio: "1:1",
 };
