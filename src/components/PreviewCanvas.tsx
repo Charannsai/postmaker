@@ -103,8 +103,8 @@ export default function PreviewCanvas({
       maxWStyle = "max-w-[400px]";
     }
   } else {
-    aspectRatioStyle = "520 / 640";
-    maxWStyle = "max-w-[420px]";
+    aspectRatioStyle = "480 / 850";
+    maxWStyle = "max-w-[360px]";
   }
 
   return (
