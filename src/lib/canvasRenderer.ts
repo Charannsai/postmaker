@@ -571,30 +571,46 @@ export function renderBuilderCard(
   const ctx = canvas.getContext("2d")!;
   ctx.clearRect(0, 0, W, H);
 
-  // === 1. Deep Goa Emerald Gradient Background ===
-  const bg = ctx.createLinearGradient(0, 0, W, H);
-  bg.addColorStop(0, "#084e2a");
-  bg.addColorStop(0.5, "#053d20");
-  bg.addColorStop(1, "#022413");
-  ctx.fillStyle = bg;
+  // === 1. Clean Ultra-Sleek Painterly Acrylic Motion Blur Background ===
+  ctx.fillStyle = "#031c10";
   drawSquircle(ctx, 0, 0, W, H, 16 * scale);
   ctx.fill();
 
-  // Dotted paper grid background (paper scribbled dot-matrix grid style)
   ctx.save();
-  ctx.fillStyle = "rgba(255, 255, 255, 0.09)";
-  const dotSpacing = 18 * scale;
-  const dotRadius = 1.1 * scale;
-  for (let x = dotSpacing / 2; x < W; x += dotSpacing) {
-    for (let y = dotSpacing / 2; y < H; y += dotSpacing) {
-      ctx.beginPath();
-      ctx.arc(x, y, dotRadius, 0, Math.PI * 2);
-      ctx.fill();
-    }
+  drawSquircle(ctx, 0, 0, W, H, 16 * scale);
+  ctx.clip();
+
+  // Multi-layered horizontal acrylic brush smudges (matching Reference Image 1)
+  const acrylicColors = [
+    "rgba(7, 77, 43, 0.45)",
+    "rgba(22, 110, 65, 0.35)",
+    "rgba(4, 38, 22, 0.60)",
+    "rgba(70, 130, 85, 0.25)",
+    "rgba(5, 50, 28, 0.65)",
+  ];
+
+  for (let i = 0; i < 30; i++) {
+    const strokeY = (H / 30) * i + Math.sin(i * 1.5) * 12 * scale;
+    const strokeH = (22 + (i % 6) * 7) * scale;
+    const strokeW = (W * 0.5 + ((i * 41) % 320)) * scale;
+    const strokeX = ((i * 125) % W) - strokeW * 0.25;
+
+    const strokeGrad = ctx.createLinearGradient(strokeX, strokeY, strokeX + strokeW, strokeY);
+    const col = acrylicColors[i % acrylicColors.length];
+    strokeGrad.addColorStop(0, "rgba(0,0,0,0)");
+    strokeGrad.addColorStop(0.25, col);
+    strokeGrad.addColorStop(0.75, col);
+    strokeGrad.addColorStop(1, "rgba(0,0,0,0)");
+
+    ctx.fillStyle = strokeGrad;
+    ctx.fillRect(strokeX, strokeY - strokeH / 2, strokeW, strokeH);
   }
+
+  // Fine Spray-paint Grain for organic acrylic texture
+  addGrain(ctx, W, H, 0.05, scale);
   ctx.restore();
 
-  addGrain(ctx, W, H, 0.035, scale);
+
 
 
   // === 2. LEFT HALF: CIRCULAR PORTRAIT BADGE ===
