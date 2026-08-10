@@ -17,8 +17,8 @@
 }
 
 :root {
-  --background: #f5f2eb;
-  --foreground: #171717;
+  --background: #031f13;
+  --foreground: #faf8f3;
 }
 
 * {
@@ -26,49 +26,49 @@
 }
 
 body {
-  background: #f5f2eb;
-  color: #171717;
+  background: #031f13;
+  color: #faf8f3;
   font-family: var(--font-geist-sans), system-ui, -apple-system, sans-serif;
   background-image: 
-    radial-gradient(circle at 100% 0%, rgba(217, 119, 6, 0.06), transparent 40%),
-    radial-gradient(circle at 0% 100%, rgba(13, 74, 43, 0.06), transparent 40%);
+    radial-gradient(circle at 100% 0%, rgba(255, 0, 127, 0.12), transparent 45%),
+    radial-gradient(circle at 0% 100%, rgba(255, 230, 0, 0.10), transparent 45%);
   min-height: 100vh;
 }
 
 ::selection {
-  background: #fed7aa;
-  color: #7c2d12;
+  background: #ff007f;
+  color: #ffe600;
 }
 
 /* ── Scrollbar ──────────────────────────────────────────── */
 ::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-track { background: #f5f2eb; }
-::-webkit-scrollbar-thumb { background: #d7d0c2; border-radius: 999px; }
-::-webkit-scrollbar-thumb:hover { background: #b8b0a0; }
+::-webkit-scrollbar-track { background: #031f13; }
+::-webkit-scrollbar-thumb { background: #084828; border-radius: 999px; }
+::-webkit-scrollbar-thumb:hover { background: #0c6136; }
 
 /* ── Tactile Paper Surfaces & Double Overlay Shadows ───── */
 .surface {
-  background: #faf8f3;
-  border: 1.5px solid #e6dfd2;
+  background: #063821;
+  border: 1.5px solid rgba(255, 255, 255, 0.12);
   border-radius: 16px;
   box-shadow: 
-    0 1px 3px rgba(0, 0, 0, 0.05),
-    0 10px 24px -4px rgba(0, 0, 0, 0.08),
-    0 20px 40px -8px rgba(0, 0, 0, 0.06);
+    0 1px 3px rgba(0, 0, 0, 0.2),
+    0 10px 24px -4px rgba(0, 0, 0, 0.35);
 }
 
 .surface-raised {
-  background: #ffffff;
-  border: 1.5px solid #e6dfd2;
+  background: #084428;
+  border: 1.5px solid rgba(255, 255, 255, 0.15);
   border-radius: 16px;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
 }
 
 .paper-card {
-  background: #ffffff;
-  border: 1px solid #e5dfd3;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05), 0 1px 3px rgba(0, 0, 0, 0.04);
+  background: #063821;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
 }
+
 
 /* ── Buttons ────────────────────────────────────────────── */
 .btn-primary {

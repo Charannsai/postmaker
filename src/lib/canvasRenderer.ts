@@ -513,10 +513,48 @@ function drawBarcodeStamp(
   ctx.restore();
 }
 
+// ── Curved Text Helper ────────────────────────────────────────
+function drawCurvedText(
+  ctx: CanvasRenderingContext2D,
+  text: string,
+  cx: number,
+  cy: number,
+  radius: number,
+  startAngle: number,
+  endAngle: number,
+  font: string,
+  color: string,
+  scale: number
+) {
+  ctx.save();
+  ctx.font = font;
+  ctx.fillStyle = color;
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+
+  const numChars = text.length;
+  if (numChars === 0) return;
+  const angleStep = (endAngle - startAngle) / Math.max(1, numChars - 1);
+
+  for (let i = 0; i < numChars; i++) {
+    const char = text[i];
+    const angle = startAngle + i * angleStep;
+    const x = cx + Math.cos(angle) * radius;
+    const y = cy + Math.sin(angle) * radius;
+
+    ctx.save();
+    ctx.translate(x, y);
+    ctx.rotate(angle + Math.PI / 2);
+    ctx.fillText(char, 0, 0);
+    ctx.restore();
+  }
+  ctx.restore();
+}
+
 // ─────────────────────────────────────────────────────────────
-// DESIGN 2: SINGLE CLEAN EVENT PASS (BUILDER ID)
-// One clean frame, official Hacker House Goa logo assets,
-// hot pink & yellow Goa Devanagari stickers, crisp layout.
+// DESIGN 2: HORIZONTAL BUILDER ID BANNER (OFFICIAL REFERENCE)
+// Large circular portrait badge on left with curved ring text &
+// Devanagari Goa logo sticker; clean editorial info on right.
 // ─────────────────────────────────────────────────────────────
 export function renderBuilderCard(
   canvas: HTMLCanvasElement,
@@ -525,207 +563,251 @@ export function renderBuilderCard(
   card: CardData,
   scale: number = 2
 ) {
-  const W = 480 * scale;
-  const H = 850 * scale;
+  const W = 800 * scale;
+  const H = 418 * scale;
   canvas.width = W;
   canvas.height = H;
   const ctx = canvas.getContext("2d")!;
   ctx.clearRect(0, 0, W, H);
 
-  // === 1. Deep Goa Emerald Gradient Background (Single Clean Pass Frame) ===
+  // === 1. Deep Goa Emerald Gradient Background ===
   const bg = ctx.createLinearGradient(0, 0, W, H);
-  bg.addColorStop(0, "#004e28");
-  bg.addColorStop(0.4, "#02381c");
-  bg.addColorStop(1, "#012113");
+  bg.addColorStop(0, "#084e2a");
+  bg.addColorStop(0.5, "#053d20");
+  bg.addColorStop(1, "#022413");
   ctx.fillStyle = bg;
-  drawSquircle(ctx, 0, 0, W, H, 20 * scale);
+  drawSquircle(ctx, 0, 0, W, H, 16 * scale);
   ctx.fill();
 
-  // Subtle clean grid paper texture background inside single pass frame
+  // Subtle diagonal texture lines across right half (matching reference!)
+  ctx.save();
   ctx.strokeStyle = "rgba(255, 255, 255, 0.04)";
-  ctx.lineWidth = 1 * scale;
-  for (let gx = 0; gx <= W; gx += 30 * scale) {
+  ctx.lineWidth = 1.5 * scale;
+  for (let d = -H; d < W + H; d += 16 * scale) {
     ctx.beginPath();
-    ctx.moveTo(gx, 0);
-    ctx.lineTo(gx, H);
+    ctx.moveTo(d, 0);
+    ctx.lineTo(d - H, H);
     ctx.stroke();
   }
-  for (let gy = 0; gy <= H; gy += 30 * scale) {
-    ctx.beginPath();
-    ctx.moveTo(0, gy);
-    ctx.lineTo(W, gy);
-    ctx.stroke();
-  }
+  ctx.restore();
 
   addGrain(ctx, W, H, 0.03, scale);
 
-  // === 2. Official Header Logo (HACKER HOUSE Yellow Asset) ===
-  drawHackerHouseLogoStamp(ctx, W / 2 - 15 * scale, 48 * scale, 310 * scale, 52 * scale, scale);
+  // === 2. LEFT HALF: CIRCULAR PORTRAIT BADGE ===
+  const badgeCX = 220 * scale;
+  const badgeCY = H / 2;
 
-  // Official Devanagari "गोवा" Hot Pink & Yellow Sticker Stamp (Top Right)
-  drawGoaHindiLogoStamp(ctx, W - 62 * scale, 46 * scale, 76 * scale, 76 * scale, 0.12, scale);
-
-  // Official Subtitle Tag
+  // Outer dark drop shadow
   ctx.save();
-  ctx.fillStyle = "rgba(255, 255, 255, 0.85)";
-  ctx.font = `bold ${10 * scale}px sans-serif`;
-  ctx.textAlign = "center";
-  ctx.textBaseline = "top";
-  ctx.fillText("✦ OFFICIAL BUILDER PASS · AUG 13-16, GOA ✦", W / 2, 86 * scale);
-  ctx.restore();
-
-  // === 3. Centered Photo Window (Clean Frame Cutout) ===
-  const photoW = W * 0.65;
-  const photoH = photoW * 0.88;
-  const photoCX = W / 2;
-  const photoCY = 275 * scale;
-
-  // White Photo Cutout Frame with Clean Drop Shadow
-  ctx.save();
-  ctx.shadowColor = "rgba(0, 0, 0, 0.35)";
+  ctx.shadowColor = "rgba(0, 0, 0, 0.5)";
   ctx.shadowBlur = 24 * scale;
-  ctx.shadowOffsetY = 10 * scale;
-  ctx.fillStyle = "#ffffff";
-  drawSquircle(
-    ctx,
-    photoCX - photoW / 2 - 6 * scale,
-    photoCY - photoH / 2 - 6 * scale,
-    photoW + 12 * scale,
-    photoH + 12 * scale,
-    14 * scale
-  );
+  ctx.shadowOffsetY = 8 * scale;
+  ctx.fillStyle = "#011a0d";
+  ctx.beginPath();
+  ctx.arc(badgeCX, badgeCY, 162 * scale, 0, Math.PI * 2);
   ctx.fill();
   ctx.restore();
 
-  // Outer border
-  ctx.strokeStyle = "rgba(255, 255, 255, 0.3)";
-  ctx.lineWidth = 1.5 * scale;
-  drawSquircle(
-    ctx,
-    photoCX - photoW / 2 - 6 * scale,
-    photoCY - photoH / 2 - 6 * scale,
-    photoW + 12 * scale,
-    photoH + 12 * scale,
-    14 * scale
-  );
+  // Outer dark green ring
+  ctx.fillStyle = "#032915";
+  ctx.beginPath();
+  ctx.arc(badgeCX, badgeCY, 160 * scale, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Inner emerald ring
+  ctx.fillStyle = "#064223";
+  ctx.beginPath();
+  ctx.arc(badgeCX, badgeCY, 154 * scale, 0, Math.PI * 2);
+  ctx.fill();
+
+  ctx.strokeStyle = "#ffe600";
+  ctx.lineWidth = 2 * scale;
+  ctx.beginPath();
+  ctx.arc(badgeCX, badgeCY, 154 * scale, 0, Math.PI * 2);
   ctx.stroke();
 
-  // Photo clip
+  // Top curved text: "HACKER HOUSE GOA"
+  drawCurvedText(
+    ctx,
+    "HACKER HOUSE GOA",
+    badgeCX,
+    badgeCY,
+    138 * scale,
+    -Math.PI * 0.76,
+    -Math.PI * 0.24,
+    `900 ${15 * scale}px 'Impact', sans-serif`,
+    "#ffe600",
+    scale
+  );
+
+  // Bottom curved text: "AUG 13-16 · 2026"
+  drawCurvedText(
+    ctx,
+    "AUG 13-16 · 2026",
+    badgeCX,
+    badgeCY,
+    138 * scale,
+    Math.PI * 0.25,
+    Math.PI * 0.75,
+    `900 ${14 * scale}px 'Impact', sans-serif`,
+    "#ffe600",
+    scale
+  );
+
+  // Inner Photo Circle Window
+  const photoR = 114 * scale;
   ctx.save();
-  drawSquircle(ctx, photoCX - photoW / 2, photoCY - photoH / 2, photoW, photoH, 10 * scale);
+  ctx.shadowColor = "rgba(0,0,0,0.3)";
+  ctx.shadowBlur = 12 * scale;
+  ctx.fillStyle = "#ffffff";
+  ctx.beginPath();
+  ctx.arc(badgeCX, badgeCY, photoR + 4 * scale, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.restore();
+
+  // Photo Clip
+  ctx.save();
+  ctx.beginPath();
+  ctx.arc(badgeCX, badgeCY, photoR, 0, Math.PI * 2);
   ctx.clip();
 
   if (img) {
-    drawUserPhoto(ctx, img, photo, photoCX, photoCY, photoW, photoH);
+    drawUserPhoto(ctx, img, photo, badgeCX, badgeCY, photoR * 2, photoR * 2);
   } else {
     const pg = ctx.createLinearGradient(
-      photoCX - photoW / 2,
-      photoCY - photoH / 2,
-      photoCX + photoW / 2,
-      photoCY + photoH / 2
+      badgeCX - photoR,
+      badgeCY - photoR,
+      badgeCX + photoR,
+      badgeCY + photoR
     );
-    pg.addColorStop(0, "#004e28");
-    pg.addColorStop(1, "#012113");
+    pg.addColorStop(0, "#ffe600");
+    pg.addColorStop(1, "#ff007f");
     ctx.fillStyle = pg;
-    ctx.fillRect(photoCX - photoW / 2, photoCY - photoH / 2, photoW, photoH);
+    ctx.fillRect(badgeCX - photoR, badgeCY - photoR, photoR * 2, photoR * 2);
 
-    ctx.fillStyle = "#facc15";
-    ctx.font = `600 ${14 * scale}px sans-serif`;
+    ctx.fillStyle = "#ffffff";
+    ctx.font = `900 ${14 * scale}px sans-serif`;
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
-    ctx.fillText("Click to Upload Photo", photoCX, photoCY);
+    ctx.fillText("Click to Upload Photo", badgeCX, badgeCY);
   }
   ctx.restore();
 
-  // === 4. Builder Info Section (Clean, Bold, High Contrast) ===
-  let ty = photoCY + photoH / 2 + 32 * scale;
+  // Devanagari "गोवा" Hot Pink & Yellow Sticker Stamp (Overlapping bottom center of circular badge!)
+  drawGoaHindiLogoStamp(
+    ctx,
+    badgeCX,
+    badgeCY + photoR - 10 * scale,
+    88 * scale,
+    88 * scale,
+    0,
+    scale
+  );
 
-  // Full Name (Massive Bold Title)
-  const nameText = (card.name || "ALEX RIVERA").toUpperCase();
+  // === 3. RIGHT HALF: EDITORIAL INFO (MATCHING REFERENCE!) ===
+  const rx = 430 * scale;
+
+  // Top Title: Official HACKER HOUSE Yellow Asset Logo
+  drawHackerHouseLogoStamp(
+    ctx,
+    rx + 155 * scale,
+    50 * scale,
+    310 * scale,
+    52 * scale,
+    scale
+  );
+
+  // Subtitle Date
+  ctx.save();
+  ctx.fillStyle = "#ffe600";
+  ctx.font = `900 ${14 * scale}px monospace`;
+  ctx.textAlign = "left";
+  ctx.textBaseline = "top";
+  ctx.fillText("GOA · AUG 13-16 2026", rx, 96 * scale);
+  ctx.restore();
+
+  // Horizontal Accent Line
+  ctx.strokeStyle = "rgba(255, 255, 255, 0.25)";
+  ctx.lineWidth = 1.5 * scale;
+  ctx.beginPath();
+  ctx.moveTo(rx, 124 * scale);
+  ctx.lineTo(W - 40 * scale, 124 * scale);
+  ctx.stroke();
+
+  // Name Label / Big Title
+  const nameStr = (card.name || "A BUILDER").toUpperCase();
   ctx.save();
   ctx.fillStyle = "#ffffff";
-  ctx.font = `900 ${26 * scale}px 'Impact', sans-serif`;
-  ctx.textAlign = "center";
+  ctx.font = `900 ${32 * scale}px 'Impact', sans-serif`;
+  ctx.textAlign = "left";
   ctx.textBaseline = "top";
-  ctx.fillText(nameText, W / 2, ty);
-
-  // Hot Pink Accent Underline
-  const nameW = ctx.measureText(nameText).width;
-  ctx.fillStyle = "#ff007f";
-  ctx.fillRect(W / 2 - Math.min(nameW, W - 60 * scale) / 2, ty + 30 * scale, Math.min(nameW, W - 60 * scale), 4 * scale);
+  ctx.fillText(nameStr, rx, 144 * scale);
   ctx.restore();
 
-  // Role Badge & Handle
-  ty += 44 * scale;
-  const roleText = (card.role || "FULLSTACK").toUpperCase() + " BUILDER";
-
+  // Role: » ASYNC CUSTODIAN / FULLSTACK BUILDER in Hot Pink!
+  const roleStr = "» " + ((card.role || "FULLSTACK").toUpperCase()) + " BUILDER";
   ctx.save();
-  ctx.font = `900 ${9.5 * scale}px sans-serif`;
-  const rWidth = ctx.measureText(roleText).width + 20 * scale;
-
-  // Hot Pink Role Pill with Gold Font
   ctx.fillStyle = "#ff007f";
-  drawSquircle(ctx, W / 2 - rWidth / 2, ty, rWidth, 22 * scale, 6 * scale);
-  ctx.fill();
-
-  ctx.fillStyle = "#ffe600";
-  ctx.textAlign = "center";
-  ctx.textBaseline = "middle";
-  ctx.fillText(roleText, W / 2, ty + 11 * scale);
+  ctx.font = `900 ${18 * scale}px sans-serif`;
+  ctx.textAlign = "left";
+  ctx.textBaseline = "top";
+  ctx.fillText(roleStr, rx, 192 * scale);
   ctx.restore();
 
-  // Handle Tag
-  ty += 28 * scale;
-  const handleText = card.handle ? `@${card.handle.replace("@", "")}` : "@alexbuilds";
+  // Handle
+  const handleStr = card.handle ? `@${card.handle.replace("@", "")}` : "@alexbuilds";
+  ctx.save();
+  ctx.fillStyle = "#ffe600";
+  ctx.font = `700 ${14 * scale}px monospace`;
+  ctx.textAlign = "left";
+  ctx.textBaseline = "top";
+  ctx.fillText(handleStr, rx, 226 * scale);
+  ctx.restore();
+
+  // Motto / Tagline: "LESS NOISE. MORE SIGNAL."
+  const taglineStr = (card.funTitle || "LESS NOISE. MORE SIGNAL.").toUpperCase();
   ctx.save();
   ctx.fillStyle = "rgba(255, 255, 255, 0.75)";
-  ctx.font = `600 ${11 * scale}px monospace`;
-  ctx.textAlign = "center";
+  ctx.font = `700 ${12 * scale}px monospace`;
+  ctx.textAlign = "left";
   ctx.textBaseline = "top";
-  ctx.fillText(handleText, W / 2, ty);
+  ctx.fillText(taglineStr, rx, 272 * scale);
+
+  // Link
+  ctx.fillStyle = "#ffe600";
+  ctx.font = `700 ${15 * scale}px monospace`;
+  ctx.fillText("hhgoa.com", rx, 300 * scale);
   ctx.restore();
 
-  // Tagline
-  ty += 22 * scale;
-  const tagline = card.funTitle || "10x Caffeine-to-Code Pipeline";
-  ctx.save();
-  ctx.fillStyle = "#facc15";
-  ctx.font = `italic 700 ${14 * scale}px 'Georgia', serif`;
-  ctx.textAlign = "center";
-  ctx.textBaseline = "top";
-  ctx.fillText(`“ ${tagline} ”`, W / 2, ty);
-  ctx.restore();
-
-  // Tech Stack Badges
-  ty += 28 * scale;
+  // Tech Stack Badges (Bottom Right)
   const stack = card.techStack?.length > 0 ? card.techStack : ["React", "Next.js", "Solana", "TypeScript"];
   ctx.save();
-  ctx.font = `bold ${8 * scale}px sans-serif`;
+  ctx.font = `bold ${8.5 * scale}px sans-serif`;
   const stackW = stack.slice(0, 4).map((t) => ctx.measureText(t).width + 16 * scale);
-  const totalStackW = stackW.reduce((a, b) => a + b, 0) + (stackW.length - 1) * 6 * scale;
-  let sx = W / 2 - totalStackW / 2;
+  let sx = rx;
 
   for (let i = 0; i < Math.min(stack.length, 4); i++) {
     const pw = stackW[i];
+    if (sx + pw > W - 100 * scale) break;
+
     ctx.fillStyle = "#ffffff";
-    drawSquircle(ctx, sx, ty, pw, 18 * scale, 5 * scale);
+    drawSquircle(ctx, sx, 342 * scale, pw, 18 * scale, 5 * scale);
     ctx.fill();
 
     ctx.fillStyle = "#0f172a";
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
-    ctx.fillText(stack[i], sx + pw / 2, ty + 9 * scale);
+    ctx.fillText(stack[i], sx + pw / 2, 351 * scale);
 
     sx += pw + 6 * scale;
   }
   ctx.restore();
 
-  // === 5. Bottom Barcode & QR Code Section ===
-  const qrS = 48 * scale;
+  // Small QR Code (Far Bottom Right)
+  const qrS = 44 * scale;
   const qrX = W - qrS - 28 * scale;
-  const qrY = H - qrS - 42 * scale;
+  const qrY = H - qrS - 32 * scale;
 
-  // QR Code Box
   ctx.save();
   ctx.fillStyle = "#ffffff";
   ctx.fillRect(qrX - 3 * scale, qrY - 3 * scale, qrS + 6 * scale, qrS + 6 * scale);
@@ -733,7 +815,7 @@ export function renderBuilderCard(
   ctx.lineWidth = 1.5 * scale;
   ctx.strokeRect(qrX - 3 * scale, qrY - 3 * scale, qrS + 6 * scale, qrS + 6 * scale);
 
-  const cs = 4 * scale;
+  const cs = 3.5 * scale;
   const gn = Math.floor(qrS / cs);
   let seed = 42;
   const seededRand = () => {
@@ -748,61 +830,24 @@ export function renderBuilderCard(
       }
     }
   }
-  // Finder patterns
-  [[qrX, qrY], [qrX + qrS - 12 * scale, qrY], [qrX, qrY + qrS - 12 * scale]].forEach(([fx, fy]) => {
-    ctx.fillStyle = "#171717";
-    ctx.fillRect(fx, fy, 12 * scale, 12 * scale);
-    ctx.fillStyle = "#ffffff";
-    ctx.fillRect(fx + 2 * scale, fy + 2 * scale, 8 * scale, 8 * scale);
-    ctx.fillStyle = "#171717";
-    ctx.fillRect(fx + 4 * scale, fy + 4 * scale, 4 * scale, 4 * scale);
-  });
   ctx.restore();
 
-  // Barcode (Bottom Left)
-  const barY = H - 56 * scale;
-  const barX = 28 * scale;
-  const barH = 18 * scale;
-  drawBarcodeStamp(ctx, barX, barY, 120 * scale, barH, card.badgeId || "HHG-26-8420", scale);
-
-  // === 6. Dynamic Official Asset Stamps ===
+  // === 4. Dynamic Official Asset Stamps ===
   const activeCardStickers = card.stickers || [];
-  if (activeCardStickers.includes("goa-hindi-logo")) {
-    drawGoaHindiLogoStamp(ctx, 60 * scale, photoCY - photoH / 2 - 10 * scale, 70 * scale, 70 * scale, -0.15, scale);
-  }
-  if (activeCardStickers.includes("hacker-house-logo")) {
-    drawHackerHouseLogoStamp(ctx, W / 2, photoCY + photoH / 2 + 15 * scale, 220 * scale, 36 * scale, scale);
-  }
   if (activeCardStickers.includes("goa-sunset-art")) {
-    drawOfficialArtStamp(ctx, "/assets/goa-sunset-bg.jpg", W - 70 * scale, photoCY + photoH / 2 + 10 * scale, 90 * scale, 75 * scale, 0.1, scale);
+    drawOfficialArtStamp(ctx, "/assets/goa-sunset-bg.jpg", W - 70 * scale, 170 * scale, 90 * scale, 75 * scale, 0.08, scale);
   }
   if (activeCardStickers.includes("goa-signpost-art")) {
-    drawOfficialArtStamp(ctx, "/assets/goa-signpost-bg.jpg", 70 * scale, photoCY + photoH / 2 + 10 * scale, 90 * scale, 75 * scale, -0.1, scale);
+    drawOfficialArtStamp(ctx, "/assets/goa-signpost-bg.jpg", W - 70 * scale, 170 * scale, 90 * scale, 75 * scale, -0.08, scale);
   }
   if (activeCardStickers.includes("hacker-shack-art")) {
-    drawOfficialArtStamp(ctx, "/assets/hacker-shack-bg.jpg", W / 2, H - 120 * scale, 120 * scale, 85 * scale, 0, scale);
+    drawOfficialArtStamp(ctx, "/assets/hacker-shack-bg.jpg", W - 80 * scale, 170 * scale, 110 * scale, 80 * scale, 0, scale);
   }
   if (activeCardStickers.includes("approved-stamp")) {
-    drawApprovedStamp(ctx, W / 2, photoCY, "BUILDER VERIFIED", scale);
+    drawApprovedStamp(ctx, rx + 160 * scale, 170 * scale, "BUILDER VERIFIED", scale);
   }
-
-  // === 7. Bottom Gold Ticker Tape ===
-  const tickerH = 26 * scale;
-  const tickerY = H - tickerH;
-
-  ctx.fillStyle = "#facc15";
-  ctx.fillRect(0, tickerY, W, tickerH);
-
-  ctx.fillStyle = "#072e1a";
-  ctx.font = `bold ${8.5 * scale}px monospace`;
-  ctx.textAlign = "left";
-  ctx.textBaseline = "middle";
-
-  const tickerText = "+ HACKER HOUSE GOA 2026 + EVERYTHING INTENTIONAL + #FrameInGoa ";
-  let tx = 0;
-  while (tx < W + 300 * scale) {
-    ctx.fillText(tickerText, tx, tickerY + tickerH / 2);
-    tx += ctx.measureText(tickerText).width;
+  if (activeCardStickers.includes("barcode")) {
+    drawBarcodeStamp(ctx, rx, 375 * scale, 110 * scale, 14 * scale, card.badgeId || "HHG-26-8420", scale);
   }
 }
 
@@ -819,4 +864,5 @@ export function canvasToBlob(canvas: HTMLCanvasElement): Promise<Blob> {
     );
   });
 }
+
 
