@@ -78,11 +78,6 @@ export default function ShareModal({ open, onClose, canvasRef, mode }: ShareModa
           </div>
         </div>
 
-        <div className="p-3 rounded-xl bg-[#031c10] border border-[#166940]">
-          <p className="text-[10px] text-[#ffe600] font-mono mb-1 font-bold uppercase">PRE-FILLED TWEET CAPTION</p>
-          <p className="text-[11.5px] text-emerald-200/80 italic">{caption}</p>
-        </div>
-
         <a
           href={tweetUrl}
           target="_blank"
