@@ -755,13 +755,22 @@ export function renderBuilderCard(
   ctx.lineTo(W - 40 * scale, 124 * scale);
   ctx.stroke();
 
-  // Name Label / Big Title
+  // Name Label / Big Title - Modern, clean & crisp styling
   const nameStr = (card.name || "A BUILDER").toUpperCase();
   ctx.save();
   ctx.fillStyle = "#ffffff";
-  ctx.font = `900 ${32 * scale}px 'Impact', sans-serif`;
   ctx.textAlign = "left";
   ctx.textBaseline = "top";
+
+  let nameFontSize = 28 * scale;
+  ctx.font = `700 ${nameFontSize}px 'Space Grotesk', 'Plus Jakarta Sans', sans-serif`;
+  const maxNameWidth = W - rx - 40 * scale;
+
+  while (ctx.measureText(nameStr).width > maxNameWidth && nameFontSize > 16 * scale) {
+    nameFontSize -= 1.5 * scale;
+    ctx.font = `700 ${nameFontSize}px 'Space Grotesk', 'Plus Jakarta Sans', sans-serif`;
+  }
+
   ctx.fillText(nameStr, rx, 144 * scale);
   ctx.restore();
 
