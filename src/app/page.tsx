@@ -5,7 +5,6 @@ import type { AppMode, PhotoState, FrameSettings, CardData } from "@/types";
 import Header from "@/components/Header";
 import PreviewCanvas from "@/components/PreviewCanvas";
 import ExportActions from "@/components/ExportActions";
-import ShareModal from "@/components/ShareModal";
 import PhotoControls from "@/components/PhotoControls";
 import PfpFrameControls from "@/components/PfpFrameControls";
 import BuilderCardControls from "@/components/BuilderCardControls";
@@ -51,7 +50,6 @@ export default function HomePage() {
   const [photo, setPhoto] = useState<PhotoState>(DEFAULT_PHOTO);
   const [frame, setFrame] = useState<FrameSettings>(DEFAULT_FRAME);
   const [card, setCard] = useState<CardData>(DEFAULT_CARD);
-  const [shareOpen, setShareOpen] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [dragOver, setDragOver] = useState(false);
   const [customTab, setCustomTab] = useState<"details" | "photo">("details");
@@ -209,7 +207,7 @@ export default function HomePage() {
                 <ExportActions
                   canvasRef={canvasRef}
                   mode={mode}
-                  onShareClick={() => setShareOpen(true)}
+                  userName={card.name}
                 />
               </div>
             </div>
@@ -287,14 +285,6 @@ export default function HomePage() {
         </a>
       </footer>
 
-      {/* ── Share Modal ────────────────────────────────────── */}
-      <ShareModal
-        open={shareOpen}
-        onClose={() => setShareOpen(false)}
-        canvasRef={canvasRef}
-        mode={mode}
-        userName={card.name}
-      />
     </div>
   );
 }

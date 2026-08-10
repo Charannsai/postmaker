@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Download, Copy, Share2, Check, Loader2 } from "lucide-react";
+import { Download, Copy, ExternalLink, Check, Loader2 } from "lucide-react";
 import confetti from "canvas-confetti";
 import { canvasToBlob } from "@/lib/canvasRenderer";
 import type { AppMode } from "@/types";
@@ -9,13 +9,13 @@ import type { AppMode } from "@/types";
 interface ExportActionsProps {
   canvasRef: React.RefObject<HTMLCanvasElement | null>;
   mode: AppMode;
-  onShareClick: () => void;
+  userName?: string;
 }
 
 export default function ExportActions({
   canvasRef,
   mode,
-  onShareClick,
+  userName,
 }: ExportActionsProps) {
   const [downloading, setDownloading] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -63,6 +63,35 @@ export default function ExportActions({
     }
   };
 
+  const handleShareToX = async () => {
+    const canvas = canvasRef.current;
+    if (canvas) {
+      try {
+        const blob = await canvasToBlob(canvas);
+        await navigator.clipboard.write([
+          new ClipboardItem({ "image/png": blob }),
+        ]);
+      } catch {
+        // Continue even if clipboard write fails
+      }
+    }
+
+    const siteUrl =
+      typeof window !== "undefined" &&
+      window.location.origin &&
+      !window.location.origin.includes("localhost")
+        ? window.location.origin
+        : "https://hhgoa-id-maker.vercel.app/";
+
+    const userDisplayName = userName?.trim() || "";
+    const nameLine = userDisplayName ? `\n\n${userDisplayName}` : "";
+
+    const caption = `Built my Hacker House Goa Builder Card! 🏝️🚀${nameLine}\n\nExcited to build, ship, and connect with amazing builders in Goa! ⚡🌴\n\nCreate your own Builder Card 👇\n${siteUrl}\n\n#FrameInGoa #HHGoa2026`;
+    const tweetUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(caption)}`;
+
+    window.open(tweetUrl, "_blank", "noopener,noreferrer");
+  };
+
   return (
     <div className="flex flex-col gap-3 w-full animate-fade-in">
       <button
@@ -96,10 +125,10 @@ export default function ExportActions({
           )}
         </button>
         <button
-          onClick={onShareClick}
+          onClick={handleShareToX}
           className="btn-pink flex-1 flex items-center justify-center gap-2 text-[11px] uppercase tracking-wider"
         >
-          <Share2 className="w-3.5 h-3.5" />
+          <ExternalLink className="w-3.5 h-3.5" />
           Share on 𝕏
         </button>
       </div>
