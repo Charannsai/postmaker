@@ -744,8 +744,8 @@ export function renderBuilderCard(
   ctx.fillText(nameStr, rx, 144 * scale);
   ctx.restore();
 
-  // Role: » ASYNC CUSTODIAN / FULLSTACK BUILDER in Hot Pink!
-  const roleStr = "» " + ((card.role || "FULLSTACK").toUpperCase()) + " BUILDER";
+  // Role in Hot Pink!
+  const roleStr = "» " + ((card.role || "FULLSTACK").toUpperCase());
   ctx.save();
   ctx.fillStyle = "#ff007f";
   ctx.font = `900 ${18 * scale}px sans-serif`;
@@ -753,6 +753,7 @@ export function renderBuilderCard(
   ctx.textBaseline = "top";
   ctx.fillText(roleStr, rx, 192 * scale);
   ctx.restore();
+
 
   // Handle
   const handleStr = card.handle ? `@${card.handle.replace("@", "")}` : "@alexbuilds";
