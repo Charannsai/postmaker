@@ -155,69 +155,26 @@ export function renderPfpFrame(
   ctx.fillStyle = "#faf5ee";
   ctx.fillRect(mx, my, stampW, stampH);
 
-  // === 3. MASSIVE BOLD TEXT BEHIND THE PHOTO ===
-  // This is the key visual — huge chunky text filling the stamp
-  const caption = frame.caption || "HH GOA";
-  const words = caption.toUpperCase().split(" ").filter(w => w.length > 0);
+  // === 3. PHOTO STICKER CUTOUT (Die-cut card frame in center) ===
+  const photoW = stampW * 0.58;
+  const photoH = stampH * 0.50;
+  const photoCX = mx + stampW / 2;
+  const photoCY = my + stampH * 0.53;
 
-  ctx.save();
-  ctx.textAlign = "center";
-  ctx.textBaseline = "middle";
-
-  // Calculate font size to fill the width
-  let bigFontSize = 70 * scale;
-  ctx.font = `900 ${bigFontSize}px 'Impact', sans-serif`;
-
-  // Draw each word stacked, filling the frame
-  const totalWords = words.length || 1;
-  const lineH = bigFontSize * 1.05;
-  const textBlockH = totalWords * lineH;
-  const textStartY = my + stampH * 0.5 - textBlockH / 2 + lineH / 2;
-
-  // Red shadow layer (3D depth effect like the reference)
-  for (let i = 0; i < words.length; i++) {
-    const word = words[i];
-    // Auto-size each word to fill stamp width
-    let wSize = bigFontSize;
-    ctx.font = `900 ${wSize}px 'Impact', sans-serif`;
-    while (ctx.measureText(word).width > stampW - 24 * scale && wSize > 20 * scale) {
-      wSize -= 2 * scale;
-      ctx.font = `900 ${wSize}px 'Impact', sans-serif`;
-    }
-    // Make it actually fill the width
-    while (ctx.measureText(word).width < stampW - 50 * scale && wSize < 140 * scale) {
-      wSize += 2 * scale;
-      ctx.font = `900 ${wSize}px 'Impact', sans-serif`;
-    }
-
-    const wy = textStartY + i * lineH;
-
-    // Red 3D shadow
-    ctx.fillStyle = "#b91c1c";
-    ctx.font = `900 ${wSize}px 'Impact', sans-serif`;
-    ctx.fillText(word, mx + stampW / 2 + 3 * scale, wy + 3 * scale);
-
-    // Main yellow fill
-    ctx.fillStyle = "#facc15";
-    ctx.fillText(word, mx + stampW / 2, wy);
-  }
-  ctx.restore();
-
-  // === 4. PHOTO AS WHITE STICKER CUTOUT ON TOP ===
-  // The photo sits ON TOP of the text with a thick white border
   if (img) {
-    const photoW = stampW * 0.72;
-    const photoH = stampH * 0.65;
-    const photoCX = mx + stampW / 2;
-    const photoCY = my + stampH * 0.48;
-
-    // Thick white sticker border (the die-cut effect)
+    // Thick white sticker border (die-cut effect)
     ctx.save();
     ctx.shadowColor = "rgba(0, 0, 0, 0.25)";
     ctx.shadowBlur = 16 * scale;
     ctx.shadowOffsetY = 6 * scale;
-    drawSquircle(ctx, photoCX - photoW / 2 - 6 * scale, photoCY - photoH / 2 - 6 * scale,
-      photoW + 12 * scale, photoH + 12 * scale, 14 * scale);
+    drawSquircle(
+      ctx,
+      photoCX - photoW / 2 - 6 * scale,
+      photoCY - photoH / 2 - 6 * scale,
+      photoW + 12 * scale,
+      photoH + 12 * scale,
+      14 * scale
+    );
     ctx.fillStyle = "#ffffff";
     ctx.fill();
     ctx.restore();
@@ -230,19 +187,96 @@ export function renderPfpFrame(
     ctx.restore();
   } else {
     // Placeholder
-    const phW = stampW * 0.6;
-    const phH = stampH * 0.5;
-    const phCX = mx + stampW / 2;
-    const phCY = my + stampH * 0.45;
-    ctx.fillStyle = "rgba(13, 74, 43, 0.15)";
-    drawSquircle(ctx, phCX - phW / 2, phCY - phH / 2, phW, phH, 12 * scale);
+    ctx.save();
+    ctx.shadowColor = "rgba(0, 0, 0, 0.15)";
+    ctx.shadowBlur = 12 * scale;
+    ctx.shadowOffsetY = 4 * scale;
+    drawSquircle(
+      ctx,
+      photoCX - photoW / 2 - 6 * scale,
+      photoCY - photoH / 2 - 6 * scale,
+      photoW + 12 * scale,
+      photoH + 12 * scale,
+      14 * scale
+    );
+    ctx.fillStyle = "#ffffff";
     ctx.fill();
-    ctx.fillStyle = "#a3a3a3";
-    ctx.font = `600 ${12 * scale}px sans-serif`;
+    ctx.restore();
+
+    ctx.fillStyle = "rgba(13, 74, 43, 0.08)";
+    drawSquircle(ctx, photoCX - photoW / 2, photoCY - photoH / 2, photoW, photoH, 10 * scale);
+    ctx.fill();
+
+    ctx.fillStyle = "#737373";
+    ctx.font = `600 ${13 * scale}px sans-serif`;
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
-    ctx.fillText("Upload Photo", phCX, phCY);
+    ctx.fillText("Click to upload photo", photoCX, photoCY);
   }
+
+  // === 4. MASSIVE BOLD STAMP TEXT (PROMINENT & UN-COVERED) ===
+  const caption = (frame.caption || "HH GOA").trim();
+  const words = caption.toUpperCase().split(/\s+/).filter((w) => w.length > 0);
+
+  let topText = "";
+  let bottomText = "";
+
+  if (words.length >= 2) {
+    const mid = Math.ceil(words.length / 2);
+    topText = words.slice(0, mid).join(" ");
+    bottomText = words.slice(mid).join(" ");
+  } else if (words.length === 1) {
+    topText = words[0];
+    bottomText = frame.subcaption ? frame.subcaption.toUpperCase() : "GOA 2026";
+  } else {
+    topText = "HH";
+    bottomText = "GOA";
+  }
+
+  const drawBoldTextLine = (text: string, cy: number) => {
+    ctx.save();
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+
+    let fontSize = 68 * scale;
+    ctx.font = `900 ${fontSize}px 'Impact', sans-serif`;
+
+    const maxW = stampW - 32 * scale;
+    while (ctx.measureText(text).width > maxW && fontSize > 20 * scale) {
+      fontSize -= 2 * scale;
+      ctx.font = `900 ${fontSize}px 'Impact', sans-serif`;
+    }
+    while (ctx.measureText(text).width < maxW * 0.7 && fontSize < 110 * scale) {
+      fontSize += 2 * scale;
+      ctx.font = `900 ${fontSize}px 'Impact', sans-serif`;
+    }
+
+    const cx = mx + stampW / 2;
+
+    // Dark outline stroke for crisp contrast pop
+    ctx.strokeStyle = "#052012";
+    ctx.lineWidth = 4 * scale;
+    ctx.lineJoin = "miter";
+    ctx.miterLimit = 2;
+    ctx.strokeText(text, cx + 3 * scale, cy + 3 * scale);
+
+    // Deep Red 3D Shadow
+    ctx.fillStyle = "#b91c1c";
+    ctx.font = `900 ${fontSize}px 'Impact', sans-serif`;
+    ctx.fillText(text, cx + 3 * scale, cy + 3 * scale);
+
+    // Main Yellow Fill
+    ctx.fillStyle = "#facc15";
+    ctx.fillText(text, cx, cy);
+
+    ctx.restore();
+  };
+
+  // Top header text line (Y ~ 20% of stamp height)
+  drawBoldTextLine(topText, my + stampH * 0.2);
+
+  // Bottom text line (Y ~ 84% of stamp height)
+  drawBoldTextLine(bottomText, my + stampH * 0.84);
 
   // === 5. Corner Number ===
   ctx.fillStyle = "#0d4a2b";
