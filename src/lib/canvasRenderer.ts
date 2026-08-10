@@ -756,9 +756,10 @@ export function renderBuilderCard(
   ctx.stroke();
 
   // Name Label / Big Title - Modern, clean & crisp styling
-  const nameStr = (card.name || "A BUILDER").toUpperCase();
+  const isNameEmpty = !card.name?.trim();
+  const nameStr = (card.name?.trim() || "YOUR NAME HERE").toUpperCase();
   ctx.save();
-  ctx.fillStyle = "#ffffff";
+  ctx.fillStyle = isNameEmpty ? "rgba(255, 255, 255, 0.4)" : "#ffffff";
   ctx.textAlign = "left";
   ctx.textBaseline = "top";
 
@@ -775,9 +776,10 @@ export function renderBuilderCard(
   ctx.restore();
 
   // Role in Hot Pink!
-  const roleStr = "» " + ((card.role || "FULLSTACK").toUpperCase());
+  const isRoleEmpty = !card.role?.trim();
+  const roleStr = "» " + (card.role?.trim() || "BUILDER").toUpperCase();
   ctx.save();
-  ctx.fillStyle = "#ff007f";
+  ctx.fillStyle = isRoleEmpty ? "rgba(255, 0, 127, 0.5)" : "#ff007f";
   ctx.font = `900 ${18 * scale}px sans-serif`;
   ctx.textAlign = "left";
   ctx.textBaseline = "top";
@@ -785,9 +787,11 @@ export function renderBuilderCard(
   ctx.restore();
 
   // Handle
-  const handleStr = card.handle ? `@${card.handle.replace("@", "")}` : "@alexbuilds";
+  const isHandleEmpty = !card.handle?.trim();
+  const rawHandle = card.handle?.trim().replace(/^@+/, "") || "";
+  const handleStr = rawHandle ? `@${rawHandle}` : "@yourhandle";
   ctx.save();
-  ctx.fillStyle = "#ffe600";
+  ctx.fillStyle = isHandleEmpty ? "rgba(255, 230, 0, 0.4)" : "#ffe600";
   ctx.font = `700 ${14 * scale}px monospace`;
   ctx.textAlign = "left";
   ctx.textBaseline = "top";
@@ -795,16 +799,14 @@ export function renderBuilderCard(
   ctx.restore();
 
   // Motto / Tagline
-  if (card.funTitle) {
-    const taglineStr = card.funTitle.toUpperCase();
-    ctx.save();
-    ctx.fillStyle = "rgba(255, 255, 255, 0.75)";
-    ctx.font = `700 ${12 * scale}px monospace`;
-    ctx.textAlign = "left";
-    ctx.textBaseline = "top";
-    ctx.fillText(taglineStr, rx, 272 * scale);
-    ctx.restore();
-  }
+  const taglineStr = (card.funTitle?.trim() || "SHIPPING IN GOA · HH GOA 2026").toUpperCase();
+  ctx.save();
+  ctx.fillStyle = !card.funTitle?.trim() ? "rgba(255, 255, 255, 0.35)" : "rgba(255, 255, 255, 0.75)";
+  ctx.font = `700 ${12 * scale}px monospace`;
+  ctx.textAlign = "left";
+  ctx.textBaseline = "top";
+  ctx.fillText(taglineStr, rx, 272 * scale);
+  ctx.restore();
 
   // Link
   ctx.save();

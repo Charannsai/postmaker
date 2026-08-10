@@ -23,7 +23,7 @@ const DEFAULT_PHOTO: PhotoState = {
 };
 
 const DEFAULT_FRAME: FrameSettings = {
-  caption: "HH GOA",
+  caption: "",
   subcaption: "HH GOA 2026",
   captionStyle: "bold-street",
   stickers: ["goa-hindi-logo"],
@@ -33,13 +33,13 @@ const DEFAULT_FRAME: FrameSettings = {
 
 
 const DEFAULT_CARD: CardData = {
-  name: "ALEX RIVERA",
-  nickname: "ALEX",
-  handle: "alexbuilds",
-  role: "Fullstack",
-  techStack: ["Next.js", "TypeScript", "Solana", "Tailwind"],
-  funTitle: "10x Caffeine-to-Code Pipeline",
-  noteText: "TREMBLING W/ EXCITEMENT & NERVES",
+  name: "",
+  nickname: "",
+  handle: "",
+  role: "",
+  techStack: [],
+  funTitle: "",
+  noteText: "",
   badgeId: "HHG-26-8420",
   stickers: ["goa-hindi-logo", "goa-sunset-art"],
   bgStyle: "notebook-lined",
@@ -53,6 +53,7 @@ export default function HomePage() {
   const [uploading, setUploading] = useState(false);
   const [dragOver, setDragOver] = useState(false);
   const [customTab, setCustomTab] = useState<"details" | "photo">("details");
+  const [validationError, setValidationError] = useState<string | null>(null);
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -208,6 +209,10 @@ export default function HomePage() {
                   canvasRef={canvasRef}
                   mode={mode}
                   userName={card.name}
+                  onValidationError={(msg) => {
+                    setValidationError(msg);
+                    setCustomTab("details");
+                  }}
                 />
               </div>
             </div>
@@ -261,7 +266,14 @@ export default function HomePage() {
                   mode === "pfp-frame" ? (
                     <PfpFrameControls frame={frame} onChange={updateFrame} />
                   ) : (
-                    <BuilderCardControls card={card} onCardChange={updateCard} />
+                    <BuilderCardControls
+                      card={card}
+                      onCardChange={(u) => {
+                        setValidationError(null);
+                        updateCard(u);
+                      }}
+                      validationError={validationError}
+                    />
                   )
                 ) : (
                   <PhotoControls photo={photo} onChange={updatePhoto} />

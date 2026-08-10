@@ -10,17 +10,28 @@ interface ExportActionsProps {
   canvasRef: React.RefObject<HTMLCanvasElement | null>;
   mode: AppMode;
   userName?: string;
+  onValidationError?: (msg: string) => void;
 }
 
 export default function ExportActions({
   canvasRef,
   mode,
   userName,
+  onValidationError,
 }: ExportActionsProps) {
   const [downloading, setDownloading] = useState(false);
   const [copied, setCopied] = useState(false);
 
+  const validateInputs = (): boolean => {
+    if (mode === "builder-card" && !userName?.trim()) {
+      onValidationError?.("Please enter your Full Name before exporting or sharing!");
+      return false;
+    }
+    return true;
+  };
+
   const handleDownload = async () => {
+    if (!validateInputs()) return;
     const canvas = canvasRef.current;
     if (!canvas) return;
     setDownloading(true);
@@ -64,6 +75,7 @@ export default function ExportActions({
   };
 
   const handleShareToX = async () => {
+    if (!validateInputs()) return;
     const canvas = canvasRef.current;
     if (canvas) {
       try {

@@ -84,7 +84,7 @@ export interface CardData {
   name: string;
   nickname: string;
   handle: string;
-  role: BuilderRole;
+  role: BuilderRole | string;
   techStack: string[];
   funTitle: string;
   noteText: string;
