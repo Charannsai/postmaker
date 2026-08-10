@@ -10,26 +10,23 @@ interface HeaderProps {
 export default function Header({ mode, onModeChange }: HeaderProps) {
   return (
     <header className="w-full flex flex-col items-center pt-8 pb-4 px-4 text-center select-none">
-      {/* Main Title & Brand Logo */}
-      <div className="flex items-center justify-center gap-3">
-        <h1 className="text-3xl sm:text-4xl md:text-5xl font-black font-serif tracking-tight text-[#ffe600] uppercase drop-shadow-md">
-          HACKER HOUSE
-        </h1>
+      {/* Main Title & Brand Logo Asset */}
+      <div className="flex items-center justify-center">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
-          src="/assets/goa-hindi-logo.png"
-          alt="गोवा"
-          className="h-8 sm:h-10 w-auto drop-shadow-[0_2px_10px_rgba(255,0,127,0.5)]"
+          src="/assets/image.png"
+          alt="HACKER HOUSE GOA"
+          className="h-24 sm:h-28 md:h-32 w-auto drop-shadow-[0_4px_20px_rgba(255,230,0,0.3)] transition-transform hover:scale-105"
         />
+
       </div>
 
-      {/* Subtitle Dates & Tagline */}
-      <div className="mt-2 space-y-1 font-mono text-[11px] sm:text-[12px] tracking-[0.25em] text-emerald-200/75 uppercase">
-        <div>OCT 28-31 · 2026 · GOA</div>
-        <div className="text-emerald-400/90 font-semibold tracking-[0.3em]">
-          LESS NOISE. MORE SIGNAL.
-        </div>
+      {/* Subtitle Dates */}
+      <div className="mt-3 font-mono text-[11px] sm:text-[12px] tracking-[0.25em] text-emerald-200/90 font-bold uppercase">
+        28 – 31 OCT 2026 · GOA
       </div>
+
+
 
       {/* Mode Selector Capsule Pill */}
       <div className="mt-6 inline-flex items-center p-1 rounded-full bg-[#032113]/90 border border-[#166940] shadow-xl backdrop-blur-md">

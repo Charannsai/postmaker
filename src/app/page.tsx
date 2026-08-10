@@ -29,8 +29,9 @@ const DEFAULT_FRAME: FrameSettings = {
   captionStyle: "bold-street",
   stickers: ["goa-hindi-logo"],
   bgStyle: "paper-wrinkled",
-  aspectRatio: "4:5",
+  aspectRatio: "1:1",
 };
+
 
 const DEFAULT_CARD: CardData = {
   name: "ALEX RIVERA",

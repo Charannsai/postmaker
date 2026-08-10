@@ -399,7 +399,8 @@ function drawHackerHouseLogoStamp(
   h: number,
   scale: number = 2
 ) {
-  const img = getOrLoadAsset("/assets/hacker-house-logo.png");
+  const img = getOrLoadAsset("/assets/image.png");
+
   ctx.save();
   ctx.translate(cx, cy);
   ctx.shadowColor = "rgba(0,0,0,0.2)";
@@ -640,10 +641,10 @@ export function renderBuilderCard(
     scale
   );
 
-  // Bottom curved text: "AUG 13-16 · 2026"
+  // Bottom curved text: "28–31 OCT 2026"
   drawCurvedText(
     ctx,
-    "AUG 13-16 · 2026",
+    "28–31 OCT 2026",
     badgeCX,
     badgeCY,
     138 * scale,
@@ -704,26 +705,26 @@ export function renderBuilderCard(
     scale
   );
 
-  // === 3. RIGHT HALF: EDITORIAL INFO (MATCHING REFERENCE!) ===
+  // === 3. RIGHT HALF: EDITORIAL INFO ===
   const rx = 430 * scale;
 
-  // Top Title: Official HACKER HOUSE Yellow Asset Logo
+  // Top Title: Official HACKER HOUSE Yellow & Pink Asset Logo
   drawHackerHouseLogoStamp(
     ctx,
-    rx + 155 * scale,
-    50 * scale,
-    310 * scale,
-    52 * scale,
+    rx + 65 * scale,
+    58 * scale,
+    130 * scale,
+    115 * scale,
     scale
   );
 
-  // Subtitle Date
+  // Subtitle Date & Location beside logo
   ctx.save();
   ctx.fillStyle = "#ffe600";
   ctx.font = `900 ${14 * scale}px monospace`;
   ctx.textAlign = "left";
   ctx.textBaseline = "top";
-  ctx.fillText("GOA · AUG 13-16 2026", rx, 96 * scale);
+  ctx.fillText("GOA · 28–31 OCT 2026", rx + 145 * scale, 65 * scale);
   ctx.restore();
 
   // Horizontal Accent Line
@@ -754,7 +755,6 @@ export function renderBuilderCard(
   ctx.fillText(roleStr, rx, 192 * scale);
   ctx.restore();
 
-
   // Handle
   const handleStr = card.handle ? `@${card.handle.replace("@", "")}` : "@alexbuilds";
   ctx.save();
@@ -765,92 +765,37 @@ export function renderBuilderCard(
   ctx.fillText(handleStr, rx, 226 * scale);
   ctx.restore();
 
-  // Motto / Tagline: "LESS NOISE. MORE SIGNAL."
-  const taglineStr = (card.funTitle || "LESS NOISE. MORE SIGNAL.").toUpperCase();
-  ctx.save();
-  ctx.fillStyle = "rgba(255, 255, 255, 0.75)";
-  ctx.font = `700 ${12 * scale}px monospace`;
-  ctx.textAlign = "left";
-  ctx.textBaseline = "top";
-  ctx.fillText(taglineStr, rx, 272 * scale);
+  // Motto / Tagline
+  if (card.funTitle) {
+    const taglineStr = card.funTitle.toUpperCase();
+    ctx.save();
+    ctx.fillStyle = "rgba(255, 255, 255, 0.75)";
+    ctx.font = `700 ${12 * scale}px monospace`;
+    ctx.textAlign = "left";
+    ctx.textBaseline = "top";
+    ctx.fillText(taglineStr, rx, 272 * scale);
+    ctx.restore();
+  }
 
   // Link
+  ctx.save();
   ctx.fillStyle = "#ffe600";
   ctx.font = `700 ${15 * scale}px monospace`;
-  ctx.fillText("hhgoa.com", rx, 300 * scale);
+  ctx.textAlign = "left";
+  ctx.textBaseline = "top";
+  ctx.fillText("hhgoa.com", rx, 305 * scale);
   ctx.restore();
 
-  // Tech Stack Badges (Bottom Right)
-  const stack = card.techStack?.length > 0 ? card.techStack : ["React", "Next.js", "Solana", "TypeScript"];
-  ctx.save();
-  ctx.font = `bold ${8.5 * scale}px sans-serif`;
-  const stackW = stack.slice(0, 4).map((t) => ctx.measureText(t).width + 16 * scale);
-  let sx = rx;
-
-  for (let i = 0; i < Math.min(stack.length, 4); i++) {
-    const pw = stackW[i];
-    if (sx + pw > W - 100 * scale) break;
-
-    ctx.fillStyle = "#ffffff";
-    drawSquircle(ctx, sx, 342 * scale, pw, 18 * scale, 5 * scale);
-    ctx.fill();
-
-    ctx.fillStyle = "#0f172a";
-    ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
-    ctx.fillText(stack[i], sx + pw / 2, 351 * scale);
-
-    sx += pw + 6 * scale;
-  }
-  ctx.restore();
-
-  // Small QR Code (Far Bottom Right)
-  const qrS = 44 * scale;
-  const qrX = W - qrS - 28 * scale;
-  const qrY = H - qrS - 32 * scale;
-
-  ctx.save();
-  ctx.fillStyle = "#ffffff";
-  ctx.fillRect(qrX - 3 * scale, qrY - 3 * scale, qrS + 6 * scale, qrS + 6 * scale);
-  ctx.strokeStyle = "#171717";
-  ctx.lineWidth = 1.5 * scale;
-  ctx.strokeRect(qrX - 3 * scale, qrY - 3 * scale, qrS + 6 * scale, qrS + 6 * scale);
-
-  const cs = 3.5 * scale;
-  const gn = Math.floor(qrS / cs);
-  let seed = 42;
-  const seededRand = () => {
-    seed = (seed * 16807) % 2147483647;
-    return seed / 2147483647;
-  };
-  for (let gx = 0; gx < gn; gx++) {
-    for (let gy = 0; gy < gn; gy++) {
-      if (seededRand() > 0.42) {
-        ctx.fillStyle = "#171717";
-        ctx.fillRect(qrX + gx * cs, qrY + gy * cs, cs - 0.5 * scale, cs - 0.5 * scale);
-      }
-    }
-  }
-  ctx.restore();
-
-  // === 4. Dynamic Official Asset Stamps ===
+  // Dynamic Official Barcode or Verified Stamp (Cleaned up, no QR or beach art)
   const activeCardStickers = card.stickers || [];
-  if (activeCardStickers.includes("goa-sunset-art")) {
-    drawOfficialArtStamp(ctx, "/assets/goa-sunset-bg.jpg", W - 70 * scale, 170 * scale, 90 * scale, 75 * scale, 0.08, scale);
-  }
-  if (activeCardStickers.includes("goa-signpost-art")) {
-    drawOfficialArtStamp(ctx, "/assets/goa-signpost-bg.jpg", W - 70 * scale, 170 * scale, 90 * scale, 75 * scale, -0.08, scale);
-  }
-  if (activeCardStickers.includes("hacker-shack-art")) {
-    drawOfficialArtStamp(ctx, "/assets/hacker-shack-bg.jpg", W - 80 * scale, 170 * scale, 110 * scale, 80 * scale, 0, scale);
-  }
   if (activeCardStickers.includes("approved-stamp")) {
-    drawApprovedStamp(ctx, rx + 160 * scale, 170 * scale, "BUILDER VERIFIED", scale);
+    drawApprovedStamp(ctx, W - 100 * scale, 240 * scale, "VERIFIED", scale);
   }
   if (activeCardStickers.includes("barcode")) {
-    drawBarcodeStamp(ctx, rx, 375 * scale, 110 * scale, 14 * scale, card.badgeId || "HHG-26-8420", scale);
+    drawBarcodeStamp(ctx, rx, 350 * scale, 120 * scale, 16 * scale, card.badgeId || "HHG-26-8420", scale);
   }
 }
+
 
 // ── Export ────────────────────────────────────────────────────
 export function canvasToBlob(canvas: HTMLCanvasElement): Promise<Blob> {
