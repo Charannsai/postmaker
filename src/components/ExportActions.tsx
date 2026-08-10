@@ -64,29 +64,29 @@ export default function ExportActions({
   };
 
   return (
-    <div className="flex flex-col gap-2.5 w-full animate-fade-in">
+    <div className="flex flex-col gap-3 w-full animate-fade-in">
       <button
         onClick={handleDownload}
         disabled={downloading}
-        className="btn-primary flex items-center justify-center gap-2 w-full !py-3 text-[14px]"
+        className="btn-yellow flex items-center justify-center gap-2.5 w-full !py-3.5 !text-[13px] uppercase tracking-wider"
       >
         {downloading ? (
-          <Loader2 className="w-4 h-4 animate-spin" />
+          <Loader2 className="w-4 h-4 animate-spin text-[#042616]" />
         ) : (
-          <Download className="w-4 h-4" />
+          <Download className="w-4 h-4 text-[#042616]" />
         )}
         {downloading ? "Exporting High-Res PNG…" : "Download High-Res PNG (2x)"}
       </button>
 
-      <div className="flex gap-2">
+      <div className="flex gap-2.5">
         <button
           onClick={handleCopy}
-          className="btn-ghost flex-1 flex items-center justify-center gap-2 text-[12px]"
+          className="btn-dark-pill flex-1 flex items-center justify-center gap-2 text-[11px] uppercase tracking-wider"
         >
           {copied ? (
             <>
-              <Check className="w-3.5 h-3.5 text-[#15803d]" />
-              <span className="text-[#15803d] font-bold">Copied!</span>
+              <Check className="w-3.5 h-3.5 text-[#ffe600]" />
+              <span className="text-[#ffe600] font-bold">Copied!</span>
             </>
           ) : (
             <>
@@ -97,12 +97,13 @@ export default function ExportActions({
         </button>
         <button
           onClick={onShareClick}
-          className="btn-ghost flex-1 flex items-center justify-center gap-2 text-[12px] !border-[#171717] !bg-[#faf8f3]"
+          className="btn-pink flex-1 flex items-center justify-center gap-2 text-[11px] uppercase tracking-wider"
         >
           <Share2 className="w-3.5 h-3.5" />
-          Share to 𝕏 (#FrameInGoa)
+          Share on 𝕏
         </button>
       </div>
     </div>
   );
 }
+

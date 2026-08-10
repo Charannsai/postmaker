@@ -35,10 +35,10 @@ export default function BuilderCardControls({ card, onCardChange }: BuilderCardC
   };
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 text-emerald-100">
       {/* Name */}
       <div className="space-y-1">
-        <label className="text-[11px] font-bold text-[#171717] uppercase tracking-wider block">
+        <label className="text-[11px] font-mono font-bold text-[#ffe600] uppercase tracking-wider block">
           Full Name
         </label>
         <input
@@ -53,7 +53,7 @@ export default function BuilderCardControls({ card, onCardChange }: BuilderCardC
 
       {/* Handle */}
       <div className="space-y-1">
-        <label className="text-[11px] font-bold text-[#171717] uppercase tracking-wider block">
+        <label className="text-[11px] font-mono font-bold text-[#ffe600] uppercase tracking-wider block">
           Handle
         </label>
         <input
@@ -68,7 +68,7 @@ export default function BuilderCardControls({ card, onCardChange }: BuilderCardC
 
       {/* Role */}
       <div className="space-y-1.5">
-        <label className="text-[11px] font-bold text-[#171717] uppercase tracking-wider block">
+        <label className="text-[11px] font-mono font-bold text-[#ffe600] uppercase tracking-wider block">
           Role
         </label>
         <div className="flex flex-wrap gap-1.5">
@@ -85,10 +85,10 @@ export default function BuilderCardControls({ card, onCardChange }: BuilderCardC
       </div>
 
       {/* Fun Title */}
-      <div className="space-y-1 pt-2 border-t border-[#e6dfd2]">
+      <div className="space-y-1 pt-2 border-t border-[#166940]">
         <div className="flex items-center justify-between">
-          <label className="text-[11px] font-bold text-[#171717] uppercase tracking-wider">Tagline</label>
-          <button onClick={randomizeTitle} className="flex items-center gap-1 text-[10px] text-[#b45309] hover:text-[#78350f] font-semibold">
+          <label className="text-[11px] font-mono font-bold text-[#ffe600] uppercase tracking-wider">Tagline</label>
+          <button onClick={randomizeTitle} className="flex items-center gap-1 text-[10px] text-[#ffe600] hover:text-[#fff066] font-mono font-semibold">
             <Shuffle className="w-3 h-3" /> Random
           </button>
         </div>
@@ -103,10 +103,10 @@ export default function BuilderCardControls({ card, onCardChange }: BuilderCardC
       </div>
 
       {/* Tech Stack */}
-      <div className="space-y-1.5 pt-2 border-t border-[#e6dfd2]">
+      <div className="space-y-1.5 pt-2 border-t border-[#166940]">
         <div className="flex items-center justify-between">
-          <label className="text-[11px] font-bold text-[#171717] uppercase tracking-wider">Tech Stack</label>
-          <span className="text-[10px] font-mono text-[#b45309] font-semibold">{card.techStack?.length || 0}/4</span>
+          <label className="text-[11px] font-mono font-bold text-[#ffe600] uppercase tracking-wider">Tech Stack</label>
+          <span className="text-[10px] font-mono text-[#ffe600] font-semibold">{card.techStack?.length || 0}/4</span>
         </div>
         <div className="flex flex-wrap gap-1.5">
           {TECH_STACK_OPTIONS.map((t) => (
@@ -122,8 +122,8 @@ export default function BuilderCardControls({ card, onCardChange }: BuilderCardC
       </div>
 
       {/* Stamps & Scribbles */}
-      <div className="space-y-1.5 pt-2 border-t border-[#e6dfd2]">
-        <label className="text-[11px] font-bold text-[#171717] uppercase tracking-wider block">
+      <div className="space-y-1.5 pt-2 border-t border-[#166940]">
+        <label className="text-[11px] font-mono font-bold text-[#ffe600] uppercase tracking-wider block">
           Pass Stamps & Doodles
         </label>
         <div className="flex flex-wrap gap-1.5">
@@ -151,4 +151,5 @@ export default function BuilderCardControls({ card, onCardChange }: BuilderCardC
     </div>
   );
 }
+
 

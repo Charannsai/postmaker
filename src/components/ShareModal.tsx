@@ -24,7 +24,7 @@ export default function ShareModal({ open, onClose, canvasRef, mode }: ShareModa
   if (!open) return null;
 
   const caption = CAPTIONS[mode];
-  const tweetUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(caption)}&hashtags=FrameInGoa,HHGoa2026`;
+  const tweetUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(caption)}`;
 
   const handleCopyImage = async () => {
     const canvas = canvasRef.current;
@@ -42,27 +42,27 @@ export default function ShareModal({ open, onClose, canvasRef, mode }: ShareModa
   return (
     <div className="fixed inset-0 z-[100] modal-overlay flex items-center justify-center p-4" onClick={onClose}>
       <div
-        className="surface w-full max-w-sm p-6 space-y-4 bg-[#faf8f3] border-2 border-[#e6dfd2] shadow-2xl"
+        className="w-full max-w-sm p-6 space-y-4 bg-[#042616] border border-[#166940] rounded-2xl shadow-2xl text-emerald-100"
         onClick={(e) => e.stopPropagation()}
         style={{ animation: "scale-in 0.2s ease" }}
       >
-        <div className="flex items-center justify-between border-b border-[#e6dfd2] pb-3">
-          <span className="text-base font-serif font-black text-[#171717]">Share to X</span>
-          <button onClick={onClose} className="text-[#737373] hover:text-[#171717] transition-colors">
+        <div className="flex items-center justify-between border-b border-[#166940] pb-3">
+          <span className="text-base font-serif font-black text-[#ffe600]">Share to 𝕏</span>
+          <button onClick={onClose} className="text-emerald-300/70 hover:text-white transition-colors">
             <XIcon className="w-4 h-4" />
           </button>
         </div>
 
-        <div className="flex items-start gap-3 p-3.5 rounded-xl bg-[#ffffff] border border-[#e6dfd2]">
-          <span className="shrink-0 w-6 h-6 rounded-full bg-[#171717] text-[#ffffff] flex items-center justify-center text-[11px] font-bold">1</span>
+        <div className="flex items-start gap-3 p-3.5 rounded-xl bg-[#031c10] border border-[#166940]">
+          <span className="shrink-0 w-6 h-6 rounded-full bg-[#ffe600] text-[#042616] flex items-center justify-center text-[11px] font-bold">1</span>
           <div className="space-y-1.5">
-            <p className="text-[12.5px] font-bold text-[#171717]">Copy high-res image</p>
+            <p className="text-[12.5px] font-bold text-white font-mono">Copy high-res image</p>
             <button
               onClick={handleCopyImage}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#f5f2eb] text-[#171717] text-[11px] font-bold hover:bg-[#e6dfd2] transition-all border border-[#d7d0c2] shadow-sm"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#166940] text-[#ffe600] text-[11px] font-mono font-bold hover:bg-[#1e8854] transition-all border border-[#166940] shadow-sm"
             >
               {copied ? (
-                <><Check className="w-3.5 h-3.5 text-[#15803d]" />Copied!</>
+                <><Check className="w-3.5 h-3.5 text-[#ffe600]" />Copied!</>
               ) : (
                 <><Copy className="w-3.5 h-3.5" />Copy Image to Clipboard</>
               )}
@@ -70,29 +70,30 @@ export default function ShareModal({ open, onClose, canvasRef, mode }: ShareModa
           </div>
         </div>
 
-        <div className="flex items-start gap-3 p-3.5 rounded-xl bg-[#ffffff] border border-[#e6dfd2]">
-          <span className="shrink-0 w-6 h-6 rounded-full bg-[#fed7aa] text-[#7c2d12] flex items-center justify-center text-[11px] font-bold border border-[#fdba74]">2</span>
+        <div className="flex items-start gap-3 p-3.5 rounded-xl bg-[#031c10] border border-[#166940]">
+          <span className="shrink-0 w-6 h-6 rounded-full bg-[#ff007f] text-white flex items-center justify-center text-[11px] font-bold">2</span>
           <div>
-            <p className="text-[12.5px] font-bold text-[#171717]">Paste in X Tweet Composer</p>
-            <p className="text-[11px] text-[#737373] mt-0.5">Paste your copied image directly into your tweet.</p>
+            <p className="text-[12.5px] font-bold text-white font-mono">Paste in 𝕏 Composer</p>
+            <p className="text-[11px] text-emerald-300/70 mt-0.5 font-mono">Paste image directly into your tweet.</p>
           </div>
         </div>
 
-        <div className="p-3 rounded-xl bg-[#ffffff] border border-[#e6dfd2]">
-          <p className="text-[10px] text-[#b45309] font-mono mb-1 font-bold">PRE-FILLED TWEET CAPTION</p>
-          <p className="text-[11.5px] text-[#525252] italic">{caption}</p>
+        <div className="p-3 rounded-xl bg-[#031c10] border border-[#166940]">
+          <p className="text-[10px] text-[#ffe600] font-mono mb-1 font-bold uppercase">PRE-FILLED TWEET CAPTION</p>
+          <p className="text-[11.5px] text-emerald-200/80 italic">{caption}</p>
         </div>
 
         <a
           href={tweetUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="btn-primary flex items-center justify-center gap-2 w-full !py-2.5 text-[13px]"
+          className="btn-pink flex items-center justify-center gap-2 w-full !py-3 text-[13px]"
         >
           <ExternalLink className="w-4 h-4" />
-          Open X and Post
+          Open 𝕏 and Post
         </a>
       </div>
     </div>
   );
 }
+

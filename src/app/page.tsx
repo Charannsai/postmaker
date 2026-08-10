@@ -1,20 +1,14 @@
 "use client";
 
 import { useState, useRef, useCallback } from "react";
-import type {
-  AppMode,
-  PhotoState,
-  FrameSettings,
-  CardData,
-} from "@/types";
-import PhotoUploader from "@/components/PhotoUploader";
-import PhotoControls from "@/components/PhotoControls";
-import PfpFrameControls from "@/components/PfpFrameControls";
-import BuilderCardControls from "@/components/BuilderCardControls";
+import type { AppMode, PhotoState, FrameSettings, CardData } from "@/types";
+import Header from "@/components/Header";
 import PreviewCanvas from "@/components/PreviewCanvas";
 import ExportActions from "@/components/ExportActions";
 import ShareModal from "@/components/ShareModal";
-import { Image as ImageIcon, IdCard, Sparkles } from "lucide-react";
+import CustomizeDrawer from "@/components/CustomizeDrawer";
+import { isHeicFile, convertHeicToBlob } from "@/lib/heicConverter";
+import { Upload, Sliders, ImagePlus, Loader2 } from "lucide-react";
 
 const DEFAULT_PHOTO: PhotoState = {
   src: null,
@@ -49,15 +43,18 @@ const DEFAULT_CARD: CardData = {
   bgStyle: "notebook-lined",
 };
 
-
-
 export default function HomePage() {
   const [mode, setMode] = useState<AppMode>("pfp-frame");
   const [photo, setPhoto] = useState<PhotoState>(DEFAULT_PHOTO);
   const [frame, setFrame] = useState<FrameSettings>(DEFAULT_FRAME);
   const [card, setCard] = useState<CardData>(DEFAULT_CARD);
   const [shareOpen, setShareOpen] = useState(false);
+  const [customizeOpen, setCustomizeOpen] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const [dragOver, setDragOver] = useState(false);
+
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const updatePhoto = useCallback(
     (u: Partial<PhotoState>) => setPhoto((p) => ({ ...p, ...u })),
@@ -72,108 +69,148 @@ export default function HomePage() {
     []
   );
 
+  const handleFile = useCallback(
+    async (file: File) => {
+      setUploading(true);
+      try {
+        let blob: Blob = file;
+        if (isHeicFile(file)) {
+          blob = await convertHeicToBlob(file);
+        }
+        const url = URL.createObjectURL(blob);
+        updatePhoto({ src: url, offsetX: 0, offsetY: 0, zoom: 1 });
+      } catch (err) {
+        console.error("Error loading image:", err);
+      } finally {
+        setUploading(false);
+      }
+    },
+    [updatePhoto]
+  );
+
+  const handleDrop = useCallback(
+    (e: React.DragEvent) => {
+      e.preventDefault();
+      setDragOver(false);
+      const file = e.dataTransfer.files?.[0];
+      if (file && (file.type.startsWith("image/") || isHeicFile(file))) {
+        handleFile(file);
+      }
+    },
+    [handleFile]
+  );
+
+  const handleInputChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const file = e.target.files?.[0];
+      if (file) handleFile(file);
+    },
+    [handleFile]
+  );
+
   return (
-    <div className="min-h-screen bg-[#f5f2eb] text-[#171717] selection:bg-[#fed7aa] selection:text-[#7c2d12]">
-      {/* ── Studio Header ─────────────────────────────────── */}
-      <header className="sticky top-0 z-40 bg-[#faf8f3]/90 backdrop-blur-md border-b border-[#e6dfd2] px-4 sm:px-8 py-3.5 shadow-sm">
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <img
-              src="/assets/goa-hindi-logo.png"
-              alt="गोवा"
-              className="h-8 w-auto drop-shadow-sm transition-transform hover:scale-105"
-            />
-            <div className="flex items-center gap-1.5 tracking-tight">
-              <span className="text-[17px] font-black tracking-tight text-[#004e28]">
-                HACKER HOUSE
-              </span>
-              <span className="text-[9px] font-sans font-extrabold bg-[#ff007f] text-[#ffe600] px-2 py-0.5 rounded-md shadow-sm border border-[#ff007f]">
-                GOA &apos;26
-              </span>
-            </div>
-            <span className="hidden md:inline-flex items-center text-[10px] font-mono bg-[#ffffff] text-[#525252] px-2 py-0.5 rounded-full border border-[#e6dfd2] ml-2">
-              AUG 13-16 · GOA, INDIA
-            </span>
-          </div>
-
-
-          {/* Mode Switcher: Single PFP Poster vs Single Builder ID */}
-          <div className="flex items-center p-1 rounded-xl bg-[#ffffff] border border-[#e6dfd2] shadow-sm">
-            <button
-              onClick={() => setMode("pfp-frame")}
-              className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-[12px] font-bold transition-all ${
-                mode === "pfp-frame"
-                  ? "bg-[#171717] text-[#ffffff] shadow-sm"
-                  : "text-[#737373] hover:text-[#171717]"
-              }`}
-            >
-              <ImageIcon className="w-3.5 h-3.5" />
-              Stamp PFP
-            </button>
-            <button
-              onClick={() => setMode("builder-card")}
-              className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-[12px] font-bold transition-all ${
-                mode === "builder-card"
-                  ? "bg-[#171717] text-[#ffffff] shadow-sm"
-                  : "text-[#737373] hover:text-[#171717]"
-              }`}
-            >
-              <IdCard className="w-3.5 h-3.5" />
-              Event Pass
-            </button>
-          </div>
+    <div className="min-h-screen bg-[#073820] text-[#faf8f3] flex flex-col justify-between relative overflow-x-hidden selection:bg-[#ff007f] selection:text-[#ffe600]">
+      {/* ── Left Side Ticker (Desktop) ────────────────────── */}
+      <aside className="hidden xl:flex fixed left-8 top-1/2 -translate-y-1/2 flex-col items-center gap-6 z-20 pointer-events-none opacity-40 hover:opacity-100 transition-opacity">
+        <div className="sprocket-dots">
+          <div className="sprocket-dot" />
+          <div className="sprocket-dot" />
+          <div className="sprocket-dot" />
         </div>
-      </header>
-
-      {/* ── Main Studio Layout ────────────────────────────── */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-8 space-y-6">
-        {/* Intro Header */}
-        <div className="text-center max-w-2xl mx-auto space-y-2">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#ffffff] border border-[#e6dfd2] text-[11px] font-mono text-[#525252] shadow-sm">
-            <Sparkles className="w-3.5 h-3.5 text-[#d97706]" />
-            #FrameInGoa · Official Studio
-          </div>
-          <h1 className="text-2xl sm:text-3xl font-serif font-black text-[#171717] tracking-tight">
-            {mode === "pfp-frame"
-              ? "Retro Stamp PFP Maker"
-              : "Event Pass Generator"}
-          </h1>
-          <p className="text-[13px] text-[#525252]">
-            {mode === "pfp-frame"
-              ? "Scalloped perforated stamp with massive bold text and your photo as a sticker cutout."
-              : "Official lanyard badge on a Goa event poster with your name, role, and tech stack."}
-          </p>
+        <div className="vertical-ticker">
+          SOMMELIER · RACE CONDITION MYSTIC · MERGE CONFLICT ARCHITECT · EDGE CASE DIPLOMAT
         </div>
+        <div className="sprocket-dots">
+          <div className="sprocket-dot" />
+          <div className="sprocket-dot" />
+          <div className="sprocket-dot" />
+        </div>
+      </aside>
 
-        {/* 3-Column Studio Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-          {/* Left Column: Photo Upload & Adjustments */}
-          <div className="lg:col-span-3 order-2 lg:order-1 space-y-4">
-            <div className="surface p-4 sm:p-5 space-y-4">
-              <div className="flex items-center justify-between border-b border-[#e6dfd2] pb-2.5">
-                <span className="text-[12px] font-bold text-[#171717] uppercase tracking-wider">
-                  1. Your Photo
-                </span>
-                <span className="text-[10px] text-[#737373] font-mono">
-                  HEIC / JPG / PNG
-                </span>
+      {/* ── Right Side Ticker (Desktop) ───────────────────── */}
+      <aside className="hidden xl:flex fixed right-8 top-1/2 -translate-y-1/2 flex-col items-center gap-6 z-20 pointer-events-none opacity-40 hover:opacity-100 transition-opacity">
+        <div className="sprocket-dots">
+          <div className="sprocket-dot" />
+          <div className="sprocket-dot" />
+          <div className="sprocket-dot" />
+        </div>
+        <div className="vertical-ticker">
+          OCT 28 - OCT 31 · 2026 · GOA · 15.2993° N, 74.1240° E · LESS NOISE. MORE SIGNAL.
+        </div>
+        <div className="sprocket-dots">
+          <div className="sprocket-dot" />
+          <div className="sprocket-dot" />
+          <div className="sprocket-dot" />
+        </div>
+      </aside>
+
+      {/* ── Header ────────────────────────────────────────── */}
+      <Header mode={mode} onModeChange={setMode} />
+
+      {/* ── Main Hero Dropzone & Studio Area ──────────────── */}
+      <main className="flex-1 max-w-4xl mx-auto w-full px-4 sm:px-6 py-4 flex flex-col items-center justify-center my-auto">
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept="image/*,.heic,.heif"
+          className="hidden"
+          onChange={handleInputChange}
+        />
+
+        <div className="w-full max-w-[560px] flex flex-col items-center space-y-6">
+          {/* Main Central Card Container */}
+          <div
+            onDragOver={(e) => {
+              e.preventDefault();
+              setDragOver(true);
+            }}
+            onDragLeave={() => setDragOver(false)}
+            onDrop={handleDrop}
+            className={`w-full dashed-dropzone p-4 sm:p-8 flex flex-col items-center justify-center transition-all ${
+              dragOver ? "drag-over" : ""
+            } ${!photo.src ? "min-h-[380px] sm:min-h-[420px]" : ""}`}
+            onClick={() => {
+              if (!photo.src) fileInputRef.current?.click();
+            }}
+          >
+            {/* Corner Crop Brackets */}
+            <div className="corner-bracket corner-tl" />
+            <div className="corner-bracket corner-tr" />
+            <div className="corner-bracket corner-bl" />
+            <div className="corner-bracket corner-br" />
+
+            {/* Content State 1: Upload Prompt */}
+            {!photo.src ? (
+              <div className="flex flex-col items-center text-center space-y-6 py-8">
+                {uploading ? (
+                  <div className="flex flex-col items-center gap-3">
+                    <Loader2 className="w-10 h-10 text-[#ffe600] animate-spin" />
+                    <p className="font-mono text-sm text-emerald-200">Processing Photo...</p>
+                  </div>
+                ) : (
+                  <>
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        fileInputRef.current?.click();
+                      }}
+                      className="btn-yellow text-sm py-3.5 px-8"
+                    >
+                      <Upload className="w-4 h-4 text-[#042616]" />
+                      UPLOAD A PHOTO
+                    </button>
+
+                    <div className="space-y-1 font-mono text-[11px] text-emerald-300/70 uppercase tracking-widest">
+                      <div>JPG · PNG · HEIC · WEBP</div>
+                      <div>ANY SHAPE – WE&apos;LL FRAME IT</div>
+                    </div>
+                  </>
+                )}
               </div>
-
-              <PhotoUploader
-                photoSrc={photo.src}
-                onPhotoLoaded={(src) => updatePhoto({ src })}
-              />
-
-              {photo.src && (
-                <PhotoControls photo={photo} onChange={updatePhoto} />
-              )}
-            </div>
-          </div>
-
-          {/* Center Column: Live Preview & Direct Actions */}
-          <div className="lg:col-span-5 order-1 lg:order-2 flex flex-col items-center space-y-4">
-            <div className="w-full flex flex-col items-center surface p-4 sm:p-6 bg-[#faf8f3]">
-              <div className="w-full max-w-[440px]">
+            ) : (
+              /* Content State 2: Live Canvas Preview */
+              <div className="w-full flex flex-col items-center space-y-4">
                 <PreviewCanvas
                   canvasRef={canvasRef}
                   mode={mode}
@@ -185,53 +222,67 @@ export default function HomePage() {
                   }
                 />
               </div>
-            </div>
+            )}
+          </div>
 
-            {/* Direct Export Action Toolbar */}
-            <div className="w-full max-w-[440px]">
+          {/* Quick Action Toolbar underneath main card */}
+          {photo.src && (
+            <div className="w-full space-y-3">
               <ExportActions
                 canvasRef={canvasRef}
                 mode={mode}
                 onShareClick={() => setShareOpen(true)}
               />
-            </div>
-          </div>
 
-          {/* Right Column: Information & Details */}
-          <div className="lg:col-span-4 order-3 lg:order-3 space-y-4">
-            <div className="surface p-4 sm:p-5 space-y-4">
-              <div className="flex items-center justify-between border-b border-[#e6dfd2] pb-2.5">
-                <span className="text-[12px] font-bold text-[#171717] uppercase tracking-wider">
-                  2. {mode === "pfp-frame" ? "Stamp Text" : "Your Details"}
-                </span>
-                <span className="text-[10px] text-[#737373] font-mono">
-                  {mode === "pfp-frame" ? "Bold Overlay" : "Name / Role / Stack"}
-                </span>
+              <div className="flex items-center justify-center gap-2 pt-1">
+                <button
+                  onClick={() => setCustomizeOpen(true)}
+                  className="btn-dark-pill flex items-center gap-2 text-xs !py-2 !px-5"
+                >
+                  <Sliders className="w-3.5 h-3.5 text-[#ffe600]" />
+                  Tweak & Customize
+                </button>
+                <button
+                  onClick={() => fileInputRef.current?.click()}
+                  className="btn-dark-pill flex items-center gap-2 text-xs !py-2 !px-5"
+                >
+                  <ImagePlus className="w-3.5 h-3.5 text-emerald-300" />
+                  Replace Photo
+                </button>
               </div>
-
-              {mode === "pfp-frame" ? (
-                <PfpFrameControls frame={frame} onChange={updateFrame} />
-              ) : (
-                <BuilderCardControls
-                  card={card}
-                  onCardChange={updateCard}
-                />
-              )}
             </div>
-          </div>
+          )}
         </div>
       </main>
 
-      <footer className="text-center py-6 text-[11px] text-[#737373] font-mono border-t border-[#e6dfd2] mt-12 bg-[#faf8f3]">
-        HACKER HOUSE GOA 2026 · Everything intentional. · #FrameInGoa
+      {/* ── Footer ────────────────────────────────────────── */}
+      <footer className="text-center py-6 px-4 space-y-1.5 font-mono text-[11px] text-emerald-300/60 uppercase tracking-widest border-t border-[#166940]/40 bg-[#042616]/60 backdrop-blur-sm select-none">
+        <div>NO LOGIN. NO SIGNUP. ONE PASS.</div>
+        <div className="text-emerald-400/80 font-bold">
+          <span className="text-[#ff007f]">#FrameInGoa</span> · mhgoa.com
+        </div>
       </footer>
 
+      {/* ── Modals & Drawers ──────────────────────────────── */}
       <ShareModal
         open={shareOpen}
         onClose={() => setShareOpen(false)}
         canvasRef={canvasRef}
         mode={mode}
       />
+
+      <CustomizeDrawer
+        open={customizeOpen}
+        onClose={() => setCustomizeOpen(false)}
+        mode={mode}
+        photo={photo}
+        frame={frame}
+        card={card}
+        onUpdatePhoto={updatePhoto}
+        onUpdateFrame={updateFrame}
+        onUpdateCard={updateCard}
+      />
     </div>
   );
 }
+

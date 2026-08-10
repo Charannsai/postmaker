@@ -19,10 +19,10 @@ export default function PfpFrameControls({ frame, onChange }: PfpFrameControlsPr
   };
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-5 text-emerald-100">
       {/* Stamp Text */}
       <div className="space-y-1.5">
-        <label className="text-[11px] font-bold text-[#171717] uppercase tracking-wider block">
+        <label className="text-[11px] font-mono font-bold text-[#ffe600] uppercase tracking-wider block">
           Stamp Text (Big Bold Text)
         </label>
         <input
@@ -33,14 +33,14 @@ export default function PfpFrameControls({ frame, onChange }: PfpFrameControlsPr
           maxLength={20}
           className="input !text-[15px] !font-black !tracking-wider"
         />
-        <p className="text-[10px] text-[#737373]">
+        <p className="text-[10px] text-emerald-400/60 font-mono">
           Shorter text = bigger letters. Try 1-2 words for maximum impact.
         </p>
       </div>
 
       {/* Quick Presets */}
       <div className="space-y-1.5">
-        <span className="text-[10px] text-[#737373] font-mono block">Quick Presets:</span>
+        <span className="text-[10px] text-emerald-300/70 font-mono block">Quick Presets:</span>
         <div className="flex flex-wrap gap-1.5">
           {["HH GOA", "HACKER", "GOA 26", "SHIPPED", "BUILDER", "CODE", "VIBES"].map((t) => (
             <button
@@ -55,8 +55,8 @@ export default function PfpFrameControls({ frame, onChange }: PfpFrameControlsPr
       </div>
 
       {/* Stamps & Stickers */}
-      <div className="space-y-1.5 pt-3 border-t border-[#e6dfd2]">
-        <label className="text-[11px] font-bold text-[#171717] uppercase tracking-wider block">
+      <div className="space-y-1.5 pt-3 border-t border-[#166940]">
+        <label className="text-[11px] font-mono font-bold text-[#ffe600] uppercase tracking-wider block">
           Stamps & Scribbles
         </label>
         <div className="flex flex-wrap gap-1.5">
@@ -76,8 +76,8 @@ export default function PfpFrameControls({ frame, onChange }: PfpFrameControlsPr
       </div>
 
       {/* Background Style */}
-      <div className="space-y-1.5 pt-3 border-t border-[#e6dfd2]">
-        <label className="text-[11px] font-bold text-[#171717] uppercase tracking-wider block">
+      <div className="space-y-1.5 pt-3 border-t border-[#166940]">
+        <label className="text-[11px] font-mono font-bold text-[#ffe600] uppercase tracking-wider block">
           Paper Background Style
         </label>
         <div className="grid grid-cols-2 gap-1.5">
@@ -85,14 +85,14 @@ export default function PfpFrameControls({ frame, onChange }: PfpFrameControlsPr
             <button
               key={bg.id}
               onClick={() => onChange({ bgStyle: bg.id as BackgroundStyleId })}
-              className={`flex items-center gap-2 p-2 rounded-lg text-[11px] font-bold border transition-all ${
+              className={`flex items-center gap-2 p-2 rounded-xl text-[11px] font-mono font-bold border transition-all ${
                 frame.bgStyle === bg.id
-                  ? "bg-[#171717] text-[#ffffff] border-[#171717]"
-                  : "bg-[#ffffff] text-[#525252] border-[#e6dfd2] hover:border-[#171717]"
+                  ? "bg-[#ffe600] text-[#042616] border-[#ffe600]"
+                  : "bg-[#031c10] text-emerald-200 border-[#166940] hover:border-[#ffe600]"
               }`}
             >
               <span
-                className="w-3.5 h-3.5 rounded-full border border-black/10 shrink-0"
+                className="w-3.5 h-3.5 rounded-full border border-black/20 shrink-0"
                 style={{ backgroundColor: bg.preview }}
               />
               <span className="truncate">{bg.label}</span>
@@ -102,8 +102,8 @@ export default function PfpFrameControls({ frame, onChange }: PfpFrameControlsPr
       </div>
 
       {/* Aspect Ratio */}
-      <div className="space-y-1.5 pt-3 border-t border-[#e6dfd2]">
-        <label className="text-[11px] font-bold text-[#171717] uppercase tracking-wider block">
+      <div className="space-y-1.5 pt-3 border-t border-[#166940]">
+        <label className="text-[11px] font-mono font-bold text-[#ffe600] uppercase tracking-wider block">
           Format
         </label>
         <div className="flex gap-1.5">
@@ -115,10 +115,10 @@ export default function PfpFrameControls({ frame, onChange }: PfpFrameControlsPr
             <button
               key={asp.id}
               onClick={() => onChange({ aspectRatio: asp.id as CanvasAspectRatio })}
-              className={`flex-1 py-2 rounded-lg text-[11px] font-bold transition-all border ${
+              className={`flex-1 py-2 rounded-xl text-[11px] font-mono font-bold transition-all border ${
                 frame.aspectRatio === asp.id
-                  ? "bg-[#171717] text-[#ffffff] border-[#171717]"
-                  : "bg-[#ffffff] text-[#737373] border-[#e6dfd2] hover:border-[#171717]"
+                  ? "bg-[#ffe600] text-[#042616] border-[#ffe600]"
+                  : "bg-[#031c10] text-emerald-200 border-[#166940] hover:border-[#ffe600]"
               }`}
             >
               {asp.label}
@@ -129,4 +129,5 @@ export default function PfpFrameControls({ frame, onChange }: PfpFrameControlsPr
     </div>
   );
 }
+
 

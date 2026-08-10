@@ -1,6 +1,6 @@
 "use client";
 
-import { RotateCw, RotateCcw, FlipHorizontal, FlipVertical } from "lucide-react";
+import { RotateCw, RotateCcw, FlipHorizontal, FlipVertical, RefreshCw } from "lucide-react";
 import type { PhotoState, FilterType } from "@/types";
 import { FILTERS } from "@/lib/templates";
 
@@ -11,11 +11,10 @@ interface PhotoControlsProps {
 
 export default function PhotoControls({ photo, onChange }: PhotoControlsProps) {
   return (
-    <div className="space-y-4 animate-fade-in pt-1">
-      <div className="divider" />
+    <div className="space-y-4 animate-fade-in text-emerald-100">
       <div className="flex items-center justify-between">
-        <label className="text-[11px] font-bold text-[#171717] uppercase tracking-wider">
-          Adjustments
+        <label className="text-[11px] font-mono font-bold text-[#ffe600] uppercase tracking-wider">
+          Photo Adjustments
         </label>
         <button
           onClick={() =>
@@ -29,17 +28,17 @@ export default function PhotoControls({ photo, onChange }: PhotoControlsProps) {
               filter: "original",
             })
           }
-          className="text-[11px] text-[#737373] hover:text-[#171717] transition-colors font-mono"
+          className="flex items-center gap-1 text-[10px] text-emerald-300/70 hover:text-[#ffe600] transition-colors font-mono"
         >
-          Reset All
+          <RefreshCw className="w-3 h-3" /> Reset
         </button>
       </div>
 
       {/* Zoom */}
       <div className="space-y-1.5">
-        <div className="flex items-center justify-between text-[11px] text-[#525252]">
+        <div className="flex items-center justify-between text-[11px] font-mono text-emerald-200">
           <span>Zoom</span>
-          <span className="font-mono text-[#171717] font-semibold">
+          <span className="text-[#ffe600] font-semibold">
             {Math.round(photo.zoom * 100)}%
           </span>
         </div>
@@ -55,9 +54,9 @@ export default function PhotoControls({ photo, onChange }: PhotoControlsProps) {
 
       {/* Rotation */}
       <div className="space-y-1.5">
-        <div className="flex items-center justify-between text-[11px] text-[#525252]">
+        <div className="flex items-center justify-between text-[11px] font-mono text-emerald-200">
           <span>Rotation</span>
-          <span className="font-mono text-[#171717] font-semibold">
+          <span className="text-[#ffe600] font-semibold">
             {photo.rotation}°
           </span>
         </div>
@@ -72,7 +71,7 @@ export default function PhotoControls({ photo, onChange }: PhotoControlsProps) {
       </div>
 
       {/* Quick actions */}
-      <div className="flex items-center gap-1.5">
+      <div className="flex items-center gap-2">
         {[
           {
             icon: RotateCcw,
@@ -100,32 +99,32 @@ export default function PhotoControls({ photo, onChange }: PhotoControlsProps) {
           <button
             key={label}
             onClick={action}
-            className={`p-2 rounded-lg border transition-all ${
+            className={`p-2.5 rounded-xl border transition-all ${
               active
-                ? "bg-[#171717] border-[#171717] text-[#ffffff] font-bold shadow-sm"
-                : "bg-[#ffffff] border-[#e6dfd2] text-[#525252] hover:border-[#171717] hover:text-[#171717]"
+                ? "bg-[#ffe600] border-[#ffe600] text-[#042616] font-bold shadow-sm"
+                : "bg-[#031c10] border-[#166940] text-emerald-200 hover:border-[#ffe600] hover:text-[#ffe600]"
             }`}
             title={label}
           >
-            <Icon className="w-3.5 h-3.5" />
+            <Icon className="w-4 h-4" />
           </button>
         ))}
       </div>
 
       {/* Filters */}
-      <div className="space-y-2 pt-1 border-t border-[#e6dfd2]">
-        <label className="text-[11px] font-bold text-[#171717] uppercase tracking-wider block">
+      <div className="space-y-2 pt-3 border-t border-[#166940]">
+        <label className="text-[11px] font-mono font-bold text-[#ffe600] uppercase tracking-wider block">
           Photo Filters
         </label>
-        <div className="grid grid-cols-3 gap-1">
+        <div className="grid grid-cols-3 gap-1.5">
           {FILTERS.map((f) => (
             <button
               key={f.id}
               onClick={() => onChange({ filter: f.id as FilterType })}
-              className={`px-2 py-1.5 rounded-lg text-[11px] font-semibold transition-all ${
+              className={`px-2 py-2 rounded-xl text-[11px] font-mono font-semibold transition-all ${
                 photo.filter === f.id
-                  ? "bg-[#171717] text-[#ffffff] shadow-sm"
-                  : "bg-[#ffffff] text-[#525252] border border-[#e6dfd2] hover:border-[#171717] hover:text-[#171717]"
+                  ? "bg-[#ffe600] text-[#042616] shadow-sm font-bold"
+                  : "bg-[#031c10] text-emerald-200 border border-[#166940] hover:border-[#ffe600] hover:text-[#ffe600]"
               }`}
             >
               {f.label}
@@ -136,3 +135,4 @@ export default function PhotoControls({ photo, onChange }: PhotoControlsProps) {
     </div>
   );
 }
+

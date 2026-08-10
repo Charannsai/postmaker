@@ -110,10 +110,10 @@ export default function PreviewCanvas({
 
   return (
     <div className="relative flex flex-col items-center justify-center w-full animate-scale-in">
-      <div className="relative w-full flex items-center justify-center p-2 sm:p-4 rounded-2xl bg-[#faf8f3] border border-[#e6dfd2] shadow-sm">
+      <div className="relative w-full flex items-center justify-center p-2 sm:p-4 rounded-2xl bg-[#031f12]/80 border border-[#166940] shadow-inner">
         <canvas
           ref={canvasRef}
-          className={`relative w-full ${maxWStyle} rounded-xl shadow-xl cursor-grab active:cursor-grabbing border border-[#e6dfd2]`}
+          className={`relative w-full ${maxWStyle} rounded-xl shadow-2xl cursor-grab active:cursor-grabbing border border-[#166940]`}
           style={{ aspectRatio: aspectRatioStyle }}
           onPointerDown={handlePointerDown}
           onPointerMove={handlePointerMove}
@@ -121,7 +121,7 @@ export default function PreviewCanvas({
           onPointerLeave={handlePointerUp}
         />
         {photo.src && (
-          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 text-[10px] text-[#525252] font-mono bg-[#ffffff]/90 px-3 py-1 rounded-full border border-[#e6dfd2] backdrop-blur-md pointer-events-none shadow-sm">
+          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 text-[10px] text-[#ffe600] font-mono bg-[#042616]/90 px-3 py-1 rounded-full border border-[#166940] backdrop-blur-md pointer-events-none shadow-md uppercase tracking-wider">
             ✦ drag photo to reposition
           </div>
         )}
@@ -129,3 +129,4 @@ export default function PreviewCanvas({
     </div>
   );
 }
+
