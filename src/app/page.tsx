@@ -285,6 +285,7 @@ export default function HomePage() {
         onClose={() => setShareOpen(false)}
         canvasRef={canvasRef}
         mode={mode}
+        userName={card.name}
       />
     </div>
   );

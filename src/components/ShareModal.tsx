@@ -10,20 +10,22 @@ interface ShareModalProps {
   onClose: () => void;
   canvasRef: React.RefObject<HTMLCanvasElement | null>;
   mode: AppMode;
+  userName?: string;
 }
 
-const CAPTIONS = {
-  "pfp-frame":
-    "I am coming to HH GOA 2026. Everything intentional. Shipping in Goa. #FrameInGoa #HHGoa2026",
-  "builder-card":
-    "My official Hacker House Goa 2026 builder pass is ready. See you on the shore builders. #FrameInGoa #HHGoa2026",
-};
-
-export default function ShareModal({ open, onClose, canvasRef, mode }: ShareModalProps) {
+export default function ShareModal({ open, onClose, canvasRef, mode, userName }: ShareModalProps) {
   const [copied, setCopied] = useState(false);
   if (!open) return null;
 
-  const caption = CAPTIONS[mode];
+  const siteUrl =
+    typeof window !== "undefined" && window.location.origin && !window.location.origin.includes("localhost")
+      ? window.location.origin
+      : "https://mhgoa.com";
+
+  const userDisplayName = userName?.trim() || "";
+  const nameLine = userDisplayName ? `\n\n${userDisplayName}` : "";
+
+  const caption = `Built my Hacker Goa House Builder Card!${nameLine}\n\nExcited to build, ship, and connect with amazing builders in Goa.\n\nCreate your own Builder Card:\n${siteUrl}`;
   const tweetUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(caption)}`;
 
   const handleCopyImage = async () => {
