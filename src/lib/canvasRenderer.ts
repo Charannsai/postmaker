@@ -580,19 +580,22 @@ export function renderBuilderCard(
   drawSquircle(ctx, 0, 0, W, H, 16 * scale);
   ctx.fill();
 
-  // Subtle diagonal texture lines across right half (matching reference!)
+  // Dotted paper grid background (paper scribbled dot-matrix grid style)
   ctx.save();
-  ctx.strokeStyle = "rgba(255, 255, 255, 0.04)";
-  ctx.lineWidth = 1.5 * scale;
-  for (let d = -H; d < W + H; d += 16 * scale) {
-    ctx.beginPath();
-    ctx.moveTo(d, 0);
-    ctx.lineTo(d - H, H);
-    ctx.stroke();
+  ctx.fillStyle = "rgba(255, 255, 255, 0.09)";
+  const dotSpacing = 18 * scale;
+  const dotRadius = 1.1 * scale;
+  for (let x = dotSpacing / 2; x < W; x += dotSpacing) {
+    for (let y = dotSpacing / 2; y < H; y += dotSpacing) {
+      ctx.beginPath();
+      ctx.arc(x, y, dotRadius, 0, Math.PI * 2);
+      ctx.fill();
+    }
   }
   ctx.restore();
 
-  addGrain(ctx, W, H, 0.03, scale);
+  addGrain(ctx, W, H, 0.035, scale);
+
 
   // === 2. LEFT HALF: CIRCULAR PORTRAIT BADGE ===
   const badgeCX = 220 * scale;
