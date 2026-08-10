@@ -399,7 +399,7 @@ function drawHackerHouseLogoStamp(
   h: number,
   scale: number = 2
 ) {
-  const img = getOrLoadAsset("/assets/image.png");
+  const img = getOrLoadAsset("/assets/hacker-house-logo.png");
 
   ctx.save();
   ctx.translate(cx, cy);
@@ -417,6 +417,7 @@ function drawHackerHouseLogoStamp(
   }
   ctx.restore();
 }
+
 
 function drawOfficialArtStamp(
   ctx: CanvasRenderingContext2D,
@@ -708,24 +709,25 @@ export function renderBuilderCard(
   // === 3. RIGHT HALF: EDITORIAL INFO ===
   const rx = 430 * scale;
 
-  // Top Title: Official HACKER HOUSE Yellow & Pink Asset Logo
+  // Top Title: Official HACKER HOUSE Asset Logo
   drawHackerHouseLogoStamp(
     ctx,
-    rx + 65 * scale,
-    58 * scale,
-    130 * scale,
-    115 * scale,
+    rx + 140 * scale,
+    48 * scale,
+    280 * scale,
+    46 * scale,
     scale
   );
 
-  // Subtitle Date & Location beside logo
+  // Subtitle Date directly BELOW the logo
   ctx.save();
   ctx.fillStyle = "#ffe600";
   ctx.font = `900 ${14 * scale}px monospace`;
   ctx.textAlign = "left";
   ctx.textBaseline = "top";
-  ctx.fillText("GOA · 28–31 OCT 2026", rx + 145 * scale, 65 * scale);
+  ctx.fillText("GOA · 28–31 OCT 2026", rx, 92 * scale);
   ctx.restore();
+
 
   // Horizontal Accent Line
   ctx.strokeStyle = "rgba(255, 255, 255, 0.25)";
