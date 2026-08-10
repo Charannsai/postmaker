@@ -1,17 +1,9 @@
-/* ──────────────────────────────────────────────────────────────
-   Canvas Engine – HH Goa 2026
-   Design 1 (PFP): Retro Postage Stamp with scalloped edges,
-       deep emerald background, bold retro block text.
-   Design 2 (Builder ID): Woven Lanyard Conference Badge on
-       textured event poster with starburst sticker & ticker tape.
-   ────────────────────────────────────────────────────────────── */
 
 import type {
   PhotoState,
   FrameSettings,
   CardData,
   BackgroundStyleId,
-  CaptionStyleId,
 } from "@/types";
 import { getFilterCss } from "./templates";
 
@@ -56,69 +48,57 @@ function drawUserPhoto(
   ctx.restore();
 }
 
-// ── Scalloped Perforated Stamp Path ──────────────────────────
-function drawPerforatedRect(
-  ctx: CanvasRenderingContext2D,
-  x: number, y: number, w: number, h: number, toothR: number
-) {
-  const step = toothR * 3.2;
-  ctx.beginPath();
+// ── Film Grain ───────────────────────────────────────────────
+function addGrain(ctx: CanvasRenderingContext2D, w: number, h: number, alpha: number, s: number) {
+  for (let i = 0; i < 1200; i++) {
+    const a = Math.random() * alpha;
+    ctx.fillStyle = Math.random() > 0.5 ? `rgba(255,255,255,${a})` : `rgba(0,0,0,${a})`;
+    ctx.fillRect(Math.random() * w, Math.random() * h, s * (1 + Math.random()), s * (1 + Math.random()));
+  }
+}
 
-  // Top edge
-  const nTop = Math.floor(w / step);
-  const offTop = (w - nTop * step) / 2;
+// ── Scalloped Stamp Edges ────────────────────────────────────
+function drawStampPath(
+  ctx: CanvasRenderingContext2D,
+  x: number, y: number, w: number, h: number, tr: number
+) {
+  const step = tr * 3.2;
+  ctx.beginPath();
+  const nX = Math.floor(w / step);
+  const offX = (w - nX * step) / 2;
+  const nY = Math.floor(h / step);
+  const offY = (h - nY * step) / 2;
+
   ctx.moveTo(x, y);
-  for (let i = 0; i < nTop; i++) {
-    const tx = x + offTop + i * step + step / 2;
-    ctx.lineTo(tx - toothR, y);
-    ctx.arc(tx, y, toothR, Math.PI, 0, true);
+  for (let i = 0; i < nX; i++) {
+    const tx = x + offX + i * step + step / 2;
+    ctx.lineTo(tx - tr, y);
+    ctx.arc(tx, y, tr, Math.PI, 0, true);
   }
   ctx.lineTo(x + w, y);
-
-  // Right edge
-  const nRight = Math.floor(h / step);
-  const offRight = (h - nRight * step) / 2;
-  for (let i = 0; i < nRight; i++) {
-    const ty = y + offRight + i * step + step / 2;
-    ctx.lineTo(x + w, ty - toothR);
-    ctx.arc(x + w, ty, toothR, -Math.PI / 2, Math.PI / 2, true);
+  for (let i = 0; i < nY; i++) {
+    const ty = y + offY + i * step + step / 2;
+    ctx.lineTo(x + w, ty - tr);
+    ctx.arc(x + w, ty, tr, -Math.PI / 2, Math.PI / 2, true);
   }
   ctx.lineTo(x + w, y + h);
-
-  // Bottom edge
-  for (let i = nTop - 1; i >= 0; i--) {
-    const tx = x + offTop + i * step + step / 2;
-    ctx.lineTo(tx + toothR, y + h);
-    ctx.arc(tx, y + h, toothR, 0, Math.PI, true);
+  for (let i = nX - 1; i >= 0; i--) {
+    const tx = x + offX + i * step + step / 2;
+    ctx.lineTo(tx + tr, y + h);
+    ctx.arc(tx, y + h, tr, 0, Math.PI, true);
   }
   ctx.lineTo(x, y + h);
-
-  // Left edge
-  for (let i = nRight - 1; i >= 0; i--) {
-    const ty = y + offRight + i * step + step / 2;
-    ctx.lineTo(x, ty + toothR);
-    ctx.arc(x, ty, toothR, Math.PI / 2, -Math.PI / 2, true);
+  for (let i = nY - 1; i >= 0; i--) {
+    const ty = y + offY + i * step + step / 2;
+    ctx.lineTo(x, ty + tr);
+    ctx.arc(x, ty, tr, Math.PI / 2, -Math.PI / 2, true);
   }
   ctx.closePath();
 }
 
-// ── Noise Grain Texture ──────────────────────────────────────
-function addGrainTexture(ctx: CanvasRenderingContext2D, w: number, h: number, alpha: number, scale: number) {
-  for (let i = 0; i < 800; i++) {
-    const gx = Math.random() * w;
-    const gy = Math.random() * h;
-    const ga = Math.random() * alpha;
-    ctx.fillStyle = Math.random() > 0.5
-      ? `rgba(255,255,255,${ga})`
-      : `rgba(0,0,0,${ga})`;
-    ctx.fillRect(gx, gy, scale * (1 + Math.random()), scale * (1 + Math.random()));
-  }
-}
-
 // ─────────────────────────────────────────────────────────────
-// DESIGN 1: RETRO POSTAGE STAMP PFP
-// (Reference: Deep colored bg, scalloped edges, cream border,
-//  photo fills stamp, bold retro text, corner number)
+// DESIGN 1: RETRO MAGAZINE COVER / STAMP PFP
+// Big bold text BEHIND, photo as white sticker cutout ON TOP
 // ─────────────────────────────────────────────────────────────
 export function renderPfpFrame(
   canvas: HTMLCanvasElement,
@@ -137,140 +117,175 @@ export function renderPfpFrame(
   const ctx = canvas.getContext("2d")!;
   ctx.clearRect(0, 0, W, H);
 
-  // === 1. Deep Rich Background Fill ===
-  const bgColor = "#0d4a2b"; // Deep Goa emerald
-  ctx.fillStyle = bgColor;
+  // === 1. Deep Emerald Background ===
+  ctx.fillStyle = "#063d23";
   ctx.fillRect(0, 0, W, H);
 
-  // Subtle radial vignette to add depth
-  const vig = ctx.createRadialGradient(W / 2, H * 0.45, W * 0.2, W / 2, H * 0.45, W * 0.9);
-  vig.addColorStop(0, "rgba(16, 92, 54, 0.4)");
-  vig.addColorStop(1, "rgba(0, 0, 0, 0.35)");
-  ctx.fillStyle = vig;
+  // Radial warm glow
+  const glow = ctx.createRadialGradient(W * 0.5, H * 0.35, 0, W * 0.5, H * 0.35, W * 0.8);
+  glow.addColorStop(0, "rgba(16, 92, 54, 0.5)");
+  glow.addColorStop(1, "rgba(5, 32, 18, 0.8)");
+  ctx.fillStyle = glow;
   ctx.fillRect(0, 0, W, H);
 
-  // Film grain on background
-  addGrainTexture(ctx, W, H, 0.06, scale);
+  addGrain(ctx, W, H, 0.07, scale);
 
-  // === 2. Scalloped Stamp Shape (Cream/Off-White) ===
-  const stampMarginX = 36 * scale;
-  const stampMarginTop = 36 * scale;
-  const stampMarginBottom = 36 * scale;
-  const stampW = W - stampMarginX * 2;
-  const stampH = H - stampMarginTop - stampMarginBottom;
-  const stampX = stampMarginX;
-  const stampY = stampMarginTop;
-  const toothR = 5.5 * scale;
+  // === 2. Scalloped Stamp Frame ===
+  const mx = 28 * scale;
+  const my = 28 * scale;
+  const stampW = W - mx * 2;
+  const stampH = H - my * 2;
+  const tr = 5 * scale;
 
-  // Stamp drop shadow
   ctx.save();
-  ctx.shadowColor = "rgba(0, 0, 0, 0.4)";
-  ctx.shadowBlur = 20 * scale;
-  ctx.shadowOffsetY = 8 * scale;
-
-  ctx.fillStyle = "#faf5ee"; // Cream/off-white stamp paper
-  drawPerforatedRect(ctx, stampX, stampY, stampW, stampH, toothR);
+  ctx.shadowColor = "rgba(0, 0, 0, 0.5)";
+  ctx.shadowBlur = 30 * scale;
+  ctx.shadowOffsetY = 10 * scale;
+  ctx.fillStyle = "#faf5ee";
+  drawStampPath(ctx, mx, my, stampW, stampH, tr);
   ctx.fill();
   ctx.restore();
 
-  // === 3. Inner Photo Area (With Cream Border) ===
-  const innerMargin = 16 * scale;
-  const photoX = stampX + innerMargin;
-  const photoY = stampY + innerMargin;
-  const photoW = stampW - innerMargin * 2;
-  // Leave room at the bottom for the bold text
-  const textBlockH = 80 * scale;
-  const photoH = stampH - innerMargin * 2 - textBlockH;
-
-  // Photo background
-  ctx.fillStyle = "#1a1a1a";
-  ctx.fillRect(photoX, photoY, photoW, photoH);
-
-  // Draw user photo
+  // Clip everything inside stamp
   ctx.save();
-  ctx.beginPath();
-  ctx.rect(photoX, photoY, photoW, photoH);
+  drawStampPath(ctx, mx, my, stampW, stampH, tr);
   ctx.clip();
-  if (img) {
-    drawUserPhoto(ctx, img, photo, photoX + photoW / 2, photoY + photoH / 2, photoW, photoH);
-  } else {
-    // Placeholder gradient
-    const grad = ctx.createLinearGradient(photoX, photoY, photoX + photoW, photoY + photoH);
-    grad.addColorStop(0, "#0a3820");
-    grad.addColorStop(1, "#08331e");
-    ctx.fillStyle = grad;
-    ctx.fillRect(photoX, photoY, photoW, photoH);
-    ctx.fillStyle = "rgba(250, 204, 21, 0.3)";
-    ctx.font = `600 ${14 * scale}px sans-serif`;
-    ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
-    ctx.fillText("Upload Photo", photoX + photoW / 2, photoY + photoH / 2);
-  }
-  ctx.restore();
 
-  // === 4. Corner Number (Top-Right of Stamp) ===
-  ctx.save();
-  ctx.fillStyle = "#c53030"; // Deep red like the stamp reference
-  ctx.font = `italic 900 ${22 * scale}px 'Georgia', serif`;
-  ctx.textAlign = "right";
-  ctx.textBaseline = "top";
-  ctx.fillText("26", stampX + stampW - innerMargin - 4 * scale, stampY + innerMargin + 4 * scale);
-  ctx.restore();
+  // Inner cream fill
+  ctx.fillStyle = "#faf5ee";
+  ctx.fillRect(mx, my, stampW, stampH);
 
-  // === 5. Small Top-Left Monogram / Logo ===
-  ctx.save();
-  ctx.fillStyle = "rgba(13, 74, 43, 0.6)";
-  ctx.font = `bold ${7 * scale}px monospace`;
-  ctx.textAlign = "left";
-  ctx.textBaseline = "top";
-  ctx.fillText("HACKER", stampX + innerMargin + 4 * scale, stampY + innerMargin + 4 * scale);
-  ctx.fillText("HOUSE", stampX + innerMargin + 4 * scale, stampY + innerMargin + 14 * scale);
-  ctx.fillText("GOA", stampX + innerMargin + 4 * scale, stampY + innerMargin + 24 * scale);
-  ctx.restore();
-
-  // === 6. Bold Retro Block Text at Bottom of Stamp ===
-  const textY = photoY + photoH + 6 * scale;
-  const textAreaH = stampH - innerMargin - (textY - stampY);
-  const textCenterY = textY + textAreaH / 2;
-  const captionText = frame.caption || "HH GOA";
+  // === 3. MASSIVE BOLD TEXT BEHIND THE PHOTO ===
+  // This is the key visual — huge chunky text filling the stamp
+  const caption = frame.caption || "HH GOA";
+  const words = caption.toUpperCase().split(" ").filter(w => w.length > 0);
 
   ctx.save();
-  // Determine font size to fit width
-  let fontSize = 42 * scale;
-  ctx.font = `900 ${fontSize}px 'Impact', sans-serif`;
-  while (ctx.measureText(captionText.toUpperCase()).width > photoW - 10 * scale && fontSize > 16 * scale) {
-    fontSize -= 2 * scale;
-    ctx.font = `900 ${fontSize}px 'Impact', sans-serif`;
-  }
-
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
 
-  // Yellow fill with slight 3D depth (red outline behind)
-  // Red shadow/outline layer
-  ctx.fillStyle = "#c53030";
-  ctx.fillText(captionText.toUpperCase(), stampX + stampW / 2 + 2 * scale, textCenterY + 2 * scale);
+  // Calculate font size to fill the width
+  let bigFontSize = 70 * scale;
+  ctx.font = `900 ${bigFontSize}px 'Impact', sans-serif`;
 
-  // Main yellow fill
-  ctx.fillStyle = "#facc15";
-  ctx.fillText(captionText.toUpperCase(), stampX + stampW / 2, textCenterY);
+  // Draw each word stacked, filling the frame
+  const totalWords = words.length || 1;
+  const lineH = bigFontSize * 1.05;
+  const textBlockH = totalWords * lineH;
+  const textStartY = my + stampH * 0.5 - textBlockH / 2 + lineH / 2;
 
+  // Red shadow layer (3D depth effect like the reference)
+  for (let i = 0; i < words.length; i++) {
+    const word = words[i];
+    // Auto-size each word to fill stamp width
+    let wSize = bigFontSize;
+    ctx.font = `900 ${wSize}px 'Impact', sans-serif`;
+    while (ctx.measureText(word).width > stampW - 24 * scale && wSize > 20 * scale) {
+      wSize -= 2 * scale;
+      ctx.font = `900 ${wSize}px 'Impact', sans-serif`;
+    }
+    // Make it actually fill the width
+    while (ctx.measureText(word).width < stampW - 50 * scale && wSize < 140 * scale) {
+      wSize += 2 * scale;
+      ctx.font = `900 ${wSize}px 'Impact', sans-serif`;
+    }
+
+    const wy = textStartY + i * lineH;
+
+    // Red 3D shadow
+    ctx.fillStyle = "#b91c1c";
+    ctx.font = `900 ${wSize}px 'Impact', sans-serif`;
+    ctx.fillText(word, mx + stampW / 2 + 3 * scale, wy + 3 * scale);
+
+    // Main yellow fill
+    ctx.fillStyle = "#facc15";
+    ctx.fillText(word, mx + stampW / 2, wy);
+  }
   ctx.restore();
 
-  // === 7. Subtle Film Grain Over Stamp ===
-  ctx.save();
-  ctx.beginPath();
-  drawPerforatedRect(ctx, stampX, stampY, stampW, stampH, toothR);
-  ctx.clip();
-  addGrainTexture(ctx, W, H, 0.03, scale);
-  ctx.restore();
+  // === 4. PHOTO AS WHITE STICKER CUTOUT ON TOP ===
+  // The photo sits ON TOP of the text with a thick white border
+  if (img) {
+    const photoW = stampW * 0.72;
+    const photoH = stampH * 0.65;
+    const photoCX = mx + stampW / 2;
+    const photoCY = my + stampH * 0.48;
+
+    // Thick white sticker border (the die-cut effect)
+    ctx.save();
+    ctx.shadowColor = "rgba(0, 0, 0, 0.25)";
+    ctx.shadowBlur = 16 * scale;
+    ctx.shadowOffsetY = 6 * scale;
+    drawSquircle(ctx, photoCX - photoW / 2 - 6 * scale, photoCY - photoH / 2 - 6 * scale,
+      photoW + 12 * scale, photoH + 12 * scale, 14 * scale);
+    ctx.fillStyle = "#ffffff";
+    ctx.fill();
+    ctx.restore();
+
+    // Photo inside
+    ctx.save();
+    drawSquircle(ctx, photoCX - photoW / 2, photoCY - photoH / 2, photoW, photoH, 10 * scale);
+    ctx.clip();
+    drawUserPhoto(ctx, img, photo, photoCX, photoCY, photoW, photoH);
+    ctx.restore();
+  } else {
+    // Placeholder
+    const phW = stampW * 0.6;
+    const phH = stampH * 0.5;
+    const phCX = mx + stampW / 2;
+    const phCY = my + stampH * 0.45;
+    ctx.fillStyle = "rgba(13, 74, 43, 0.15)";
+    drawSquircle(ctx, phCX - phW / 2, phCY - phH / 2, phW, phH, 12 * scale);
+    ctx.fill();
+    ctx.fillStyle = "#a3a3a3";
+    ctx.font = `600 ${12 * scale}px sans-serif`;
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText("Upload Photo", phCX, phCY);
+  }
+
+  // === 5. Corner Number ===
+  ctx.fillStyle = "#0d4a2b";
+  ctx.font = `italic 900 ${24 * scale}px 'Georgia', serif`;
+  ctx.textAlign = "right";
+  ctx.textBaseline = "top";
+  ctx.fillText("26", mx + stampW - 16 * scale, my + 14 * scale);
+
+  // === 6. Top-Left Small Monogram ===
+  ctx.fillStyle = "rgba(13, 74, 43, 0.5)";
+  ctx.font = `bold ${7 * scale}px monospace`;
+  ctx.textAlign = "left";
+  ctx.textBaseline = "top";
+  ctx.fillText("HACKER HOUSE", mx + 14 * scale, my + 14 * scale);
+  ctx.fillText("GOA 2026", mx + 14 * scale, my + 24 * scale);
+
+  // === 7. Bottom Barcode ===
+  const barcodeY = my + stampH - 26 * scale;
+  const barcodeX = mx + 14 * scale;
+  const barcodeW = 60 * scale;
+  const barH = 16 * scale;
+
+  ctx.fillStyle = "#171717";
+  const bars = [2, 1, 3, 1, 2, 4, 1, 2, 3, 1, 2, 1, 4, 2, 1, 3, 1, 2];
+  let bx = barcodeX;
+  for (const b of bars) {
+    ctx.fillRect(bx, barcodeY, b * scale * 0.8, barH);
+    bx += (b + 1.2) * scale * 0.8;
+  }
+  ctx.font = `500 ${5 * scale}px monospace`;
+  ctx.fillText("HH-GOA-2026-PFP", barcodeX, barcodeY + barH + 4 * scale);
+
+  // Grain over stamp
+  addGrain(ctx, W, H, 0.025, scale);
+
+  ctx.restore(); // End stamp clip
 }
 
 // ─────────────────────────────────────────────────────────────
-// DESIGN 2: LANYARD CONFERENCE BADGE EVENT POSTER (Builder ID)
-// (Reference: Textured event poster bg, woven lanyard + metal clip,
-//  badge card with gradient + geometric patterns, photo, starburst
-//  logo sticker, attendee info, bottom ticker tape)
+// DESIGN 2: EVENT POSTER WITH LANYARD BADGE (Builder ID)
+// Matches reference 3: textured poster bg, event title, sidebar
+// info, lanyard + clip, badge card with abstract patterns,
+// starburst sticker, QR code, bottom ticker
 // ─────────────────────────────────────────────────────────────
 export function renderBuilderCard(
   canvas: HTMLCanvasElement,
@@ -286,326 +301,378 @@ export function renderBuilderCard(
   const ctx = canvas.getContext("2d")!;
   ctx.clearRect(0, 0, W, H);
 
-  // === 1. Textured Event Poster Background ===
-  const bgGrad = ctx.createLinearGradient(0, 0, W, H);
-  bgGrad.addColorStop(0, "#063d23");
-  bgGrad.addColorStop(0.5, "#0d4a2b");
-  bgGrad.addColorStop(1, "#072e1a");
-  ctx.fillStyle = bgGrad;
+  // === 1. Textured Poster Background ===
+  const bg = ctx.createLinearGradient(0, 0, W, H);
+  bg.addColorStop(0, "#063d23");
+  bg.addColorStop(0.4, "#0a4a2d");
+  bg.addColorStop(1, "#052012");
+  ctx.fillStyle = bg;
   ctx.fillRect(0, 0, W, H);
 
-  // Large faded watermark event text behind everything
+  // Large faded watermark letters (like reference)
   ctx.save();
-  ctx.fillStyle = "rgba(250, 204, 21, 0.06)";
-  ctx.font = `900 ${120 * scale}px 'Impact', sans-serif`;
+  ctx.fillStyle = "rgba(250, 204, 21, 0.05)";
+  ctx.font = `900 ${160 * scale}px 'Impact', sans-serif`;
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
-  ctx.fillText("HH", W / 2 - 20 * scale, H * 0.25);
-  ctx.fillText("GOA", W / 2 + 30 * scale, H * 0.45);
+  ctx.fillText("H", W * 0.3, H * 0.35);
+  ctx.fillText("H", W * 0.7, H * 0.35);
+  ctx.font = `900 ${200 * scale}px 'Impact', sans-serif`;
+  ctx.fillText("G", W * 0.35, H * 0.65);
   ctx.restore();
 
-  // Faded geometric circles
+  // Faded circular and cross geometric patterns
   ctx.save();
-  ctx.strokeStyle = "rgba(250, 204, 21, 0.05)";
+  ctx.strokeStyle = "rgba(250, 204, 21, 0.04)";
   ctx.lineWidth = 2 * scale;
+  // Large circle
   ctx.beginPath();
-  ctx.arc(W * 0.8, H * 0.15, 60 * scale, 0, Math.PI * 2);
+  ctx.arc(W * 0.75, H * 0.2, 50 * scale, 0, Math.PI * 2);
+  ctx.stroke();
+  // Globe icon pattern
+  ctx.beginPath();
+  ctx.arc(W * 0.2, H * 0.75, 35 * scale, 0, Math.PI * 2);
   ctx.stroke();
   ctx.beginPath();
-  ctx.arc(W * 0.2, H * 0.7, 45 * scale, 0, Math.PI * 2);
+  ctx.moveTo(W * 0.2 - 35 * scale, H * 0.75);
+  ctx.lineTo(W * 0.2 + 35 * scale, H * 0.75);
+  ctx.moveTo(W * 0.2, H * 0.75 - 35 * scale);
+  ctx.lineTo(W * 0.2, H * 0.75 + 35 * scale);
   ctx.stroke();
   ctx.restore();
 
-  // Film grain
-  addGrainTexture(ctx, W, H, 0.04, scale);
+  addGrain(ctx, W, H, 0.05, scale);
 
-  // === 2. Event Title (Top of Poster) ===
+  // === 2. Event Title (Top — Mixed Editorial Typography) ===
   ctx.save();
+  // "HACKER" in gold
   ctx.fillStyle = "#facc15";
-  ctx.font = `900 ${28 * scale}px 'Impact', sans-serif`;
-  ctx.textAlign = "center";
-  ctx.fillText("HACKER", W / 2, 50 * scale);
-
-  ctx.fillStyle = "#ffffff";
-  ctx.font = `italic 600 ${16 * scale}px 'Georgia', serif`;
-  ctx.fillText("of", W / 2 - 60 * scale, 72 * scale);
-
-  ctx.fillStyle = "#facc15";
-  ctx.font = `900 ${40 * scale}px 'Impact', sans-serif`;
-  ctx.fillText("GOA", W / 2 + 10 * scale, 78 * scale);
-
-  ctx.fillStyle = "#ec4899";
-  ctx.font = `italic 900 ${22 * scale}px 'Georgia', serif`;
-  ctx.fillText("House", W / 2 + 70 * scale, 78 * scale);
-  ctx.restore();
-
-  // === 3. Event Details (Left side) ===
-  let ey = 120 * scale;
-  ctx.save();
+  ctx.font = `900 ${36 * scale}px 'Impact', sans-serif`;
   ctx.textAlign = "left";
-  const leftX = 28 * scale;
+  ctx.fillText("HACKER", 24 * scale, 52 * scale);
 
-  ctx.fillStyle = "#facc15";
-  ctx.font = `italic 900 ${14 * scale}px 'Georgia', serif`;
-  ctx.fillText("Wednesday", leftX, ey);
-
-  ey += 22 * scale;
+  // "of" in italic white
   ctx.fillStyle = "#ffffff";
-  ctx.font = `900 ${28 * scale}px 'Impact', sans-serif`;
-  ctx.fillText("13 AUG", leftX, ey);
+  ctx.font = `italic 500 ${18 * scale}px 'Georgia', serif`;
+  ctx.fillText("of", 24 * scale, 78 * scale);
 
-  ey += 20 * scale;
+  // "GOA" in huge gold
   ctx.fillStyle = "#facc15";
-  ctx.font = `900 ${12 * scale}px 'Impact', sans-serif`;
-  ctx.fillText("BUILDERS", leftX, ey);
+  ctx.font = `900 ${52 * scale}px 'Impact', sans-serif`;
+  ctx.fillText("GOA", 56 * scale, 82 * scale);
 
-  ey += 16 * scale;
-  ctx.fillStyle = "#ffffff";
-  ctx.font = `bold ${10 * scale}px monospace`;
-  ctx.fillText("10.00 IST", leftX, ey);
-
-  ey += 24 * scale;
-  ctx.fillStyle = "#facc15";
-  ctx.font = `900 ${12 * scale}px 'Impact', sans-serif`;
-  ctx.fillText("HACKERS", leftX, ey);
-
-  ey += 16 * scale;
-  ctx.fillStyle = "#ffffff";
-  ctx.font = `bold ${10 * scale}px monospace`;
-  ctx.fillText("18.00 IST", leftX, ey);
-
-  ey += 24 * scale;
+  // "House" in pink italic script
   ctx.fillStyle = "#ec4899";
-  ctx.font = `italic bold ${10 * scale}px 'Georgia', serif`;
-  ctx.fillText("At", leftX, ey);
-  ey += 14 * scale;
-  ctx.fillStyle = "#ffffff";
-  ctx.font = `900 ${12 * scale}px 'Impact', sans-serif`;
-  ctx.fillText("GOA, INDIA", leftX, ey);
-
+  ctx.font = `italic 900 ${28 * scale}px 'Georgia', serif`;
+  ctx.fillText("House", 175 * scale, 82 * scale);
   ctx.restore();
 
-  // === 4. Starburst Logo Sticker (Top Right) ===
-  const starX = W - 70 * scale;
-  const starY = 115 * scale;
-  const starR = 34 * scale;
+  // === 3. Starburst Logo Sticker (Top Right) ===
+  const starCX = W - 56 * scale;
+  const starCY = 60 * scale;
+  const starR = 32 * scale;
 
   ctx.save();
-  ctx.translate(starX, starY);
-  ctx.rotate(0.15);
+  ctx.translate(starCX, starCY);
+  ctx.rotate(0.12);
 
-  // Starburst shape
+  // Drop shadow
+  ctx.shadowColor = "rgba(0,0,0,0.3)";
+  ctx.shadowBlur = 10 * scale;
+  ctx.shadowOffsetY = 4 * scale;
+
   ctx.fillStyle = "#facc15";
   ctx.beginPath();
-  const spikes = 12;
-  for (let i = 0; i < spikes * 2; i++) {
-    const angle = (i * Math.PI) / spikes - Math.PI / 2;
-    const r = i % 2 === 0 ? starR : starR * 0.72;
+  for (let i = 0; i < 24; i++) {
+    const angle = (i * Math.PI) / 12 - Math.PI / 2;
+    const r = i % 2 === 0 ? starR : starR * 0.78;
     const sx = Math.cos(angle) * r;
     const sy = Math.sin(angle) * r;
-    if (i === 0) ctx.moveTo(sx, sy);
-    else ctx.lineTo(sx, sy);
+    if (i === 0) ctx.moveTo(sx, sy); else ctx.lineTo(sx, sy);
   }
   ctx.closePath();
   ctx.fill();
+  ctx.shadowColor = "transparent";
 
-  // Text inside starburst
   ctx.fillStyle = "#072e1a";
-  ctx.font = `900 ${7 * scale}px sans-serif`;
+  ctx.font = `bold ${7 * scale}px sans-serif`;
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
-  ctx.fillText("HACKER", 0, -4 * scale);
-  ctx.font = `italic 900 ${9 * scale}px 'Georgia', serif`;
-  ctx.fillText("GoA", 0, 8 * scale);
+  ctx.fillText("HACKER", 0, -5 * scale);
+  ctx.font = `italic 900 ${10 * scale}px 'Georgia', serif`;
+  ctx.fillText("GoA", 0, 7 * scale);
   ctx.restore();
 
-  // === 5. Woven Lanyard Strap & Metal Clip ===
-  const badgeCX = W / 2 + 5 * scale;
-  const clipY = 100 * scale;
+  // === 4. Event Info Sidebar (Left) ===
+  let ey = 115 * scale;
+  ctx.save();
+  ctx.textAlign = "left";
+  const lx = 24 * scale;
+
+  ctx.fillStyle = "#facc15";
+  ctx.font = `italic 900 ${13 * scale}px 'Georgia', serif`;
+  ctx.fillText("Wednesday", lx, ey);
+
+  ey += 8 * scale;
+  ctx.fillStyle = "#ffffff";
+  ctx.font = `900 ${32 * scale}px 'Impact', sans-serif`;
+  ctx.fillText("13", lx, ey + 24 * scale);
+  ctx.fillStyle = "#facc15";
+  ctx.font = `900 ${16 * scale}px 'Impact', sans-serif`;
+  ctx.fillText("AUG", lx + 40 * scale, ey + 24 * scale);
+  ey += 36 * scale;
+
+  ey += 14 * scale;
+  ctx.fillStyle = "#facc15";
+  ctx.font = `900 ${11 * scale}px 'Impact', sans-serif`;
+  ctx.fillText("BUILDERS", lx, ey);
+  ey += 14 * scale;
+  ctx.fillStyle = "#ffffff";
+  ctx.font = `bold ${9 * scale}px monospace`;
+  ctx.fillText("10.00 IST", lx, ey);
+
+  ey += 18 * scale;
+  ctx.fillStyle = "#facc15";
+  ctx.font = `900 ${11 * scale}px 'Impact', sans-serif`;
+  ctx.fillText("HACKERS", lx, ey);
+  ey += 14 * scale;
+  ctx.fillStyle = "#ffffff";
+  ctx.font = `bold ${9 * scale}px monospace`;
+  ctx.fillText("18.00 IST", lx, ey);
+
+  ey += 20 * scale;
+  ctx.fillStyle = "#ec4899";
+  ctx.font = `italic bold ${10 * scale}px 'Georgia', serif`;
+  ctx.fillText("At", lx, ey);
+  ey += 14 * scale;
+  ctx.fillStyle = "#ffffff";
+  ctx.font = `900 ${11 * scale}px 'Impact', sans-serif`;
+  ctx.fillText("GOA,", lx, ey);
+  ey += 14 * scale;
+  ctx.fillText("INDIA", lx, ey);
+  ctx.restore();
+
+  // === 5. Woven Lanyard + Metal Clip ===
+  const badgeCX = W / 2 + 20 * scale;
+  const clipY = 95 * scale;
 
   ctx.save();
-  // Left strap arm
-  ctx.fillStyle = "#171717";
+  // Left strap
+  ctx.fillStyle = "#1a1a1a";
   ctx.beginPath();
-  ctx.moveTo(badgeCX - 80 * scale, 0);
-  ctx.lineTo(badgeCX - 55 * scale, 0);
-  ctx.lineTo(badgeCX - 8 * scale, clipY);
+  ctx.moveTo(badgeCX - 90 * scale, 0);
+  ctx.lineTo(badgeCX - 60 * scale, 0);
+  ctx.lineTo(badgeCX - 10 * scale, clipY);
+  ctx.lineTo(badgeCX - 35 * scale, clipY);
+  ctx.closePath();
+  ctx.fill();
+
+  // Right strap
+  ctx.beginPath();
+  ctx.moveTo(badgeCX + 60 * scale, 0);
+  ctx.lineTo(badgeCX + 90 * scale, 0);
+  ctx.lineTo(badgeCX + 35 * scale, clipY);
+  ctx.lineTo(badgeCX + 10 * scale, clipY);
+  ctx.closePath();
+  ctx.fill();
+
+  // Gold/yellow accent stripes on straps
+  ctx.fillStyle = "#facc15";
+  ctx.beginPath();
+  ctx.moveTo(badgeCX - 78 * scale, 0);
+  ctx.lineTo(badgeCX - 70 * scale, 0);
+  ctx.lineTo(badgeCX - 24 * scale, clipY);
   ctx.lineTo(badgeCX - 30 * scale, clipY);
   ctx.closePath();
   ctx.fill();
-
-  // Right strap arm
   ctx.beginPath();
-  ctx.moveTo(badgeCX + 55 * scale, 0);
-  ctx.lineTo(badgeCX + 80 * scale, 0);
+  ctx.moveTo(badgeCX + 70 * scale, 0);
+  ctx.lineTo(badgeCX + 78 * scale, 0);
   ctx.lineTo(badgeCX + 30 * scale, clipY);
-  ctx.lineTo(badgeCX + 8 * scale, clipY);
+  ctx.lineTo(badgeCX + 24 * scale, clipY);
   ctx.closePath();
   ctx.fill();
 
-  // Lanyard text
-  ctx.fillStyle = "rgba(255, 255, 255, 0.25)";
-  ctx.font = `bold ${6 * scale}px monospace`;
-  ctx.save();
-  ctx.translate(badgeCX - 60 * scale, 40 * scale);
-  ctx.rotate(0.85);
-  ctx.fillText("+ HH GOA 2026 +", 0, 0);
-  ctx.restore();
-
-  // Two-tone stripe on straps
-  ctx.fillStyle = "#facc15";
-  ctx.beginPath();
-  ctx.moveTo(badgeCX - 72 * scale, 0);
-  ctx.lineTo(badgeCX - 65 * scale, 0);
-  ctx.lineTo(badgeCX - 22 * scale, clipY);
-  ctx.lineTo(badgeCX - 26 * scale, clipY);
-  ctx.closePath();
+  // Metal clip body
+  ctx.fillStyle = "#b0b8c4";
+  const clipW = 32 * scale;
+  const clipH = 34 * scale;
+  drawSquircle(ctx, badgeCX - clipW / 2, clipY - 6 * scale, clipW, clipH, 5 * scale);
   ctx.fill();
-
-  ctx.beginPath();
-  ctx.moveTo(badgeCX + 65 * scale, 0);
-  ctx.lineTo(badgeCX + 72 * scale, 0);
-  ctx.lineTo(badgeCX + 26 * scale, clipY);
-  ctx.lineTo(badgeCX + 22 * scale, clipY);
-  ctx.closePath();
-  ctx.fill();
-
-  // Metal Clip
-  ctx.fillStyle = "#94a3b8";
-  drawSquircle(ctx, badgeCX - 14 * scale, clipY - 4 * scale, 28 * scale, 30 * scale, 4 * scale);
-  ctx.fill();
-  ctx.strokeStyle = "#64748b";
+  // Clip highlight
+  ctx.fillStyle = "#d4dae2";
+  ctx.fillRect(badgeCX - clipW / 2 + 3 * scale, clipY - 4 * scale, 4 * scale, clipH - 8 * scale);
+  // Clip outline
+  ctx.strokeStyle = "#78849a";
   ctx.lineWidth = 2 * scale;
-  drawSquircle(ctx, badgeCX - 14 * scale, clipY - 4 * scale, 28 * scale, 30 * scale, 4 * scale);
+  drawSquircle(ctx, badgeCX - clipW / 2, clipY - 6 * scale, clipW, clipH, 5 * scale);
   ctx.stroke();
-
-  // Clip ring hole
-  ctx.fillStyle = "#475569";
+  // Ring hole
+  ctx.fillStyle = "#5a6577";
   ctx.beginPath();
-  ctx.arc(badgeCX, clipY + 18 * scale, 5 * scale, 0, Math.PI * 2);
+  ctx.arc(badgeCX, clipY + 20 * scale, 6 * scale, 0, Math.PI * 2);
   ctx.fill();
-  ctx.fillStyle = "#94a3b8";
+  ctx.fillStyle = "#b0b8c4";
   ctx.beginPath();
-  ctx.arc(badgeCX, clipY + 18 * scale, 3 * scale, 0, Math.PI * 2);
+  ctx.arc(badgeCX, clipY + 20 * scale, 3.5 * scale, 0, Math.PI * 2);
   ctx.fill();
-
   ctx.restore();
 
-  // === 6. Badge Card ===
-  const cardW = W - 55 * scale;
+  // === 6. Badge Card (White Outer Sleeve + Inner Emerald Card) ===
+  const cardW = 340 * scale;
   const cardH = 420 * scale;
-  const cardX = (W - cardW) / 2;
-  const cardY = clipY + 36 * scale;
+  const cardX = badgeCX - cardW / 2;
+  const cardY = clipY + 38 * scale;
 
-  // Card shadow
+  // Outer white sleeve with shadow
   ctx.save();
   ctx.shadowColor = "rgba(0, 0, 0, 0.35)";
-  ctx.shadowBlur = 24 * scale;
-  ctx.shadowOffsetY = 10 * scale;
-
+  ctx.shadowBlur = 28 * scale;
+  ctx.shadowOffsetY = 12 * scale;
   ctx.fillStyle = "#ffffff";
-  drawSquircle(ctx, cardX, cardY, cardW, cardH, 14 * scale);
+  drawSquircle(ctx, cardX - 8 * scale, cardY - 8 * scale, cardW + 16 * scale, cardH + 16 * scale, 16 * scale);
   ctx.fill();
   ctx.shadowColor = "transparent";
   ctx.restore();
 
-  // Card inner body gradient (Goa emerald/teal)
-  const cardInnerMargin = 6 * scale;
-  const innerX = cardX + cardInnerMargin;
-  const innerY = cardY + cardInnerMargin;
-  const innerW = cardW - cardInnerMargin * 2;
-  const innerH = cardH - cardInnerMargin * 2;
+  // Sleeve border
+  ctx.strokeStyle = "rgba(0,0,0,0.12)";
+  ctx.lineWidth = 1.5 * scale;
+  drawSquircle(ctx, cardX - 8 * scale, cardY - 8 * scale, cardW + 16 * scale, cardH + 16 * scale, 16 * scale);
+  ctx.stroke();
 
+  // Top punch-hole slot
+  ctx.fillStyle = "#e2e8f0";
+  drawSquircle(ctx, badgeCX - 24 * scale, cardY - 14 * scale, 48 * scale, 10 * scale, 5 * scale);
+  ctx.fill();
+  ctx.strokeStyle = "#94a3b8";
+  ctx.lineWidth = 1 * scale;
+  drawSquircle(ctx, badgeCX - 24 * scale, cardY - 14 * scale, 48 * scale, 10 * scale, 5 * scale);
+  ctx.stroke();
+
+  // Inner card body
   ctx.save();
-  drawSquircle(ctx, innerX, innerY, innerW, innerH, 10 * scale);
+  drawSquircle(ctx, cardX, cardY, cardW, cardH, 12 * scale);
   ctx.clip();
 
-  const cardGrad = ctx.createLinearGradient(innerX, innerY, innerX + innerW, innerY + innerH);
-  cardGrad.addColorStop(0, "#0d4a2b");
-  cardGrad.addColorStop(0.5, "#105c36");
-  cardGrad.addColorStop(1, "#0a3820");
+  // Emerald gradient fill
+  const cardGrad = ctx.createLinearGradient(cardX, cardY, cardX + cardW, cardY + cardH);
+  cardGrad.addColorStop(0, "#0d6b3e");
+  cardGrad.addColorStop(0.3, "#0a8a4e");
+  cardGrad.addColorStop(0.6, "#0d6b3e");
+  cardGrad.addColorStop(1, "#074d2c");
   ctx.fillStyle = cardGrad;
-  ctx.fillRect(innerX, innerY, innerW, innerH);
+  ctx.fillRect(cardX, cardY, cardW, cardH);
 
-  // Geometric wave pattern inside card
+  // Abstract wave overlay patterns (like reference)
   ctx.strokeStyle = "rgba(250, 204, 21, 0.08)";
-  ctx.lineWidth = 2 * scale;
-  for (let wy = innerY; wy < innerY + innerH; wy += 18 * scale) {
+  ctx.lineWidth = 2.5 * scale;
+  for (let wy = cardY - 20 * scale; wy < cardY + cardH + 20 * scale; wy += 14 * scale) {
     ctx.beginPath();
-    for (let wx = innerX; wx < innerX + innerW; wx += 6 * scale) {
-      const y = wy + Math.sin((wx - innerX) * 0.04) * 8 * scale;
-      if (wx === innerX) ctx.moveTo(wx, y);
-      else ctx.lineTo(wx, y);
+    for (let wx = cardX; wx <= cardX + cardW; wx += 4 * scale) {
+      const offset = Math.sin((wx - cardX) * 0.025 + wy * 0.01) * 12 * scale;
+      if (wx === cardX) ctx.moveTo(wx, wy + offset);
+      else ctx.lineTo(wx, wy + offset);
     }
     ctx.stroke();
   }
 
-  // Circular pattern overlays
+  // Larger decorative circles
   ctx.strokeStyle = "rgba(250, 204, 21, 0.06)";
-  ctx.lineWidth = 1.5 * scale;
+  ctx.lineWidth = 2 * scale;
   ctx.beginPath();
-  ctx.arc(innerX + innerW * 0.8, innerY + 40 * scale, 40 * scale, 0, Math.PI * 2);
+  ctx.arc(cardX + cardW * 0.82, cardY + 60 * scale, 45 * scale, 0, Math.PI * 2);
   ctx.stroke();
   ctx.beginPath();
-  ctx.arc(innerX + 30 * scale, innerY + innerH - 60 * scale, 30 * scale, 0, Math.PI * 2);
+  ctx.arc(cardX + 35 * scale, cardY + cardH - 80 * scale, 35 * scale, 0, Math.PI * 2);
   ctx.stroke();
 
-  // === 7. Card Header Bar ===
-  const headerH = 28 * scale;
-  ctx.fillStyle = "rgba(250, 204, 21, 0.15)";
-  ctx.fillRect(innerX, innerY, innerW, headerH);
+  // Globe icon (top right of card)
+  ctx.strokeStyle = "rgba(255,255,255,0.2)";
+  ctx.lineWidth = 1.5 * scale;
+  const gx = cardX + cardW - 40 * scale;
+  const gy = cardY + 40 * scale;
+  ctx.beginPath();
+  ctx.arc(gx, gy, 14 * scale, 0, Math.PI * 2);
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(gx - 14 * scale, gy);
+  ctx.lineTo(gx + 14 * scale, gy);
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.ellipse(gx, gy, 7 * scale, 14 * scale, 0, 0, Math.PI * 2);
+  ctx.stroke();
+
+  // === Header Bar ===
+  const hdrH = 26 * scale;
+  ctx.fillStyle = "rgba(0, 0, 0, 0.2)";
+  ctx.fillRect(cardX, cardY, cardW, hdrH);
 
   ctx.fillStyle = "#facc15";
   ctx.font = `bold ${7 * scale}px monospace`;
   ctx.textAlign = "left";
-  ctx.fillText("HACKER HOUSE", innerX + 10 * scale, innerY + 18 * scale);
-
+  ctx.fillText("HACKER", cardX + 12 * scale, cardY + 17 * scale);
+  ctx.fillStyle = "#ffffff";
   ctx.textAlign = "center";
-  ctx.fillText("BUILDERS", innerX + innerW / 2, innerY + 18 * scale);
-
+  ctx.font = `900 ${8 * scale}px sans-serif`;
+  ctx.fillText("BUILDERS", cardX + cardW / 2, cardY + 17 * scale);
+  ctx.fillStyle = "rgba(255,255,255,0.5)";
+  ctx.font = `bold ${7 * scale}px monospace`;
   ctx.textAlign = "right";
-  ctx.fillText("GOA 2026", innerX + innerW - 10 * scale, innerY + 18 * scale);
+  ctx.fillText("IN GOA", cardX + cardW - 12 * scale, cardY + 11 * scale);
+  ctx.fillText("2026", cardX + cardW - 12 * scale, cardY + 22 * scale);
 
-  // Small circle icons in header
-  ctx.strokeStyle = "rgba(250, 204, 21, 0.5)";
+  // Small icons in header
+  ctx.strokeStyle = "rgba(250, 204, 21, 0.6)";
   ctx.lineWidth = 1 * scale;
-  const iconY = innerY + 14 * scale;
-  [innerX + innerW * 0.3, innerX + innerW * 0.7].forEach(ix => {
+  [cardX + cardW * 0.3, cardX + cardW * 0.6].forEach(ix => {
     ctx.beginPath();
-    ctx.arc(ix, iconY, 5 * scale, 0, Math.PI * 2);
+    ctx.arc(ix, cardY + 13 * scale, 5 * scale, 0, Math.PI * 2);
     ctx.stroke();
-    // Cross inside
     ctx.beginPath();
-    ctx.moveTo(ix - 3 * scale, iconY);
-    ctx.lineTo(ix + 3 * scale, iconY);
-    ctx.moveTo(ix, iconY - 3 * scale);
-    ctx.lineTo(ix, iconY + 3 * scale);
+    ctx.moveTo(ix - 3 * scale, cardY + 13 * scale);
+    ctx.lineTo(ix + 3 * scale, cardY + 13 * scale);
+    ctx.moveTo(ix, cardY + 10 * scale);
+    ctx.lineTo(ix, cardY + 16 * scale);
     ctx.stroke();
   });
 
-  // === 8. Photo Window ===
-  const pW = innerW - 36 * scale;
-  const pH = pW * 0.85;
-  const pX = innerX + 18 * scale;
-  const pY = innerY + headerH + 14 * scale;
+  // === Photo Window ===
+  const pW = cardW - 40 * scale;
+  const pH = pW * 0.78;
+  const pX = cardX + 20 * scale;
+  const pY = cardY + hdrH + 16 * scale;
 
-  // White border around photo
+  // White photo border
   ctx.fillStyle = "#ffffff";
-  drawSquircle(ctx, pX - 4 * scale, pY - 4 * scale, pW + 8 * scale, pH + 8 * scale, 8 * scale);
+  drawSquircle(ctx, pX - 5 * scale, pY - 5 * scale, pW + 10 * scale, pH + 10 * scale, 10 * scale);
   ctx.fill();
 
   ctx.save();
-  drawSquircle(ctx, pX, pY, pW, pH, 6 * scale);
+  drawSquircle(ctx, pX, pY, pW, pH, 7 * scale);
   ctx.clip();
   if (img) {
     drawUserPhoto(ctx, img, photo, pX + pW / 2, pY + pH / 2, pW, pH);
   } else {
-    const pGrad = ctx.createLinearGradient(pX, pY, pX + pW, pY + pH);
-    pGrad.addColorStop(0, "#1e40af");
-    pGrad.addColorStop(1, "#0d4a2b");
-    ctx.fillStyle = pGrad;
+    const pg = ctx.createLinearGradient(pX, pY, pX + pW, pY + pH);
+    pg.addColorStop(0, "#1e40af");
+    pg.addColorStop(1, "#0d6b3e");
+    ctx.fillStyle = pg;
     ctx.fillRect(pX, pY, pW, pH);
-    ctx.fillStyle = "rgba(255,255,255,0.35)";
+
+    // Abstract swirl pattern in placeholder
+    ctx.strokeStyle = "rgba(255,255,255,0.15)";
+    ctx.lineWidth = 3 * scale;
+    for (let sw = pY; sw < pY + pH; sw += 20 * scale) {
+      ctx.beginPath();
+      for (let sx = pX; sx < pX + pW; sx += 4 * scale) {
+        const sy = sw + Math.sin((sx - pX) * 0.03 + sw * 0.02) * 15 * scale;
+        if (sx === pX) ctx.moveTo(sx, sy); else ctx.lineTo(sx, sy);
+      }
+      ctx.stroke();
+    }
+
+    ctx.fillStyle = "rgba(255,255,255,0.4)";
     ctx.font = `600 ${14 * scale}px sans-serif`;
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
@@ -613,42 +680,43 @@ export function renderBuilderCard(
   }
   ctx.restore();
 
-  // === 9. Attendee Info Below Photo ===
-  let ty = pY + pH + 22 * scale;
+  // === Attendee Info ===
+  let ty = pY + pH + 20 * scale;
 
+  // Role tag
   ctx.fillStyle = "#facc15";
-  ctx.font = `italic bold ${9 * scale}px 'Georgia', serif`;
+  ctx.font = `italic bold ${8 * scale}px 'Georgia', serif`;
   ctx.textAlign = "left";
-  ctx.fillText(card.role?.toUpperCase() || "FULLSTACK", innerX + 18 * scale, ty);
+  ctx.fillText((card.role || "FULLSTACK").toUpperCase(), cardX + 20 * scale, ty);
 
   ctx.textAlign = "right";
-  const handle = card.handle ? `@${card.handle.replace("@", "")}` : "@handle";
-  ctx.fillStyle = "rgba(254, 252, 232, 0.6)";
+  ctx.fillStyle = "rgba(254,252,232,0.5)";
   ctx.font = `500 ${8 * scale}px monospace`;
-  ctx.fillText(handle, innerX + innerW - 18 * scale, ty);
+  const handle = card.handle ? `@${card.handle.replace("@", "")}` : "@handle";
+  ctx.fillText(handle, cardX + cardW - 20 * scale, ty);
 
+  // Big name
   ty += 24 * scale;
   ctx.fillStyle = "#ffffff";
-  ctx.font = `900 ${20 * scale}px sans-serif`;
+  ctx.font = `900 ${22 * scale}px sans-serif`;
   ctx.textAlign = "center";
-  const displayName = card.name || "YOUR NAME";
-  ctx.fillText(displayName, innerX + innerW / 2, ty);
+  ctx.fillText(card.name || "YOUR NAME", cardX + cardW / 2, ty);
 
-  // Tagline / fun title
-  ty += 20 * scale;
-  ctx.fillStyle = "rgba(254, 252, 232, 0.5)";
+  // Fun title
+  ty += 18 * scale;
+  ctx.fillStyle = "rgba(254,252,232,0.45)";
   ctx.font = `italic ${8 * scale}px 'Georgia', serif`;
-  ctx.fillText(card.funTitle || "10X BUILDER", innerX + innerW / 2, ty);
+  ctx.fillText(card.funTitle || "Everything intentional. Shipping in Goa.", cardX + cardW / 2, ty);
 
   // Tech stack pills
-  ty += 18 * scale;
+  ty += 16 * scale;
   const stack = card.techStack?.length > 0 ? card.techStack : ["React", "Next.js", "Solana", "TypeScript"];
   ctx.font = `bold ${7 * scale}px sans-serif`;
-  const pillWidths = stack.slice(0, 4).map(t => ctx.measureText(t).width + 12 * scale);
-  const totalPillW = pillWidths.reduce((a, b) => a + b, 0) + (pillWidths.length - 1) * 4 * scale;
-  let sx = innerX + (innerW - totalPillW) / 2;
+  const widths = stack.slice(0, 4).map(t => ctx.measureText(t).width + 12 * scale);
+  const total = widths.reduce((a, b) => a + b, 0) + (widths.length - 1) * 4 * scale;
+  let sx = cardX + (cardW - total) / 2;
   for (let i = 0; i < Math.min(stack.length, 4); i++) {
-    const pw = pillWidths[i];
+    const pw = widths[i];
     ctx.fillStyle = "rgba(250, 204, 21, 0.2)";
     drawSquircle(ctx, sx, ty - 9 * scale, pw, 14 * scale, 4 * scale);
     ctx.fill();
@@ -658,35 +726,33 @@ export function renderBuilderCard(
     ctx.fillText(stack[i], sx + pw / 2, ty);
     sx += pw + 4 * scale;
   }
+  ctx.textBaseline = "alphabetic";
 
   ctx.restore(); // End card clip
 
-  // === 10. QR-style Barcode Block (Bottom Right of Card) ===
-  const qrSize = 48 * scale;
-  const qrX = cardX + cardW - qrSize - 18 * scale;
-  const qrY = cardY + cardH - qrSize - 14 * scale;
+  // === QR Code (Bottom Right of Card) ===
+  const qrS = 50 * scale;
+  const qrX = cardX + cardW - qrS - 16 * scale;
+  const qrY = cardY + cardH - qrS - 12 * scale;
 
-  ctx.save();
   ctx.fillStyle = "#ffffff";
-  ctx.fillRect(qrX - 4 * scale, qrY - 4 * scale, qrSize + 8 * scale, qrSize + 8 * scale);
+  ctx.fillRect(qrX - 4 * scale, qrY - 4 * scale, qrS + 8 * scale, qrS + 8 * scale);
 
-  // Generate a fake QR-like pattern
-  const cellSize = 4 * scale;
-  const gridN = Math.floor(qrSize / cellSize);
-  for (let gx = 0; gx < gridN; gx++) {
-    for (let gy = 0; gy < gridN; gy++) {
-      if (Math.random() > 0.45) {
+  const cs = 4 * scale;
+  const gn = Math.floor(qrS / cs);
+  // Seeded pseudo-random for consistent look
+  let seed = 42;
+  const seededRand = () => { seed = (seed * 16807) % 2147483647; return seed / 2147483647; };
+  for (let gx = 0; gx < gn; gx++) {
+    for (let gy = 0; gy < gn; gy++) {
+      if (seededRand() > 0.42) {
         ctx.fillStyle = "#171717";
-        ctx.fillRect(qrX + gx * cellSize, qrY + gy * cellSize, cellSize - 0.5 * scale, cellSize - 0.5 * scale);
+        ctx.fillRect(qrX + gx * cs, qrY + gy * cs, cs - 0.5 * scale, cs - 0.5 * scale);
       }
     }
   }
-  // Corner finder patterns
-  [
-    [qrX, qrY],
-    [qrX + qrSize - 12 * scale, qrY],
-    [qrX, qrY + qrSize - 12 * scale],
-  ].forEach(([fx, fy]) => {
+  // Finder patterns
+  [[qrX, qrY], [qrX + qrS - 12 * scale, qrY], [qrX, qrY + qrS - 12 * scale]].forEach(([fx, fy]) => {
     ctx.fillStyle = "#171717";
     ctx.fillRect(fx, fy, 12 * scale, 12 * scale);
     ctx.fillStyle = "#ffffff";
@@ -694,13 +760,21 @@ export function renderBuilderCard(
     ctx.fillStyle = "#171717";
     ctx.fillRect(fx + 4 * scale, fy + 4 * scale, 4 * scale, 4 * scale);
   });
-  ctx.restore();
 
-  // === 11. Bottom Ticker Tape ===
-  const tickerY = H - 22 * scale;
-  const tickerH = 22 * scale;
+  // === Small Info Below Card ===
+  ctx.fillStyle = "rgba(254,252,232,0.3)";
+  ctx.font = `500 ${6.5 * scale}px monospace`;
+  ctx.textAlign = "center";
+  ctx.fillText(
+    "PASS NO. " + (card.badgeId || "HHG-26-0000") + " // EVERYTHING INTENTIONAL // GOA, INDIA",
+    W / 2,
+    cardY + cardH + 30 * scale
+  );
 
-  ctx.save();
+  // === Bottom Ticker Tape ===
+  const tickerH = 24 * scale;
+  const tickerY = H - tickerH;
+
   ctx.fillStyle = "#facc15";
   ctx.fillRect(0, tickerY, W, tickerH);
 
@@ -709,25 +783,12 @@ export function renderBuilderCard(
   ctx.textAlign = "left";
   ctx.textBaseline = "middle";
 
-  const tickerText = "+ Hacker House Goa 2026 ";
+  const tickerText = "+ Hacker House Goa 2026 + Hacker House Goa 2026 ";
   let tx = 0;
-  while (tx < W + 200 * scale) {
+  while (tx < W + 300 * scale) {
     ctx.fillText(tickerText, tx, tickerY + tickerH / 2);
     tx += ctx.measureText(tickerText).width;
   }
-  ctx.restore();
-
-  // === 12. Bottom Info Text (Above Ticker) ===
-  ctx.save();
-  ctx.fillStyle = "rgba(254, 252, 232, 0.4)";
-  ctx.font = `500 ${7 * scale}px monospace`;
-  ctx.textAlign = "center";
-  ctx.fillText(
-    "PASS NO. " + (card.badgeId || "HHG-26-0000") + " · GOA, INDIA · EVERYTHING INTENTIONAL",
-    W / 2,
-    tickerY - 12 * scale
-  );
-  ctx.restore();
 }
 
 // ── Export ────────────────────────────────────────────────────

@@ -28,7 +28,7 @@ const DEFAULT_PHOTO: PhotoState = {
 };
 
 const DEFAULT_FRAME: FrameSettings = {
-  caption: "I AM COMING TO HH GOA '26 · ARE YOU?",
+  caption: "HH GOA",
   subcaption: "HH GOA 2026",
   captionStyle: "bold-street",
   stickers: ["washi-tape"],
@@ -102,7 +102,7 @@ export default function HomePage() {
               }`}
             >
               <ImageIcon className="w-3.5 h-3.5" />
-              Scrapbook Poster
+              Stamp PFP
             </button>
             <button
               onClick={() => setMode("builder-card")}
@@ -113,7 +113,7 @@ export default function HomePage() {
               }`}
             >
               <IdCard className="w-3.5 h-3.5" />
-              Lanyard Builder ID
+              Event Pass
             </button>
           </div>
         </div>
@@ -129,13 +129,13 @@ export default function HomePage() {
           </div>
           <h1 className="text-2xl sm:text-3xl font-serif font-black text-[#171717] tracking-tight">
             {mode === "pfp-frame"
-              ? "Editorial Paper Scrapbook Poster"
-              : "Lanyard Conference Badge on Notebook"}
+              ? "Retro Stamp PFP Maker"
+              : "Event Pass Generator"}
           </h1>
           <p className="text-[13px] text-[#525252]">
             {mode === "pfp-frame"
-              ? "Die-cut white sticker cutout, spiral notebook stack, taped polaroid, and clean typography."
-              : "Authentic transparent acrylic badge holder with lanyard strap, die-cut 3D stickers, and oval nametag on lined notebook paper."}
+              ? "Scalloped perforated stamp with massive bold text and your photo as a sticker cutout."
+              : "Official lanyard badge on a Goa event poster with your name, role, and tech stack."}
           </p>
         </div>
 
@@ -196,10 +196,10 @@ export default function HomePage() {
             <div className="surface p-4 sm:p-5 space-y-4">
               <div className="flex items-center justify-between border-b border-[#e6dfd2] pb-2.5">
                 <span className="text-[12px] font-bold text-[#171717] uppercase tracking-wider">
-                  2. {mode === "pfp-frame" ? "Poster Slogan" : "Badge Details"}
+                  2. {mode === "pfp-frame" ? "Stamp Text" : "Your Details"}
                 </span>
                 <span className="text-[10px] text-[#737373] font-mono">
-                  {mode === "pfp-frame" ? "Typography & Backdrop" : "Attendee Info"}
+                  {mode === "pfp-frame" ? "Bold Overlay" : "Name / Role / Stack"}
                 </span>
               </div>
 
