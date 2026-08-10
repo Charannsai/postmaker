@@ -6,9 +6,11 @@ import Header from "@/components/Header";
 import PreviewCanvas from "@/components/PreviewCanvas";
 import ExportActions from "@/components/ExportActions";
 import ShareModal from "@/components/ShareModal";
-import CustomizeDrawer from "@/components/CustomizeDrawer";
+import PhotoControls from "@/components/PhotoControls";
+import PfpFrameControls from "@/components/PfpFrameControls";
+import BuilderCardControls from "@/components/BuilderCardControls";
 import { isHeicFile, convertHeicToBlob } from "@/lib/heicConverter";
-import { Sliders, ImagePlus } from "lucide-react";
+import { Sliders, Type, Image as ImageIcon, IdCard } from "lucide-react";
 
 const DEFAULT_PHOTO: PhotoState = {
   src: null,
@@ -49,9 +51,9 @@ export default function HomePage() {
   const [frame, setFrame] = useState<FrameSettings>(DEFAULT_FRAME);
   const [card, setCard] = useState<CardData>(DEFAULT_CARD);
   const [shareOpen, setShareOpen] = useState(false);
-  const [customizeOpen, setCustomizeOpen] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [dragOver, setDragOver] = useState(false);
+  const [customTab, setCustomTab] = useState<"details" | "photo">("details");
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -108,13 +110,17 @@ export default function HomePage() {
     [handleFile]
   );
 
+  const handleRemovePhoto = useCallback(() => {
+    setPhoto(DEFAULT_PHOTO);
+  }, []);
+
   return (
     <div className="min-h-screen bg-[#073820] text-[#faf8f3] flex flex-col justify-between relative overflow-x-hidden selection:bg-[#ff007f] selection:text-[#ffe600]">
       {/* ── Header Branding ─────────────────────────────────── */}
       <Header mode={mode} onModeChange={setMode} />
 
       {/* ── Main Studio Area ──────────────────────────────── */}
-      <main className="flex-1 max-w-4xl mx-auto w-full px-4 sm:px-6 py-4 flex flex-col items-center justify-center my-auto">
+      <main className="flex-1 max-w-5xl mx-auto w-full px-4 sm:px-6 py-4 flex flex-col items-center justify-center my-auto">
         <input
           ref={fileInputRef}
           type="file"
@@ -123,7 +129,7 @@ export default function HomePage() {
           onChange={handleInputChange}
         />
 
-        <div className="w-full max-w-[560px] flex flex-col items-center space-y-6">
+        <div className="w-full flex flex-col items-center space-y-6">
           {/* Central Dashed Dropzone Card containing Preview Frame */}
           <div
             onDragOver={(e) => {
@@ -132,7 +138,7 @@ export default function HomePage() {
             }}
             onDragLeave={() => setDragOver(false)}
             onDrop={handleDrop}
-            className={`w-full dashed-dropzone p-3 sm:p-6 flex flex-col items-center justify-center transition-all ${
+            className={`w-full max-w-[580px] dashed-dropzone p-3 sm:p-6 flex flex-col items-center justify-center transition-all ${
               dragOver ? "drag-over" : ""
             }`}
           >
@@ -142,7 +148,7 @@ export default function HomePage() {
             <div className="corner-bracket corner-bl" />
             <div className="corner-bracket corner-br" />
 
-            {/* Always Display Preview Canvas with Centered Upload Button when photo is null */}
+            {/* Display Preview Canvas with Centered Upload Button when photo is null & top-right X button when photo is present */}
             <div className="w-full flex flex-col items-center">
               <PreviewCanvas
                 canvasRef={canvasRef}
@@ -154,41 +160,78 @@ export default function HomePage() {
                   updatePhoto({ offsetX, offsetY })
                 }
                 onUploadClick={() => fileInputRef.current?.click()}
+                onRemovePhoto={handleRemovePhoto}
                 uploading={uploading}
               />
             </div>
           </div>
 
-          {/* Actions & Customization Toolbar */}
-          <div className="w-full space-y-3">
-            {photo.src ? (
+          {/* When photo IS uploaded: Render Export Actions & Inline Customization Controls */}
+          {photo.src && (
+            <div className="w-full max-w-[580px] space-y-6 animate-fade-in">
+              {/* Export Buttons (Download, Copy, Share) */}
               <ExportActions
                 canvasRef={canvasRef}
                 mode={mode}
                 onShareClick={() => setShareOpen(true)}
               />
-            ) : null}
 
-            <div className="flex items-center justify-center gap-2 pt-1">
-              <button
-                onClick={() => setCustomizeOpen(true)}
-                className="btn-dark-pill flex items-center gap-2 text-xs !py-2.5 !px-6 shadow-lg"
-              >
-                <Sliders className="w-4 h-4 text-[#ffe600]" />
-                Customize & Tweak Details
-              </button>
+              {/* Inline Customization Panel directly on the page */}
+              <div className="w-full bg-[#042616] border border-[#166940] rounded-2xl p-5 sm:p-6 shadow-2xl space-y-5">
+                {/* Panel Title & Tabs */}
+                <div className="flex items-center justify-between border-b border-[#166940] pb-3">
+                  <div className="flex items-center gap-2">
+                    <Sliders className="w-4 h-4 text-[#ffe600]" />
+                    <h3 className="text-sm font-mono font-bold text-[#ffe600] uppercase tracking-wider">
+                      Customization
+                    </h3>
+                  </div>
 
-              {photo.src && (
-                <button
-                  onClick={() => fileInputRef.current?.click()}
-                  className="btn-dark-pill flex items-center gap-2 text-xs !py-2.5 !px-6 shadow-lg"
-                >
-                  <ImagePlus className="w-4 h-4 text-emerald-300" />
-                  Replace Photo
-                </button>
-              )}
+                  <div className="flex p-0.5 rounded-full bg-[#031c10] border border-[#166940]">
+                    <button
+                      onClick={() => setCustomTab("details")}
+                      className={`px-3.5 py-1 rounded-full text-[11px] font-mono font-bold flex items-center gap-1.5 transition-all ${
+                        customTab === "details"
+                          ? "bg-[#ffe600] text-[#042616] shadow-md"
+                          : "text-emerald-300/70 hover:text-white"
+                      }`}
+                    >
+                      {mode === "pfp-frame" ? (
+                        <>
+                          <Type className="w-3 h-3" /> Stamp Text
+                        </>
+                      ) : (
+                        <>
+                          <IdCard className="w-3 h-3" /> Pass Info
+                        </>
+                      )}
+                    </button>
+                    <button
+                      onClick={() => setCustomTab("photo")}
+                      className={`px-3.5 py-1 rounded-full text-[11px] font-mono font-bold flex items-center gap-1.5 transition-all ${
+                        customTab === "photo"
+                          ? "bg-[#ffe600] text-[#042616] shadow-md"
+                          : "text-emerald-300/70 hover:text-white"
+                      }`}
+                    >
+                      <ImageIcon className="w-3 h-3" /> Photo Options
+                    </button>
+                  </div>
+                </div>
+
+                {/* Inline Tab Content */}
+                {customTab === "details" ? (
+                  mode === "pfp-frame" ? (
+                    <PfpFrameControls frame={frame} onChange={updateFrame} />
+                  ) : (
+                    <BuilderCardControls card={card} onCardChange={updateCard} />
+                  )
+                ) : (
+                  <PhotoControls photo={photo} onChange={updatePhoto} />
+                )}
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </main>
 
@@ -197,27 +240,16 @@ export default function HomePage() {
         <span className="text-[#ff007f] font-black">#FrameInGoa</span> · mhgoa.com
       </footer>
 
-      {/* ── Modals & Drawers ──────────────────────────────── */}
+      {/* ── Share Modal ────────────────────────────────────── */}
       <ShareModal
         open={shareOpen}
         onClose={() => setShareOpen(false)}
         canvasRef={canvasRef}
         mode={mode}
       />
-
-      <CustomizeDrawer
-        open={customizeOpen}
-        onClose={() => setCustomizeOpen(false)}
-        mode={mode}
-        photo={photo}
-        frame={frame}
-        card={card}
-        onUpdatePhoto={updatePhoto}
-        onUpdateFrame={updateFrame}
-        onUpdateCard={updateCard}
-      />
     </div>
   );
 }
+
 
 

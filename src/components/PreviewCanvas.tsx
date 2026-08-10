@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useCallback } from "react";
-import { Upload, Loader2 } from "lucide-react";
+import { Upload, Loader2, X } from "lucide-react";
 import type {
   PhotoState,
   FrameSettings,
@@ -18,6 +18,7 @@ interface PreviewCanvasProps {
   onPhotoOffsetChange: (offsetX: number, offsetY: number) => void;
   canvasRef: React.RefObject<HTMLCanvasElement | null>;
   onUploadClick?: () => void;
+  onRemovePhoto?: () => void;
   uploading?: boolean;
 }
 
@@ -29,6 +30,7 @@ export default function PreviewCanvas({
   onPhotoOffsetChange,
   canvasRef,
   onUploadClick,
+  onRemovePhoto,
   uploading = false,
 }: PreviewCanvasProps) {
   const imgRef = useRef<HTMLImageElement | null>(null);
@@ -119,6 +121,21 @@ export default function PreviewCanvas({
   return (
     <div className="relative flex flex-col items-center justify-center w-full animate-scale-in">
       <div className="relative w-full flex items-center justify-center p-2 sm:p-4 rounded-2xl bg-[#031f12]/80 border border-[#166940] shadow-inner">
+        {/* Remove Image X Button */}
+        {photo.src && onRemovePhoto && (
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              onRemovePhoto();
+            }}
+            className="absolute top-4 right-4 z-30 p-2 rounded-full bg-[#042616] border border-[#166940] text-emerald-300 hover:text-white hover:bg-[#ff007f] hover:border-[#ff007f] transition-all shadow-xl group"
+            title="Remove photo"
+          >
+            <X className="w-4 h-4" />
+          </button>
+        )}
+
         <div className={`relative w-full ${maxWStyle} rounded-xl overflow-hidden shadow-2xl border border-[#166940]`}>
           <canvas
             ref={canvasRef}
@@ -177,5 +194,3 @@ export default function PreviewCanvas({
     </div>
   );
 }
-
-
