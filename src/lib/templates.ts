@@ -83,15 +83,16 @@ export interface StickerDef {
 }
 
 export const STICKERS: StickerDef[] = [
-  { id: "washi-tape", label: "Washi Tape" },
-  { id: "postmark", label: "Air Mail Ink Stamp" },
+
+  { id: "goa-hindi-logo", label: "गोवा (Hindi Pink Sticker)" },
+  { id: "hacker-house-logo", label: "Hacker House Yellow Logo" },
+  { id: "goa-sunset-art", label: "Goa Sunset Illustration" },
+  { id: "goa-signpost-art", label: "Goa Beach Signpost Art" },
+  { id: "hacker-shack-art", label: "Hacker Shack Workstation" },
   { id: "approved-stamp", label: "Approved Rubber Stamp" },
-  { id: "gold-starburst", label: "★ VIP Starburst Seal" },
-  { id: "scribble-doodles", label: "Hand Doodles & Stars" },
-  { id: "goa-sunset-stamp", label: "🌴 Goa Sunset Stamp" },
   { id: "barcode", label: "Event Barcode" },
-  { id: "sparkles", label: "Sparkle Cluster" },
 ];
+
 
 // ── Tech Stack Options ───────────────────────────────────────
 export const TECH_STACK_OPTIONS: string[] = [

@@ -31,7 +31,7 @@ const DEFAULT_FRAME: FrameSettings = {
   caption: "HH GOA",
   subcaption: "HH GOA 2026",
   captionStyle: "bold-street",
-  stickers: ["washi-tape", "postmark", "scribble-doodles"],
+  stickers: ["goa-hindi-logo"],
   bgStyle: "paper-wrinkled",
   aspectRatio: "4:5",
 };
@@ -45,9 +45,10 @@ const DEFAULT_CARD: CardData = {
   funTitle: "10x Caffeine-to-Code Pipeline",
   noteText: "TREMBLING W/ EXCITEMENT & NERVES",
   badgeId: "HHG-26-8420",
-  stickers: ["washi-tape", "approved-stamp", "scribble-doodles"],
+  stickers: ["goa-hindi-logo", "goa-sunset-art"],
   bgStyle: "notebook-lined",
 };
+
 
 
 export default function HomePage() {
@@ -77,20 +78,24 @@ export default function HomePage() {
       <header className="sticky top-0 z-40 bg-[#faf8f3]/90 backdrop-blur-md border-b border-[#e6dfd2] px-4 sm:px-8 py-3.5 shadow-sm">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-lg bg-[#171717] flex items-center justify-center text-[#faf8f3] font-mono font-bold text-xs shadow-sm">
-              HH
-            </div>
-            <div className="flex items-center gap-1.5 font-serif tracking-tight">
-              <span className="text-[17px] font-black text-[#171717]">HACKER</span>
-              <span className="text-[9px] font-sans font-bold bg-[#fed7aa] text-[#7c2d12] px-1.5 py-0.5 rounded border border-[#fdba74]">
+            <img
+              src="/assets/goa-hindi-logo.png"
+              alt="गोवा"
+              className="h-8 w-auto drop-shadow-sm transition-transform hover:scale-105"
+            />
+            <div className="flex items-center gap-1.5 tracking-tight">
+              <span className="text-[17px] font-black tracking-tight text-[#004e28]">
+                HACKER HOUSE
+              </span>
+              <span className="text-[9px] font-sans font-extrabold bg-[#ff007f] text-[#ffe600] px-2 py-0.5 rounded-md shadow-sm border border-[#ff007f]">
                 GOA &apos;26
               </span>
-              <span className="text-[17px] font-black text-[#171717]">HOUSE</span>
             </div>
             <span className="hidden md:inline-flex items-center text-[10px] font-mono bg-[#ffffff] text-[#525252] px-2 py-0.5 rounded-full border border-[#e6dfd2] ml-2">
               AUG 13-16 · GOA, INDIA
             </span>
           </div>
+
 
           {/* Mode Switcher: Single PFP Poster vs Single Builder ID */}
           <div className="flex items-center p-1 rounded-xl bg-[#ffffff] border border-[#e6dfd2] shadow-sm">

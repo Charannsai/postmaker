@@ -309,23 +309,27 @@ export function renderPfpFrame(
   ctx.font = `500 ${5 * scale}px monospace`;
   ctx.fillText("HH-GOA-2026-PFP", barcodeX, barcodeY + barH + 4 * scale);
 
-  // === 8. Active Stamps & Scribble Stickers ===
+  // === 8. Active Official Asset Stamps ===
   const activeStickers = frame.stickers || [];
-  if (activeStickers.includes("postmark")) {
-    drawRubberPostmark(ctx, mx + stampW - 75 * scale, my + 65 * scale, scale);
+  if (activeStickers.includes("goa-hindi-logo")) {
+    drawGoaHindiLogoStamp(ctx, mx + stampW - 55 * scale, my + 55 * scale, 75 * scale, 75 * scale, 0.12, scale);
+  }
+  if (activeStickers.includes("hacker-house-logo")) {
+    drawHackerHouseLogoStamp(ctx, mx + stampW / 2, my + 24 * scale, 220 * scale, 34 * scale, scale);
+  }
+  if (activeStickers.includes("goa-sunset-art")) {
+    drawOfficialArtStamp(ctx, "/assets/goa-sunset-bg.jpg", mx + stampW - 65 * scale, my + stampH * 0.76, 85 * scale, 70 * scale, 0.1, scale);
+  }
+  if (activeStickers.includes("goa-signpost-art")) {
+    drawOfficialArtStamp(ctx, "/assets/goa-signpost-bg.jpg", mx + 65 * scale, my + stampH * 0.76, 85 * scale, 70 * scale, -0.1, scale);
+  }
+  if (activeStickers.includes("hacker-shack-art")) {
+    drawOfficialArtStamp(ctx, "/assets/hacker-shack-bg.jpg", mx + stampW / 2, my + stampH * 0.78, 110 * scale, 80 * scale, 0, scale);
   }
   if (activeStickers.includes("approved-stamp")) {
-    drawApprovedStamp(ctx, mx + 75 * scale, my + stampH * 0.72, "APPROVED FOR GOA", scale);
+    drawApprovedStamp(ctx, mx + 65 * scale, my + 65 * scale, "APPROVED FOR GOA", scale);
   }
-  if (activeStickers.includes("goa-sunset-stamp")) {
-    drawGoaSunsetStamp(ctx, mx + 55 * scale, my + 55 * scale, scale);
-  }
-  if (activeStickers.includes("gold-starburst")) {
-    drawGoldStarburst(ctx, mx + stampW - 55 * scale, my + stampH * 0.74, 28 * scale, scale);
-  }
-  if (activeStickers.includes("scribble-doodles")) {
-    drawScribblesAndDoodles(ctx, W, H, "pfp-frame", scale);
-  }
+
 
   // Grain over stamp
   addGrain(ctx, W, H, 0.025, scale);
@@ -334,49 +338,124 @@ export function renderPfpFrame(
 }
 
 
-// ── Scribble & Stamp Helpers ─────────────────────────────────
-function drawRubberPostmark(
+// ── Asset Image Loader Cache ──────────────────────────────────
+const assetImageCache: Record<string, HTMLImageElement> = {};
+
+function getOrLoadAsset(src: string): HTMLImageElement | null {
+  if (typeof window === "undefined") return null;
+  if (assetImageCache[src]) {
+    return assetImageCache[src].complete && assetImageCache[src].naturalWidth > 0
+      ? assetImageCache[src]
+      : null;
+  }
+  const img = new Image();
+  img.src = src;
+  img.onload = () => {
+    assetImageCache[src] = img;
+  };
+  assetImageCache[src] = img;
+  return null;
+}
+
+// ── Official Asset Stamp Renderers ────────────────────────────
+function drawGoaHindiLogoStamp(
   ctx: CanvasRenderingContext2D,
   cx: number,
   cy: number,
-  scale: number
+  w: number,
+  h: number,
+  angle: number = 0.12,
+  scale: number = 2
 ) {
+  const img = getOrLoadAsset("/assets/goa-hindi-logo.png");
   ctx.save();
   ctx.translate(cx, cy);
-  ctx.rotate(-0.14);
+  ctx.rotate(angle);
+  ctx.shadowColor = "rgba(0,0,0,0.3)";
+  ctx.shadowBlur = 12 * scale;
+  ctx.shadowOffsetY = 4 * scale;
 
-  ctx.strokeStyle = "rgba(185, 28, 28, 0.85)";
-  ctx.lineWidth = 2.5 * scale;
-
-  ctx.beginPath();
-  ctx.arc(0, 0, 36 * scale, 0, Math.PI * 2);
-  ctx.stroke();
-
-  ctx.beginPath();
-  ctx.arc(0, 0, 31 * scale, 0, Math.PI * 2);
-  ctx.stroke();
-
-  ctx.fillStyle = "rgba(185, 28, 28, 0.9)";
-  ctx.font = `bold ${6.5 * scale}px sans-serif`;
-  ctx.textAlign = "center";
-  ctx.textBaseline = "middle";
-  ctx.fillText("AIR MAIL · GOA", 0, -10 * scale);
-  ctx.font = `900 ${11 * scale}px 'Impact', sans-serif`;
-  ctx.fillText("AUG 2026", 0, 2 * scale);
-  ctx.font = `bold ${5.5 * scale}px monospace`;
-  ctx.fillText("POSTAL SERVICE", 0, 13 * scale);
-
-  // Wavy cancellation lines extending out
-  ctx.beginPath();
-  for (let wave = -20 * scale; wave <= 20 * scale; wave += 10 * scale) {
-    ctx.moveTo(38 * scale, wave);
-    for (let x = 38 * scale; x <= 105 * scale; x += 4 * scale) {
-      const y = wave + Math.sin((x - 38 * scale) * 0.1) * 3 * scale;
-      ctx.lineTo(x, y);
-    }
+  if (img) {
+    ctx.drawImage(img, -w / 2, -h / 2, w, h);
+  } else {
+    // Fallback vector Devanagari badge if loading
+    ctx.fillStyle = "#ff007f";
+    drawSquircle(ctx, -w / 2, -h / 2, w, h, 8 * scale);
+    ctx.fill();
+    ctx.fillStyle = "#ffe600";
+    ctx.font = `900 ${18 * scale}px sans-serif`;
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText("गोवा", 0, 0);
   }
-  ctx.stroke();
+  ctx.restore();
+}
 
+function drawHackerHouseLogoStamp(
+  ctx: CanvasRenderingContext2D,
+  cx: number,
+  cy: number,
+  w: number,
+  h: number,
+  scale: number = 2
+) {
+  const img = getOrLoadAsset("/assets/hacker-house-logo.png");
+  ctx.save();
+  ctx.translate(cx, cy);
+  ctx.shadowColor = "rgba(0,0,0,0.2)";
+  ctx.shadowBlur = 8 * scale;
+
+  if (img) {
+    ctx.drawImage(img, -w / 2, -h / 2, w, h);
+  } else {
+    ctx.fillStyle = "#facc15";
+    ctx.font = `900 ${28 * scale}px 'Impact', sans-serif`;
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText("HACKER HOUSE", 0, 0);
+  }
+  ctx.restore();
+}
+
+function drawOfficialArtStamp(
+  ctx: CanvasRenderingContext2D,
+  srcPath: string,
+  cx: number,
+  cy: number,
+  w: number,
+  h: number,
+  angle: number = -0.06,
+  scale: number = 2
+) {
+  const img = getOrLoadAsset(srcPath);
+  ctx.save();
+  ctx.translate(cx, cy);
+  ctx.rotate(angle);
+
+  // White polaroid / sticker border
+  ctx.shadowColor = "rgba(0,0,0,0.25)";
+  ctx.shadowBlur = 12 * scale;
+  ctx.shadowOffsetY = 5 * scale;
+  ctx.fillStyle = "#ffffff";
+  drawSquircle(ctx, -w / 2 - 4 * scale, -h / 2 - 4 * scale, w + 8 * scale, h + 8 * scale, 8 * scale);
+  ctx.fill();
+
+  ctx.save();
+  drawSquircle(ctx, -w / 2, -h / 2, w, h, 6 * scale);
+  ctx.clip();
+
+  if (img) {
+    ctx.drawImage(img, -w / 2, -h / 2, w, h);
+  } else {
+    ctx.fillStyle = "#004e28";
+    ctx.fillRect(-w / 2, -h / 2, w, h);
+    ctx.fillStyle = "#facc15";
+    ctx.font = `bold ${10 * scale}px sans-serif`;
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText("GOA ART", 0, 0);
+  }
+  ctx.restore();
   ctx.restore();
 }
 
@@ -394,14 +473,14 @@ function drawApprovedStamp(
   const stampW = 126 * scale;
   const stampH = 36 * scale;
 
-  ctx.strokeStyle = "rgba(220, 38, 38, 0.85)";
+  ctx.strokeStyle = "rgba(236, 72, 153, 0.9)";
   ctx.lineWidth = 3 * scale;
   ctx.strokeRect(-stampW / 2, -stampH / 2, stampW, stampH);
 
   ctx.lineWidth = 1 * scale;
   ctx.strokeRect(-stampW / 2 + 3 * scale, -stampH / 2 + 3 * scale, stampW - 6 * scale, stampH - 6 * scale);
 
-  ctx.fillStyle = "rgba(220, 38, 38, 0.9)";
+  ctx.fillStyle = "#ec4899";
   ctx.font = `900 ${13 * scale}px 'Impact', sans-serif`;
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
@@ -410,172 +489,34 @@ function drawApprovedStamp(
   ctx.restore();
 }
 
-function drawGoaSunsetStamp(
+function drawBarcodeStamp(
   ctx: CanvasRenderingContext2D,
-  cx: number,
-  cy: number,
+  x: number,
+  y: number,
+  w: number,
+  h: number,
+  code: string,
   scale: number
 ) {
   ctx.save();
-  ctx.translate(cx, cy);
-  ctx.rotate(0.08);
-
-  const r = 32 * scale;
-  ctx.strokeStyle = "rgba(217, 119, 6, 0.85)";
-  ctx.lineWidth = 2.5 * scale;
-  ctx.beginPath();
-  ctx.arc(0, 0, r, 0, Math.PI * 2);
-  ctx.stroke();
-
-  ctx.fillStyle = "rgba(217, 119, 6, 0.9)";
-  ctx.font = `bold ${7 * scale}px sans-serif`;
-  ctx.textAlign = "center";
-  ctx.textBaseline = "middle";
-  ctx.fillText("🌴 GOA VIBES 🌴", 0, -r + 10 * scale);
-  ctx.font = `900 ${12 * scale}px 'Impact', sans-serif`;
-  ctx.fillText("2026", 0, 2 * scale);
-  ctx.font = `700 ${6 * scale}px monospace`;
-  ctx.fillText("#FrameInGoa", 0, r - 10 * scale);
-
-  ctx.restore();
-}
-
-function drawGoldStarburst(
-  ctx: CanvasRenderingContext2D,
-  cx: number,
-  cy: number,
-  starR: number,
-  scale: number
-) {
-  ctx.save();
-  ctx.translate(cx, cy);
-  ctx.rotate(0.12);
-
-  ctx.shadowColor = "rgba(0,0,0,0.3)";
-  ctx.shadowBlur = 10 * scale;
-  ctx.shadowOffsetY = 4 * scale;
-
-  ctx.fillStyle = "#facc15";
-  ctx.beginPath();
-  for (let i = 0; i < 24; i++) {
-    const angle = (i * Math.PI) / 12 - Math.PI / 2;
-    const r = i % 2 === 0 ? starR : starR * 0.78;
-    const sx = Math.cos(angle) * r;
-    const sy = Math.sin(angle) * r;
-    if (i === 0) ctx.moveTo(sx, sy);
-    else ctx.lineTo(sx, sy);
+  ctx.fillStyle = "#171717";
+  const bars = [2, 1, 3, 1, 2, 4, 1, 2, 3, 1, 2, 1, 4, 2, 1, 3];
+  let bx = x;
+  for (const b of bars) {
+    ctx.fillRect(bx, y, b * scale * 0.7, h);
+    bx += (b + 1.2) * scale * 0.7;
   }
-  ctx.closePath();
-  ctx.fill();
-  ctx.shadowColor = "transparent";
-
-  ctx.fillStyle = "#072e1a";
-  ctx.font = `bold ${7 * scale}px sans-serif`;
-  ctx.textAlign = "center";
-  ctx.textBaseline = "middle";
-  ctx.fillText("★ 100% ★", 0, -5 * scale);
-  ctx.font = `italic 900 ${10 * scale}px 'Georgia', serif`;
-  ctx.fillText("BUILDER", 0, 7 * scale);
+  ctx.font = `600 ${6 * scale}px monospace`;
+  ctx.textAlign = "left";
+  ctx.textBaseline = "top";
+  ctx.fillText(`PASS ID: ${code}`, x, y + h + 3 * scale);
   ctx.restore();
 }
-
-function drawScribblesAndDoodles(
-  ctx: CanvasRenderingContext2D,
-  W: number,
-  H: number,
-  mode: string,
-  scale: number
-) {
-  ctx.save();
-  ctx.strokeStyle = "#d97706";
-  ctx.lineWidth = 2.5 * scale;
-  ctx.lineCap = "round";
-
-  if (mode === "pfp-frame") {
-    drawScribbleStar(ctx, W * 0.84, H * 0.22, 10 * scale, "#d97706", scale);
-    drawScribbleStar(ctx, W * 0.16, H * 0.78, 8 * scale, "#b91c1c", scale);
-
-    ctx.beginPath();
-    ctx.moveTo(W * 0.14, H * 0.38);
-    ctx.quadraticCurveTo(W * 0.18, H * 0.44, W * 0.22, H * 0.46);
-    ctx.stroke();
-
-    ctx.beginPath();
-    ctx.moveTo(W * 0.20, H * 0.43);
-    ctx.lineTo(W * 0.22, H * 0.46);
-    ctx.lineTo(W * 0.18, H * 0.47);
-    ctx.stroke();
-
-    ctx.fillStyle = "#0d4a2b";
-    ctx.font = `700 ${14 * scale}px 'Caveat', cursive, serif`;
-    ctx.textAlign = "left";
-    ctx.fillText("shipping in Goa ☕", W * 0.06, H * 0.34);
-  } else {
-    drawScribbleStar(ctx, W * 0.88, H * 0.16, 9 * scale, "#facc15", scale);
-    drawScribbleStar(ctx, W * 0.12, H * 0.80, 7 * scale, "#ec4899", scale);
-
-    ctx.fillStyle = "#facc15";
-    ctx.font = `700 ${14 * scale}px 'Caveat', cursive, serif`;
-    ctx.textAlign = "right";
-    ctx.fillText("100% Legit Builder ✦", W * 0.92, H * 0.10);
-  }
-
-  ctx.restore();
-}
-
-function drawScribbleStar(
-  ctx: CanvasRenderingContext2D,
-  cx: number,
-  cy: number,
-  r: number,
-  color: string,
-  scale: number
-) {
-  ctx.save();
-  ctx.strokeStyle = color;
-  ctx.lineWidth = 2.2 * scale;
-  ctx.lineCap = "round";
-  for (let i = 0; i < 4; i++) {
-    const angle = (i * Math.PI) / 4;
-    ctx.beginPath();
-    ctx.moveTo(cx - Math.cos(angle) * r, cy - Math.sin(angle) * r);
-    ctx.lineTo(cx + Math.cos(angle) * r, cy + Math.sin(angle) * r);
-    ctx.stroke();
-  }
-  ctx.restore();
-}
-
-function drawWavyUnderline(
-  ctx: CanvasRenderingContext2D,
-  x1: number,
-  y1: number,
-  x2: number,
-  color: string,
-  scale: number
-) {
-  ctx.save();
-  ctx.strokeStyle = color;
-  ctx.lineWidth = 2.5 * scale;
-  ctx.lineCap = "round";
-  ctx.beginPath();
-  const len = x2 - x1;
-  const segments = 14;
-  const dx = len / segments;
-  for (let i = 0; i <= segments; i++) {
-    const x = x1 + i * dx;
-    const y = y1 + Math.sin(i * 0.7) * 3 * scale;
-    if (i === 0) ctx.moveTo(x, y);
-    else ctx.lineTo(x, y);
-  }
-  ctx.stroke();
-  ctx.restore();
-}
-
 
 // ─────────────────────────────────────────────────────────────
-// DESIGN 2: EVENT PASS (BUILDER ID)
-// Ultra-clean physical VIP badge on rich dark backdrop with
-// handwritten scribble touches, high contrast, and zero clutter.
+// DESIGN 2: SINGLE CLEAN EVENT PASS (BUILDER ID)
+// One clean frame, official Hacker House Goa logo assets,
+// hot pink & yellow Goa Devanagari stickers, crisp layout.
 // ─────────────────────────────────────────────────────────────
 export function renderBuilderCard(
   canvas: HTMLCanvasElement,
@@ -591,337 +532,201 @@ export function renderBuilderCard(
   const ctx = canvas.getContext("2d")!;
   ctx.clearRect(0, 0, W, H);
 
-  // === 1. Deep Emerald Poster Background ===
+  // === 1. Deep Goa Emerald Gradient Background (Single Clean Pass Frame) ===
   const bg = ctx.createLinearGradient(0, 0, W, H);
-  bg.addColorStop(0, "#031c10");
-  bg.addColorStop(0.5, "#07331b");
-  bg.addColorStop(1, "#02130a");
+  bg.addColorStop(0, "#004e28");
+  bg.addColorStop(0.4, "#02381c");
+  bg.addColorStop(1, "#012113");
   ctx.fillStyle = bg;
-  ctx.fillRect(0, 0, W, H);
+  drawSquircle(ctx, 0, 0, W, H, 20 * scale);
+  ctx.fill();
 
-  // Subtle organic doodle waves in low opacity gold behind badge
-  ctx.save();
-  ctx.strokeStyle = "rgba(250, 204, 21, 0.05)";
-  ctx.lineWidth = 2 * scale;
-  for (let y = 100 * scale; y < H - 50 * scale; y += 40 * scale) {
+  // Subtle clean grid paper texture background inside single pass frame
+  ctx.strokeStyle = "rgba(255, 255, 255, 0.04)";
+  ctx.lineWidth = 1 * scale;
+  for (let gx = 0; gx <= W; gx += 30 * scale) {
     ctx.beginPath();
-    for (let x = 0; x <= W; x += 10 * scale) {
-      const dy = Math.sin((x + y) * 0.015) * 15 * scale;
-      if (x === 0) ctx.moveTo(x, y + dy);
-      else ctx.lineTo(x, y + dy);
-    }
+    ctx.moveTo(gx, 0);
+    ctx.lineTo(gx, H);
+    ctx.stroke();
+  }
+  for (let gy = 0; gy <= H; gy += 30 * scale) {
+    ctx.beginPath();
+    ctx.moveTo(0, gy);
+    ctx.lineTo(W, gy);
     ctx.stroke();
   }
 
-  // Faded background watermark letters
-  ctx.fillStyle = "rgba(250, 204, 21, 0.04)";
-  ctx.font = `900 ${180 * scale}px 'Impact', sans-serif`;
-  ctx.textAlign = "center";
-  ctx.textBaseline = "middle";
-  ctx.fillText("GOA", W / 2, H * 0.65);
-  ctx.restore();
+  addGrain(ctx, W, H, 0.03, scale);
 
-  addGrain(ctx, W, H, 0.04, scale);
+  // === 2. Official Header Logo (HACKER HOUSE Yellow Asset) ===
+  drawHackerHouseLogoStamp(ctx, W / 2 - 15 * scale, 48 * scale, 310 * scale, 52 * scale, scale);
 
-  // === 2. Clean Editorial Poster Header (Top Canvas) ===
+  // Official Devanagari "गोवा" Hot Pink & Yellow Sticker Stamp (Top Right)
+  drawGoaHindiLogoStamp(ctx, W - 62 * scale, 46 * scale, 76 * scale, 76 * scale, 0.12, scale);
+
+  // Official Subtitle Tag
   ctx.save();
+  ctx.fillStyle = "rgba(255, 255, 255, 0.85)";
+  ctx.font = `bold ${10 * scale}px sans-serif`;
   ctx.textAlign = "center";
   ctx.textBaseline = "top";
-
-  // Top title: "HACKER HOUSE GOA '26"
-  ctx.fillStyle = "#facc15";
-  ctx.font = `900 ${32 * scale}px 'Impact', sans-serif`;
-  ctx.fillText("HACKER HOUSE GOA '26", W / 2, 22 * scale);
-
-  // Handwritten tag: "✦ Official Builder Pass · Aug 13-16, Goa ✦"
-  ctx.fillStyle = "rgba(255, 255, 255, 0.85)";
-  ctx.font = `700 ${16 * scale}px 'Caveat', cursive, 'Georgia', serif`;
-  ctx.fillText("✦ Official Builder Pass · Aug 13-16, Goa ✦", W / 2, 60 * scale);
+  ctx.fillText("✦ OFFICIAL BUILDER PASS · AUG 13-16, GOA ✦", W / 2, 86 * scale);
   ctx.restore();
 
-  // === 3. Woven Lanyard Straps & Metal Clip ===
-  const badgeCX = W / 2;
-  const clipY = 112 * scale;
+  // === 3. Centered Photo Window (Clean Frame Cutout) ===
+  const photoW = W * 0.65;
+  const photoH = photoW * 0.88;
+  const photoCX = W / 2;
+  const photoCY = 275 * scale;
 
+  // White Photo Cutout Frame with Clean Drop Shadow
   ctx.save();
-  // Left woven strap
-  ctx.fillStyle = "#141414";
-  ctx.beginPath();
-  ctx.moveTo(badgeCX - 80 * scale, 0);
-  ctx.lineTo(badgeCX - 50 * scale, 0);
-  ctx.lineTo(badgeCX - 12 * scale, clipY);
-  ctx.lineTo(badgeCX - 36 * scale, clipY);
-  ctx.closePath();
-  ctx.fill();
-
-  // Right woven strap
-  ctx.beginPath();
-  ctx.moveTo(badgeCX + 50 * scale, 0);
-  ctx.lineTo(badgeCX + 80 * scale, 0);
-  ctx.lineTo(badgeCX + 36 * scale, clipY);
-  ctx.lineTo(badgeCX + 12 * scale, clipY);
-  ctx.closePath();
-  ctx.fill();
-
-  // Gold accent weave stripes on lanyard
-  ctx.fillStyle = "#facc15";
-  ctx.beginPath();
-  ctx.moveTo(badgeCX - 68 * scale, 0);
-  ctx.lineTo(badgeCX - 62 * scale, 0);
-  ctx.lineTo(badgeCX - 24 * scale, clipY);
-  ctx.lineTo(badgeCX - 30 * scale, clipY);
-  ctx.closePath();
-  ctx.fill();
-
-  ctx.beginPath();
-  ctx.moveTo(badgeCX + 62 * scale, 0);
-  ctx.lineTo(badgeCX + 68 * scale, 0);
-  ctx.lineTo(badgeCX + 30 * scale, clipY);
-  ctx.lineTo(badgeCX + 24 * scale, clipY);
-  ctx.closePath();
-  ctx.fill();
-
-  // Metal clip
-  const clipW = 34 * scale;
-  const clipH = 34 * scale;
-  ctx.fillStyle = "#cbd5e1";
-  drawSquircle(ctx, badgeCX - clipW / 2, clipY - 6 * scale, clipW, clipH, 6 * scale);
-  ctx.fill();
-
-  ctx.fillStyle = "#f8fafc";
-  ctx.fillRect(badgeCX - clipW / 2 + 4 * scale, clipY - 4 * scale, 4 * scale, clipH - 8 * scale);
-
-  ctx.strokeStyle = "#64748b";
-  ctx.lineWidth = 2 * scale;
-  drawSquircle(ctx, badgeCX - clipW / 2, clipY - 6 * scale, clipW, clipH, 6 * scale);
-  ctx.stroke();
-
-  // Clip ring hole
-  ctx.fillStyle = "#334155";
-  ctx.beginPath();
-  ctx.arc(badgeCX, clipY + 20 * scale, 6 * scale, 0, Math.PI * 2);
-  ctx.fill();
-  ctx.fillStyle = "#cbd5e1";
-  ctx.beginPath();
-  ctx.arc(badgeCX, clipY + 20 * scale, 3.5 * scale, 0, Math.PI * 2);
-  ctx.fill();
-  ctx.restore();
-
-  // === 4. High-Clarity Physical VIP Builder Pass Card ===
-  const cardW = 350 * scale;
-  const cardH = 550 * scale;
-  const cardX = badgeCX - cardW / 2;
-  const cardY = clipY + 38 * scale;
-
-  // Outer pass card with deep soft drop shadow
-  ctx.save();
-  ctx.shadowColor = "rgba(0, 0, 0, 0.45)";
-  ctx.shadowBlur = 32 * scale;
-  ctx.shadowOffsetY = 16 * scale;
+  ctx.shadowColor = "rgba(0, 0, 0, 0.35)";
+  ctx.shadowBlur = 24 * scale;
+  ctx.shadowOffsetY = 10 * scale;
   ctx.fillStyle = "#ffffff";
-  drawSquircle(ctx, cardX - 4 * scale, cardY - 4 * scale, cardW + 8 * scale, cardH + 8 * scale, 18 * scale);
-  ctx.fill();
-  ctx.shadowColor = "transparent";
-  ctx.restore();
-
-  // Outer card outline
-  ctx.strokeStyle = "#171717";
-  ctx.lineWidth = 2.5 * scale;
-  drawSquircle(ctx, cardX - 4 * scale, cardY - 4 * scale, cardW + 8 * scale, cardH + 8 * scale, 18 * scale);
-  ctx.stroke();
-
-  // Top punch hole slot for lanyard
-  ctx.fillStyle = "#e2e8f0";
-  drawSquircle(ctx, badgeCX - 24 * scale, cardY - 10 * scale, 48 * scale, 12 * scale, 6 * scale);
-  ctx.fill();
-  ctx.strokeStyle = "#64748b";
-  ctx.lineWidth = 1.5 * scale;
-  drawSquircle(ctx, badgeCX - 24 * scale, cardY - 10 * scale, 48 * scale, 12 * scale, 6 * scale);
-  ctx.stroke();
-
-  // Inner card body clip
-  ctx.save();
-  drawSquircle(ctx, cardX, cardY, cardW, cardH, 14 * scale);
-  ctx.clip();
-
-  // Off-white / cream physical card fill
-  ctx.fillStyle = "#faf8f3";
-  ctx.fillRect(cardX, cardY, cardW, cardH);
-
-  // Subtle clean grid paper texture background inside card
-  ctx.strokeStyle = "rgba(0, 0, 0, 0.03)";
-  ctx.lineWidth = 1 * scale;
-  for (let gx = cardX; gx <= cardX + cardW; gx += 20 * scale) {
-    ctx.beginPath();
-    ctx.moveTo(gx, cardY);
-    ctx.lineTo(gx, cardY + cardH);
-    ctx.stroke();
-  }
-  for (let gy = cardY; gy <= cardY + cardH; gy += 20 * scale) {
-    ctx.beginPath();
-    ctx.moveTo(cardX, gy);
-    ctx.lineTo(cardX + cardW, gy);
-    ctx.stroke();
-  }
-
-  // === Header Bar (Dark Emerald Banner) ===
-  const hdrH = 34 * scale;
-  ctx.fillStyle = "#063d23";
-  ctx.fillRect(cardX, cardY, cardW, hdrH);
-
-  ctx.fillStyle = "#facc15";
-  ctx.font = `900 ${10 * scale}px 'Impact', sans-serif`;
-  ctx.textAlign = "left";
-  ctx.textBaseline = "middle";
-  ctx.fillText("HACKER HOUSE GOA", cardX + 16 * scale, cardY + hdrH / 2);
-
-  // VIP Gold Seal (Top Right)
-  ctx.fillStyle = "#facc15";
-  ctx.font = `bold ${8 * scale}px sans-serif`;
-  ctx.textAlign = "right";
-  ctx.fillText("★ VIP BUILDER", cardX + cardW - 16 * scale, cardY + hdrH / 2);
-
-  // === Photo Section (Center Top) ===
-  const pW = cardW - 44 * scale;
-  const pH = pW * 0.82;
-  const pX = cardX + 22 * scale;
-  const pY = cardY + hdrH + 18 * scale;
-
-  // White Photo Card Frame with Drop Shadow
-  ctx.save();
-  ctx.shadowColor = "rgba(0, 0, 0, 0.12)";
-  ctx.shadowBlur = 10 * scale;
-  ctx.shadowOffsetY = 4 * scale;
-  ctx.fillStyle = "#ffffff";
-  drawSquircle(ctx, pX - 6 * scale, pY - 6 * scale, pW + 12 * scale, pH + 12 * scale, 12 * scale);
+  drawSquircle(
+    ctx,
+    photoCX - photoW / 2 - 6 * scale,
+    photoCY - photoH / 2 - 6 * scale,
+    photoW + 12 * scale,
+    photoH + 12 * scale,
+    14 * scale
+  );
   ctx.fill();
   ctx.restore();
 
-  // Photo border stroke
-  ctx.strokeStyle = "#e2e8f0";
+  // Outer border
+  ctx.strokeStyle = "rgba(255, 255, 255, 0.3)";
   ctx.lineWidth = 1.5 * scale;
-  drawSquircle(ctx, pX - 6 * scale, pY - 6 * scale, pW + 12 * scale, pH + 12 * scale, 12 * scale);
+  drawSquircle(
+    ctx,
+    photoCX - photoW / 2 - 6 * scale,
+    photoCY - photoH / 2 - 6 * scale,
+    photoW + 12 * scale,
+    photoH + 12 * scale,
+    14 * scale
+  );
   ctx.stroke();
 
   // Photo clip
   ctx.save();
-  drawSquircle(ctx, pX, pY, pW, pH, 8 * scale);
+  drawSquircle(ctx, photoCX - photoW / 2, photoCY - photoH / 2, photoW, photoH, 10 * scale);
   ctx.clip();
 
   if (img) {
-    drawUserPhoto(ctx, img, photo, pX + pW / 2, pY + pH / 2, pW, pH);
+    drawUserPhoto(ctx, img, photo, photoCX, photoCY, photoW, photoH);
   } else {
-    const pg = ctx.createLinearGradient(pX, pY, pX + pW, pY + pH);
-    pg.addColorStop(0, "#093820");
-    pg.addColorStop(1, "#031c10");
+    const pg = ctx.createLinearGradient(
+      photoCX - photoW / 2,
+      photoCY - photoH / 2,
+      photoCX + photoW / 2,
+      photoCY + photoH / 2
+    );
+    pg.addColorStop(0, "#004e28");
+    pg.addColorStop(1, "#012113");
     ctx.fillStyle = pg;
-    ctx.fillRect(pX, pY, pW, pH);
+    ctx.fillRect(photoCX - photoW / 2, photoCY - photoH / 2, photoW, photoH);
 
-    ctx.fillStyle = "rgba(250, 204, 21, 0.6)";
+    ctx.fillStyle = "#facc15";
     ctx.font = `600 ${14 * scale}px sans-serif`;
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
-    ctx.fillText("Click to Upload Photo", pX + pW / 2, pY + pH / 2);
+    ctx.fillText("Click to Upload Photo", photoCX, photoCY);
   }
   ctx.restore();
 
-  // Washi Tape Strip Accent across top-left of photo (Scribbled aesthetic)
+  // === 4. Builder Info Section (Clean, Bold, High Contrast) ===
+  let ty = photoCY + photoH / 2 + 32 * scale;
+
+  // Full Name (Massive Bold Title)
+  const nameText = (card.name || "ALEX RIVERA").toUpperCase();
   ctx.save();
-  ctx.translate(pX + 10 * scale, pY - 10 * scale);
-  ctx.rotate(-0.08);
-  ctx.fillStyle = "rgba(250, 204, 21, 0.9)";
-  ctx.shadowColor = "rgba(0,0,0,0.1)";
-  ctx.shadowBlur = 4 * scale;
-  ctx.fillRect(0, 0, 72 * scale, 18 * scale);
-  ctx.fillStyle = "#072e1a";
-  ctx.font = `700 ${10 * scale}px 'Caveat', cursive, sans-serif`;
+  ctx.fillStyle = "#ffffff";
+  ctx.font = `900 ${26 * scale}px 'Impact', sans-serif`;
   ctx.textAlign = "center";
-  ctx.textBaseline = "middle";
-  ctx.fillText("SHIPPED ✦", 36 * scale, 9 * scale);
+  ctx.textBaseline = "top";
+  ctx.fillText(nameText, W / 2, ty);
+
+  // Hot Pink Accent Underline
+  const nameW = ctx.measureText(nameText).width;
+  ctx.fillStyle = "#ff007f";
+  ctx.fillRect(W / 2 - Math.min(nameW, W - 60 * scale) / 2, ty + 30 * scale, Math.min(nameW, W - 60 * scale), 4 * scale);
   ctx.restore();
 
-  // === Builder Info Section ===
-  let ty = pY + pH + 24 * scale;
+  // Role Badge & Handle
+  ty += 44 * scale;
+  const roleText = (card.role || "FULLSTACK").toUpperCase() + " BUILDER";
 
-  // Full Name (Massive, Bold, Crisp Dark)
-  const nameText = (card.name || "ALEX RIVERA").toUpperCase();
-  ctx.fillStyle = "#171717";
-  ctx.font = `900 ${22 * scale}px 'Impact', sans-serif`;
-  ctx.textAlign = "left";
-  ctx.textBaseline = "top";
-  ctx.fillText(nameText, cardX + 22 * scale, ty);
+  ctx.save();
+  ctx.font = `900 ${9.5 * scale}px sans-serif`;
+  const rWidth = ctx.measureText(roleText).width + 20 * scale;
 
-  // Handwritten Wavy Red/Gold Underline underneath name
-  const nameW = ctx.measureText(nameText).width;
-  drawWavyUnderline(ctx, cardX + 22 * scale, ty + 26 * scale, cardX + 22 * scale + Math.min(nameW, cardW - 44 * scale), "#b91c1c", scale);
-
-  // Role Pill & Handle
-  ty += 34 * scale;
-  const roleText = (card.role || "FULLSTACK").toUpperCase();
-
-  // Role Pill (Dark background, vibrant gold font)
-  ctx.font = `bold ${8.5 * scale}px sans-serif`;
-  const rWidth = ctx.measureText(roleText).width + 16 * scale;
-  ctx.fillStyle = "#171717";
-  drawSquircle(ctx, cardX + 22 * scale, ty, rWidth, 18 * scale, 5 * scale);
+  // Hot Pink Role Pill with Gold Font
+  ctx.fillStyle = "#ff007f";
+  drawSquircle(ctx, W / 2 - rWidth / 2, ty, rWidth, 22 * scale, 6 * scale);
   ctx.fill();
 
-  ctx.fillStyle = "#facc15";
+  ctx.fillStyle = "#ffe600";
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
-  ctx.fillText(roleText, cardX + 22 * scale + rWidth / 2, ty + 9 * scale);
+  ctx.fillText(roleText, W / 2, ty + 11 * scale);
+  ctx.restore();
 
-  // Handle (Right aligned)
-  const handleText = card.handle ? `@${card.handle.replace("@", "")}` : "@alexbuilds";
-  ctx.fillStyle = "#525252";
-  ctx.font = `600 ${10 * scale}px monospace`;
-  ctx.textAlign = "right";
-  ctx.textBaseline = "middle";
-  ctx.fillText(handleText, cardX + cardW - 22 * scale, ty + 9 * scale);
-
-  // Handwritten Tagline / Fun Title
+  // Handle Tag
   ty += 28 * scale;
-  const tagline = card.funTitle || "10x Caffeine-to-Code Pipeline";
-  ctx.fillStyle = "#093820";
-  ctx.font = `700 ${16 * scale}px 'Caveat', cursive, 'Georgia', serif`;
-  ctx.textAlign = "left";
+  const handleText = card.handle ? `@${card.handle.replace("@", "")}` : "@alexbuilds";
+  ctx.save();
+  ctx.fillStyle = "rgba(255, 255, 255, 0.75)";
+  ctx.font = `600 ${11 * scale}px monospace`;
+  ctx.textAlign = "center";
   ctx.textBaseline = "top";
-  ctx.fillText(`“ ${tagline} ”`, cardX + 22 * scale, ty);
+  ctx.fillText(handleText, W / 2, ty);
+  ctx.restore();
+
+  // Tagline
+  ty += 22 * scale;
+  const tagline = card.funTitle || "10x Caffeine-to-Code Pipeline";
+  ctx.save();
+  ctx.fillStyle = "#facc15";
+  ctx.font = `italic 700 ${14 * scale}px 'Georgia', serif`;
+  ctx.textAlign = "center";
+  ctx.textBaseline = "top";
+  ctx.fillText(`“ ${tagline} ”`, W / 2, ty);
+  ctx.restore();
 
   // Tech Stack Badges
-  ty += 26 * scale;
+  ty += 28 * scale;
   const stack = card.techStack?.length > 0 ? card.techStack : ["React", "Next.js", "Solana", "TypeScript"];
-  ctx.font = `bold ${7.5 * scale}px sans-serif`;
-  const stackW = stack.slice(0, 4).map((t) => ctx.measureText(t).width + 14 * scale);
-  let sx = cardX + 22 * scale;
+  ctx.save();
+  ctx.font = `bold ${8 * scale}px sans-serif`;
+  const stackW = stack.slice(0, 4).map((t) => ctx.measureText(t).width + 16 * scale);
+  const totalStackW = stackW.reduce((a, b) => a + b, 0) + (stackW.length - 1) * 6 * scale;
+  let sx = W / 2 - totalStackW / 2;
 
   for (let i = 0; i < Math.min(stack.length, 4); i++) {
     const pw = stackW[i];
-    if (sx + pw > cardX + cardW - 22 * scale) break;
-
     ctx.fillStyle = "#ffffff";
-    drawSquircle(ctx, sx, ty, pw, 16 * scale, 4 * scale);
+    drawSquircle(ctx, sx, ty, pw, 18 * scale, 5 * scale);
     ctx.fill();
-
-    ctx.strokeStyle = "#cbd5e1";
-    ctx.lineWidth = 1 * scale;
-    drawSquircle(ctx, sx, ty, pw, 16 * scale, 4 * scale);
-    ctx.stroke();
 
     ctx.fillStyle = "#0f172a";
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
-    ctx.fillText(stack[i], sx + pw / 2, ty + 8 * scale);
+    ctx.fillText(stack[i], sx + pw / 2, ty + 9 * scale);
 
     sx += pw + 6 * scale;
   }
+  ctx.restore();
 
-  // === Bottom Barcode & QR Code Section ===
+  // === 5. Bottom Barcode & QR Code Section ===
   const qrS = 48 * scale;
-  const qrX = cardX + cardW - qrS - 20 * scale;
-  const qrY = cardY + cardH - qrS - 16 * scale;
+  const qrX = W - qrS - 28 * scale;
+  const qrY = H - qrS - 42 * scale;
 
   // QR Code Box
+  ctx.save();
   ctx.fillStyle = "#ffffff";
   ctx.fillRect(qrX - 3 * scale, qrY - 3 * scale, qrS + 6 * scale, qrS + 6 * scale);
   ctx.strokeStyle = "#171717";
@@ -952,50 +757,36 @@ export function renderBuilderCard(
     ctx.fillStyle = "#171717";
     ctx.fillRect(fx + 4 * scale, fy + 4 * scale, 4 * scale, 4 * scale);
   });
+  ctx.restore();
 
-  // Barcode (Bottom Left of Card)
-  const barY = cardY + cardH - 34 * scale;
-  const barX = cardX + 22 * scale;
-  const barH = 16 * scale;
+  // Barcode (Bottom Left)
+  const barY = H - 56 * scale;
+  const barX = 28 * scale;
+  const barH = 18 * scale;
+  drawBarcodeStamp(ctx, barX, barY, 120 * scale, barH, card.badgeId || "HHG-26-8420", scale);
 
-  ctx.fillStyle = "#171717";
-  const bars = [2, 1, 3, 1, 2, 4, 1, 2, 3, 1, 2, 1, 4, 2, 1, 3];
-  let bx = barX;
-  for (const b of bars) {
-    ctx.fillRect(bx, barY, b * scale * 0.7, barH);
-    bx += (b + 1.2) * scale * 0.7;
-  }
-  ctx.font = `600 ${6 * scale}px monospace`;
-  ctx.textAlign = "left";
-  ctx.textBaseline = "top";
-  ctx.fillText(`PASS ID: ${card.badgeId || "HHG-26-8420"}`, barX, barY + barH + 3 * scale);
-
-  // Handwritten Doodle Stars on Card Margins (Scribbled aesthetic)
-  drawScribbleStar(ctx, cardX + cardW - 30 * scale, cardY + hdrH + 12 * scale, 6 * scale, "#d97706", scale);
-  drawScribbleStar(ctx, cardX + 16 * scale, cardY + cardH - 54 * scale, 5 * scale, "#b91c1c", scale);
-
-  // Dynamic Stamps & Scribbles on Card
+  // === 6. Dynamic Official Asset Stamps ===
   const activeCardStickers = card.stickers || [];
-  if (activeCardStickers.includes("postmark")) {
-    drawRubberPostmark(ctx, cardX + cardW - 65 * scale, cardY + hdrH + 50 * scale, scale);
+  if (activeCardStickers.includes("goa-hindi-logo")) {
+    drawGoaHindiLogoStamp(ctx, 60 * scale, photoCY - photoH / 2 - 10 * scale, 70 * scale, 70 * scale, -0.15, scale);
+  }
+  if (activeCardStickers.includes("hacker-house-logo")) {
+    drawHackerHouseLogoStamp(ctx, W / 2, photoCY + photoH / 2 + 15 * scale, 220 * scale, 36 * scale, scale);
+  }
+  if (activeCardStickers.includes("goa-sunset-art")) {
+    drawOfficialArtStamp(ctx, "/assets/goa-sunset-bg.jpg", W - 70 * scale, photoCY + photoH / 2 + 10 * scale, 90 * scale, 75 * scale, 0.1, scale);
+  }
+  if (activeCardStickers.includes("goa-signpost-art")) {
+    drawOfficialArtStamp(ctx, "/assets/goa-signpost-bg.jpg", 70 * scale, photoCY + photoH / 2 + 10 * scale, 90 * scale, 75 * scale, -0.1, scale);
+  }
+  if (activeCardStickers.includes("hacker-shack-art")) {
+    drawOfficialArtStamp(ctx, "/assets/hacker-shack-bg.jpg", W / 2, H - 120 * scale, 120 * scale, 85 * scale, 0, scale);
   }
   if (activeCardStickers.includes("approved-stamp")) {
-    drawApprovedStamp(ctx, cardX + 75 * scale, cardY + cardH - 75 * scale, "BUILDER VERIFIED", scale);
-  }
-  if (activeCardStickers.includes("goa-sunset-stamp")) {
-    drawGoaSunsetStamp(ctx, cardX + 50 * scale, cardY + hdrH + 45 * scale, scale);
-  }
-  if (activeCardStickers.includes("gold-starburst")) {
-    drawGoldStarburst(ctx, cardX + cardW - 50 * scale, cardY + cardH - 85 * scale, 24 * scale, scale);
-  }
-  if (activeCardStickers.includes("scribble-doodles")) {
-    drawScribblesAndDoodles(ctx, W, H, "builder-card", scale);
+    drawApprovedStamp(ctx, W / 2, photoCY, "BUILDER VERIFIED", scale);
   }
 
-  ctx.restore(); // End card clip
-
-
-  // === 5. Bottom Ticker Tape ===
+  // === 7. Bottom Gold Ticker Tape ===
   const tickerH = 26 * scale;
   const tickerY = H - tickerH;
 
@@ -1007,7 +798,7 @@ export function renderBuilderCard(
   ctx.textAlign = "left";
   ctx.textBaseline = "middle";
 
-  const tickerText = "+ HACKER HOUSE GOA 2026 + EVERYTHING INTENTIONAL + SHIP HARD VIBE HARDER ";
+  const tickerText = "+ HACKER HOUSE GOA 2026 + EVERYTHING INTENTIONAL + #FrameInGoa ";
   let tx = 0;
   while (tx < W + 300 * scale) {
     ctx.fillText(tickerText, tx, tickerY + tickerH / 2);
@@ -1019,8 +810,13 @@ export function renderBuilderCard(
 export function canvasToBlob(canvas: HTMLCanvasElement): Promise<Blob> {
   return new Promise((resolve, reject) => {
     canvas.toBlob(
-      (blob) => { if (blob) resolve(blob); else reject(new Error("Canvas toBlob failed")); },
-      "image/png", 1
+      (blob) => {
+        if (blob) resolve(blob);
+        else reject(new Error("Canvas toBlob failed"));
+      },
+      "image/png",
+      1
     );
   });
 }
+

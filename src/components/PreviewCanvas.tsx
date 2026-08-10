@@ -103,9 +103,10 @@ export default function PreviewCanvas({
       maxWStyle = "max-w-[400px]";
     }
   } else {
-    aspectRatioStyle = "480 / 850";
-    maxWStyle = "max-w-[360px]";
+    aspectRatioStyle = "800 / 418";
+    maxWStyle = "max-w-[640px]";
   }
+
 
   return (
     <div className="relative flex flex-col items-center justify-center w-full animate-scale-in">

@@ -48,14 +48,14 @@ export interface CaptionStyleDef {
 }
 
 export type StickerType =
-  | "washi-tape"
-  | "postmark"
+  | "goa-hindi-logo"
+  | "hacker-house-logo"
+  | "goa-sunset-art"
+  | "goa-signpost-art"
+  | "hacker-shack-art"
   | "approved-stamp"
-  | "gold-starburst"
-  | "scribble-doodles"
-  | "goa-sunset-stamp"
-  | "barcode"
-  | "sparkles";
+  | "barcode";
+
 
 // ── Format A: PFP Poster Frame ────────────────────────────────
 export interface FrameSettings {
