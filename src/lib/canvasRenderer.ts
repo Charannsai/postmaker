@@ -315,11 +315,59 @@ export function renderPfpFrame(
   ctx.restore(); // End stamp clip
 }
 
+// ── Scribble Helpers ──────────────────────────────────────────
+function drawScribbleStar(
+  ctx: CanvasRenderingContext2D,
+  cx: number,
+  cy: number,
+  r: number,
+  color: string,
+  scale: number
+) {
+  ctx.save();
+  ctx.strokeStyle = color;
+  ctx.lineWidth = 2.2 * scale;
+  ctx.lineCap = "round";
+  for (let i = 0; i < 4; i++) {
+    const angle = (i * Math.PI) / 4;
+    ctx.beginPath();
+    ctx.moveTo(cx - Math.cos(angle) * r, cy - Math.sin(angle) * r);
+    ctx.lineTo(cx + Math.cos(angle) * r, cy + Math.sin(angle) * r);
+    ctx.stroke();
+  }
+  ctx.restore();
+}
+
+function drawWavyUnderline(
+  ctx: CanvasRenderingContext2D,
+  x1: number,
+  y1: number,
+  x2: number,
+  color: string,
+  scale: number
+) {
+  ctx.save();
+  ctx.strokeStyle = color;
+  ctx.lineWidth = 2.5 * scale;
+  ctx.lineCap = "round";
+  ctx.beginPath();
+  const len = x2 - x1;
+  const segments = 14;
+  const dx = len / segments;
+  for (let i = 0; i <= segments; i++) {
+    const x = x1 + i * dx;
+    const y = y1 + Math.sin(i * 0.7) * 3 * scale;
+    if (i === 0) ctx.moveTo(x, y);
+    else ctx.lineTo(x, y);
+  }
+  ctx.stroke();
+  ctx.restore();
+}
+
 // ─────────────────────────────────────────────────────────────
-// DESIGN 2: EVENT POSTER WITH LANYARD BADGE (Builder ID)
-// Matches reference 3: textured poster bg, event title, sidebar
-// info, lanyard + clip, badge card with abstract patterns,
-// starburst sticker, QR code, bottom ticker
+// DESIGN 2: EVENT PASS (BUILDER ID)
+// Ultra-clean physical VIP badge on rich dark backdrop with
+// handwritten scribble touches, high contrast, and zero clutter.
 // ─────────────────────────────────────────────────────────────
 export function renderBuilderCard(
   canvas: HTMLCanvasElement,
@@ -335,448 +383,350 @@ export function renderBuilderCard(
   const ctx = canvas.getContext("2d")!;
   ctx.clearRect(0, 0, W, H);
 
-  // === 1. Textured Poster Background ===
+  // === 1. Deep Emerald Poster Background ===
   const bg = ctx.createLinearGradient(0, 0, W, H);
-  bg.addColorStop(0, "#063d23");
-  bg.addColorStop(0.4, "#0a4a2d");
-  bg.addColorStop(1, "#052012");
+  bg.addColorStop(0, "#031c10");
+  bg.addColorStop(0.5, "#07331b");
+  bg.addColorStop(1, "#02130a");
   ctx.fillStyle = bg;
   ctx.fillRect(0, 0, W, H);
 
-  // Large faded watermark letters (like reference)
+  // Subtle organic doodle waves in low opacity gold behind badge
   ctx.save();
-  ctx.fillStyle = "rgba(250, 204, 21, 0.05)";
-  ctx.font = `900 ${160 * scale}px 'Impact', sans-serif`;
-  ctx.textAlign = "center";
-  ctx.textBaseline = "middle";
-  ctx.fillText("H", W * 0.3, H * 0.35);
-  ctx.fillText("H", W * 0.7, H * 0.35);
-  ctx.font = `900 ${200 * scale}px 'Impact', sans-serif`;
-  ctx.fillText("G", W * 0.35, H * 0.65);
-  ctx.restore();
-
-  // Faded circular and cross geometric patterns
-  ctx.save();
-  ctx.strokeStyle = "rgba(250, 204, 21, 0.04)";
+  ctx.strokeStyle = "rgba(250, 204, 21, 0.05)";
   ctx.lineWidth = 2 * scale;
-  // Large circle
-  ctx.beginPath();
-  ctx.arc(W * 0.75, H * 0.2, 50 * scale, 0, Math.PI * 2);
-  ctx.stroke();
-  // Globe icon pattern
-  ctx.beginPath();
-  ctx.arc(W * 0.2, H * 0.75, 35 * scale, 0, Math.PI * 2);
-  ctx.stroke();
-  ctx.beginPath();
-  ctx.moveTo(W * 0.2 - 35 * scale, H * 0.75);
-  ctx.lineTo(W * 0.2 + 35 * scale, H * 0.75);
-  ctx.moveTo(W * 0.2, H * 0.75 - 35 * scale);
-  ctx.lineTo(W * 0.2, H * 0.75 + 35 * scale);
-  ctx.stroke();
-  ctx.restore();
-
-  addGrain(ctx, W, H, 0.05, scale);
-
-  // === 2. Event Title (Top — Mixed Editorial Typography) ===
-  ctx.save();
-  // "HACKER" in gold
-  ctx.fillStyle = "#facc15";
-  ctx.font = `900 ${36 * scale}px 'Impact', sans-serif`;
-  ctx.textAlign = "left";
-  ctx.fillText("HACKER", 24 * scale, 52 * scale);
-
-  // "of" in italic white
-  ctx.fillStyle = "#ffffff";
-  ctx.font = `italic 500 ${18 * scale}px 'Georgia', serif`;
-  ctx.fillText("of", 24 * scale, 78 * scale);
-
-  // "GOA" in huge gold
-  ctx.fillStyle = "#facc15";
-  ctx.font = `900 ${52 * scale}px 'Impact', sans-serif`;
-  ctx.fillText("GOA", 56 * scale, 82 * scale);
-
-  // "House" in pink italic script
-  ctx.fillStyle = "#ec4899";
-  ctx.font = `italic 900 ${28 * scale}px 'Georgia', serif`;
-  ctx.fillText("House", 175 * scale, 82 * scale);
-  ctx.restore();
-
-  // === 3. Starburst Logo Sticker (Top Right) ===
-  const starCX = W - 56 * scale;
-  const starCY = 60 * scale;
-  const starR = 32 * scale;
-
-  ctx.save();
-  ctx.translate(starCX, starCY);
-  ctx.rotate(0.12);
-
-  // Drop shadow
-  ctx.shadowColor = "rgba(0,0,0,0.3)";
-  ctx.shadowBlur = 10 * scale;
-  ctx.shadowOffsetY = 4 * scale;
-
-  ctx.fillStyle = "#facc15";
-  ctx.beginPath();
-  for (let i = 0; i < 24; i++) {
-    const angle = (i * Math.PI) / 12 - Math.PI / 2;
-    const r = i % 2 === 0 ? starR : starR * 0.78;
-    const sx = Math.cos(angle) * r;
-    const sy = Math.sin(angle) * r;
-    if (i === 0) ctx.moveTo(sx, sy); else ctx.lineTo(sx, sy);
+  for (let y = 100 * scale; y < H - 50 * scale; y += 40 * scale) {
+    ctx.beginPath();
+    for (let x = 0; x <= W; x += 10 * scale) {
+      const dy = Math.sin((x + y) * 0.015) * 15 * scale;
+      if (x === 0) ctx.moveTo(x, y + dy);
+      else ctx.lineTo(x, y + dy);
+    }
+    ctx.stroke();
   }
-  ctx.closePath();
-  ctx.fill();
-  ctx.shadowColor = "transparent";
 
-  ctx.fillStyle = "#072e1a";
-  ctx.font = `bold ${7 * scale}px sans-serif`;
+  // Faded background watermark letters
+  ctx.fillStyle = "rgba(250, 204, 21, 0.04)";
+  ctx.font = `900 ${180 * scale}px 'Impact', sans-serif`;
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
-  ctx.fillText("HACKER", 0, -5 * scale);
-  ctx.font = `italic 900 ${10 * scale}px 'Georgia', serif`;
-  ctx.fillText("GoA", 0, 7 * scale);
+  ctx.fillText("GOA", W / 2, H * 0.65);
   ctx.restore();
 
-  // === 4. Event Info Sidebar (Left) ===
-  let ey = 115 * scale;
+  addGrain(ctx, W, H, 0.04, scale);
+
+  // === 2. Clean Editorial Poster Header (Top Canvas) ===
   ctx.save();
-  ctx.textAlign = "left";
-  const lx = 24 * scale;
+  ctx.textAlign = "center";
+  ctx.textBaseline = "top";
 
+  // Top title: "HACKER HOUSE GOA '26"
   ctx.fillStyle = "#facc15";
-  ctx.font = `italic 900 ${13 * scale}px 'Georgia', serif`;
-  ctx.fillText("Wednesday", lx, ey);
-
-  ey += 8 * scale;
-  ctx.fillStyle = "#ffffff";
   ctx.font = `900 ${32 * scale}px 'Impact', sans-serif`;
-  ctx.fillText("13", lx, ey + 24 * scale);
-  ctx.fillStyle = "#facc15";
-  ctx.font = `900 ${16 * scale}px 'Impact', sans-serif`;
-  ctx.fillText("AUG", lx + 40 * scale, ey + 24 * scale);
-  ey += 36 * scale;
+  ctx.fillText("HACKER HOUSE GOA '26", W / 2, 22 * scale);
 
-  ey += 14 * scale;
-  ctx.fillStyle = "#facc15";
-  ctx.font = `900 ${11 * scale}px 'Impact', sans-serif`;
-  ctx.fillText("BUILDERS", lx, ey);
-  ey += 14 * scale;
-  ctx.fillStyle = "#ffffff";
-  ctx.font = `bold ${9 * scale}px monospace`;
-  ctx.fillText("10.00 IST", lx, ey);
-
-  ey += 18 * scale;
-  ctx.fillStyle = "#facc15";
-  ctx.font = `900 ${11 * scale}px 'Impact', sans-serif`;
-  ctx.fillText("HACKERS", lx, ey);
-  ey += 14 * scale;
-  ctx.fillStyle = "#ffffff";
-  ctx.font = `bold ${9 * scale}px monospace`;
-  ctx.fillText("18.00 IST", lx, ey);
-
-  ey += 20 * scale;
-  ctx.fillStyle = "#ec4899";
-  ctx.font = `italic bold ${10 * scale}px 'Georgia', serif`;
-  ctx.fillText("At", lx, ey);
-  ey += 14 * scale;
-  ctx.fillStyle = "#ffffff";
-  ctx.font = `900 ${11 * scale}px 'Impact', sans-serif`;
-  ctx.fillText("GOA,", lx, ey);
-  ey += 14 * scale;
-  ctx.fillText("INDIA", lx, ey);
+  // Handwritten tag: "✦ Official Builder Pass · Aug 13-16, Goa ✦"
+  ctx.fillStyle = "rgba(255, 255, 255, 0.85)";
+  ctx.font = `700 ${16 * scale}px 'Caveat', cursive, 'Georgia', serif`;
+  ctx.fillText("✦ Official Builder Pass · Aug 13-16, Goa ✦", W / 2, 60 * scale);
   ctx.restore();
 
-  // === 5. Woven Lanyard + Metal Clip ===
-  const badgeCX = W / 2 + 20 * scale;
-  const clipY = 95 * scale;
+  // === 3. Woven Lanyard Straps & Metal Clip ===
+  const badgeCX = W / 2;
+  const clipY = 112 * scale;
 
   ctx.save();
-  // Left strap
-  ctx.fillStyle = "#1a1a1a";
+  // Left woven strap
+  ctx.fillStyle = "#141414";
   ctx.beginPath();
-  ctx.moveTo(badgeCX - 90 * scale, 0);
-  ctx.lineTo(badgeCX - 60 * scale, 0);
-  ctx.lineTo(badgeCX - 10 * scale, clipY);
-  ctx.lineTo(badgeCX - 35 * scale, clipY);
+  ctx.moveTo(badgeCX - 80 * scale, 0);
+  ctx.lineTo(badgeCX - 50 * scale, 0);
+  ctx.lineTo(badgeCX - 12 * scale, clipY);
+  ctx.lineTo(badgeCX - 36 * scale, clipY);
   ctx.closePath();
   ctx.fill();
 
-  // Right strap
+  // Right woven strap
   ctx.beginPath();
-  ctx.moveTo(badgeCX + 60 * scale, 0);
-  ctx.lineTo(badgeCX + 90 * scale, 0);
-  ctx.lineTo(badgeCX + 35 * scale, clipY);
-  ctx.lineTo(badgeCX + 10 * scale, clipY);
+  ctx.moveTo(badgeCX + 50 * scale, 0);
+  ctx.lineTo(badgeCX + 80 * scale, 0);
+  ctx.lineTo(badgeCX + 36 * scale, clipY);
+  ctx.lineTo(badgeCX + 12 * scale, clipY);
   ctx.closePath();
   ctx.fill();
 
-  // Gold/yellow accent stripes on straps
+  // Gold accent weave stripes on lanyard
   ctx.fillStyle = "#facc15";
   ctx.beginPath();
-  ctx.moveTo(badgeCX - 78 * scale, 0);
-  ctx.lineTo(badgeCX - 70 * scale, 0);
+  ctx.moveTo(badgeCX - 68 * scale, 0);
+  ctx.lineTo(badgeCX - 62 * scale, 0);
   ctx.lineTo(badgeCX - 24 * scale, clipY);
   ctx.lineTo(badgeCX - 30 * scale, clipY);
   ctx.closePath();
   ctx.fill();
+
   ctx.beginPath();
-  ctx.moveTo(badgeCX + 70 * scale, 0);
-  ctx.lineTo(badgeCX + 78 * scale, 0);
+  ctx.moveTo(badgeCX + 62 * scale, 0);
+  ctx.lineTo(badgeCX + 68 * scale, 0);
   ctx.lineTo(badgeCX + 30 * scale, clipY);
   ctx.lineTo(badgeCX + 24 * scale, clipY);
   ctx.closePath();
   ctx.fill();
 
-  // Metal clip body
-  ctx.fillStyle = "#b0b8c4";
-  const clipW = 32 * scale;
+  // Metal clip
+  const clipW = 34 * scale;
   const clipH = 34 * scale;
-  drawSquircle(ctx, badgeCX - clipW / 2, clipY - 6 * scale, clipW, clipH, 5 * scale);
+  ctx.fillStyle = "#cbd5e1";
+  drawSquircle(ctx, badgeCX - clipW / 2, clipY - 6 * scale, clipW, clipH, 6 * scale);
   ctx.fill();
-  // Clip highlight
-  ctx.fillStyle = "#d4dae2";
-  ctx.fillRect(badgeCX - clipW / 2 + 3 * scale, clipY - 4 * scale, 4 * scale, clipH - 8 * scale);
-  // Clip outline
-  ctx.strokeStyle = "#78849a";
+
+  ctx.fillStyle = "#f8fafc";
+  ctx.fillRect(badgeCX - clipW / 2 + 4 * scale, clipY - 4 * scale, 4 * scale, clipH - 8 * scale);
+
+  ctx.strokeStyle = "#64748b";
   ctx.lineWidth = 2 * scale;
-  drawSquircle(ctx, badgeCX - clipW / 2, clipY - 6 * scale, clipW, clipH, 5 * scale);
+  drawSquircle(ctx, badgeCX - clipW / 2, clipY - 6 * scale, clipW, clipH, 6 * scale);
   ctx.stroke();
-  // Ring hole
-  ctx.fillStyle = "#5a6577";
+
+  // Clip ring hole
+  ctx.fillStyle = "#334155";
   ctx.beginPath();
   ctx.arc(badgeCX, clipY + 20 * scale, 6 * scale, 0, Math.PI * 2);
   ctx.fill();
-  ctx.fillStyle = "#b0b8c4";
+  ctx.fillStyle = "#cbd5e1";
   ctx.beginPath();
   ctx.arc(badgeCX, clipY + 20 * scale, 3.5 * scale, 0, Math.PI * 2);
   ctx.fill();
   ctx.restore();
 
-  // === 6. Badge Card (White Outer Sleeve + Inner Emerald Card) ===
-  const cardW = 340 * scale;
-  const cardH = 420 * scale;
+  // === 4. High-Clarity Physical VIP Builder Pass Card ===
+  const cardW = 350 * scale;
+  const cardH = 550 * scale;
   const cardX = badgeCX - cardW / 2;
   const cardY = clipY + 38 * scale;
 
-  // Outer white sleeve with shadow
+  // Outer pass card with deep soft drop shadow
   ctx.save();
-  ctx.shadowColor = "rgba(0, 0, 0, 0.35)";
-  ctx.shadowBlur = 28 * scale;
-  ctx.shadowOffsetY = 12 * scale;
+  ctx.shadowColor = "rgba(0, 0, 0, 0.45)";
+  ctx.shadowBlur = 32 * scale;
+  ctx.shadowOffsetY = 16 * scale;
   ctx.fillStyle = "#ffffff";
-  drawSquircle(ctx, cardX - 8 * scale, cardY - 8 * scale, cardW + 16 * scale, cardH + 16 * scale, 16 * scale);
+  drawSquircle(ctx, cardX - 4 * scale, cardY - 4 * scale, cardW + 8 * scale, cardH + 8 * scale, 18 * scale);
   ctx.fill();
   ctx.shadowColor = "transparent";
   ctx.restore();
 
-  // Sleeve border
-  ctx.strokeStyle = "rgba(0,0,0,0.12)";
-  ctx.lineWidth = 1.5 * scale;
-  drawSquircle(ctx, cardX - 8 * scale, cardY - 8 * scale, cardW + 16 * scale, cardH + 16 * scale, 16 * scale);
+  // Outer card outline
+  ctx.strokeStyle = "#171717";
+  ctx.lineWidth = 2.5 * scale;
+  drawSquircle(ctx, cardX - 4 * scale, cardY - 4 * scale, cardW + 8 * scale, cardH + 8 * scale, 18 * scale);
   ctx.stroke();
 
-  // Top punch-hole slot
+  // Top punch hole slot for lanyard
   ctx.fillStyle = "#e2e8f0";
-  drawSquircle(ctx, badgeCX - 24 * scale, cardY - 14 * scale, 48 * scale, 10 * scale, 5 * scale);
+  drawSquircle(ctx, badgeCX - 24 * scale, cardY - 10 * scale, 48 * scale, 12 * scale, 6 * scale);
   ctx.fill();
-  ctx.strokeStyle = "#94a3b8";
-  ctx.lineWidth = 1 * scale;
-  drawSquircle(ctx, badgeCX - 24 * scale, cardY - 14 * scale, 48 * scale, 10 * scale, 5 * scale);
+  ctx.strokeStyle = "#64748b";
+  ctx.lineWidth = 1.5 * scale;
+  drawSquircle(ctx, badgeCX - 24 * scale, cardY - 10 * scale, 48 * scale, 12 * scale, 6 * scale);
   ctx.stroke();
 
-  // Inner card body
+  // Inner card body clip
   ctx.save();
-  drawSquircle(ctx, cardX, cardY, cardW, cardH, 12 * scale);
+  drawSquircle(ctx, cardX, cardY, cardW, cardH, 14 * scale);
   ctx.clip();
 
-  // Emerald gradient fill
-  const cardGrad = ctx.createLinearGradient(cardX, cardY, cardX + cardW, cardY + cardH);
-  cardGrad.addColorStop(0, "#0d6b3e");
-  cardGrad.addColorStop(0.3, "#0a8a4e");
-  cardGrad.addColorStop(0.6, "#0d6b3e");
-  cardGrad.addColorStop(1, "#074d2c");
-  ctx.fillStyle = cardGrad;
+  // Off-white / cream physical card fill
+  ctx.fillStyle = "#faf8f3";
   ctx.fillRect(cardX, cardY, cardW, cardH);
 
-  // Abstract wave overlay patterns (like reference)
-  ctx.strokeStyle = "rgba(250, 204, 21, 0.08)";
-  ctx.lineWidth = 2.5 * scale;
-  for (let wy = cardY - 20 * scale; wy < cardY + cardH + 20 * scale; wy += 14 * scale) {
+  // Subtle clean grid paper texture background inside card
+  ctx.strokeStyle = "rgba(0, 0, 0, 0.03)";
+  ctx.lineWidth = 1 * scale;
+  for (let gx = cardX; gx <= cardX + cardW; gx += 20 * scale) {
     ctx.beginPath();
-    for (let wx = cardX; wx <= cardX + cardW; wx += 4 * scale) {
-      const offset = Math.sin((wx - cardX) * 0.025 + wy * 0.01) * 12 * scale;
-      if (wx === cardX) ctx.moveTo(wx, wy + offset);
-      else ctx.lineTo(wx, wy + offset);
-    }
+    ctx.moveTo(gx, cardY);
+    ctx.lineTo(gx, cardY + cardH);
+    ctx.stroke();
+  }
+  for (let gy = cardY; gy <= cardY + cardH; gy += 20 * scale) {
+    ctx.beginPath();
+    ctx.moveTo(cardX, gy);
+    ctx.lineTo(cardX + cardW, gy);
     ctx.stroke();
   }
 
-  // Larger decorative circles
-  ctx.strokeStyle = "rgba(250, 204, 21, 0.06)";
-  ctx.lineWidth = 2 * scale;
-  ctx.beginPath();
-  ctx.arc(cardX + cardW * 0.82, cardY + 60 * scale, 45 * scale, 0, Math.PI * 2);
-  ctx.stroke();
-  ctx.beginPath();
-  ctx.arc(cardX + 35 * scale, cardY + cardH - 80 * scale, 35 * scale, 0, Math.PI * 2);
-  ctx.stroke();
-
-  // Globe icon (top right of card)
-  ctx.strokeStyle = "rgba(255,255,255,0.2)";
-  ctx.lineWidth = 1.5 * scale;
-  const gx = cardX + cardW - 40 * scale;
-  const gy = cardY + 40 * scale;
-  ctx.beginPath();
-  ctx.arc(gx, gy, 14 * scale, 0, Math.PI * 2);
-  ctx.stroke();
-  ctx.beginPath();
-  ctx.moveTo(gx - 14 * scale, gy);
-  ctx.lineTo(gx + 14 * scale, gy);
-  ctx.stroke();
-  ctx.beginPath();
-  ctx.ellipse(gx, gy, 7 * scale, 14 * scale, 0, 0, Math.PI * 2);
-  ctx.stroke();
-
-  // === Header Bar ===
-  const hdrH = 26 * scale;
-  ctx.fillStyle = "rgba(0, 0, 0, 0.2)";
+  // === Header Bar (Dark Emerald Banner) ===
+  const hdrH = 34 * scale;
+  ctx.fillStyle = "#063d23";
   ctx.fillRect(cardX, cardY, cardW, hdrH);
 
   ctx.fillStyle = "#facc15";
-  ctx.font = `bold ${7 * scale}px monospace`;
+  ctx.font = `900 ${10 * scale}px 'Impact', sans-serif`;
   ctx.textAlign = "left";
-  ctx.fillText("HACKER", cardX + 12 * scale, cardY + 17 * scale);
-  ctx.fillStyle = "#ffffff";
-  ctx.textAlign = "center";
-  ctx.font = `900 ${8 * scale}px sans-serif`;
-  ctx.fillText("BUILDERS", cardX + cardW / 2, cardY + 17 * scale);
-  ctx.fillStyle = "rgba(255,255,255,0.5)";
-  ctx.font = `bold ${7 * scale}px monospace`;
+  ctx.textBaseline = "middle";
+  ctx.fillText("HACKER HOUSE GOA", cardX + 16 * scale, cardY + hdrH / 2);
+
+  // VIP Gold Seal (Top Right)
+  ctx.fillStyle = "#facc15";
+  ctx.font = `bold ${8 * scale}px sans-serif`;
   ctx.textAlign = "right";
-  ctx.fillText("IN GOA", cardX + cardW - 12 * scale, cardY + 11 * scale);
-  ctx.fillText("2026", cardX + cardW - 12 * scale, cardY + 22 * scale);
+  ctx.fillText("★ VIP BUILDER", cardX + cardW - 16 * scale, cardY + hdrH / 2);
 
-  // Small icons in header
-  ctx.strokeStyle = "rgba(250, 204, 21, 0.6)";
-  ctx.lineWidth = 1 * scale;
-  [cardX + cardW * 0.3, cardX + cardW * 0.6].forEach(ix => {
-    ctx.beginPath();
-    ctx.arc(ix, cardY + 13 * scale, 5 * scale, 0, Math.PI * 2);
-    ctx.stroke();
-    ctx.beginPath();
-    ctx.moveTo(ix - 3 * scale, cardY + 13 * scale);
-    ctx.lineTo(ix + 3 * scale, cardY + 13 * scale);
-    ctx.moveTo(ix, cardY + 10 * scale);
-    ctx.lineTo(ix, cardY + 16 * scale);
-    ctx.stroke();
-  });
+  // === Photo Section (Center Top) ===
+  const pW = cardW - 44 * scale;
+  const pH = pW * 0.82;
+  const pX = cardX + 22 * scale;
+  const pY = cardY + hdrH + 18 * scale;
 
-  // === Photo Window ===
-  const pW = cardW - 40 * scale;
-  const pH = pW * 0.78;
-  const pX = cardX + 20 * scale;
-  const pY = cardY + hdrH + 16 * scale;
-
-  // White photo border
-  ctx.fillStyle = "#ffffff";
-  drawSquircle(ctx, pX - 5 * scale, pY - 5 * scale, pW + 10 * scale, pH + 10 * scale, 10 * scale);
-  ctx.fill();
-
+  // White Photo Card Frame with Drop Shadow
   ctx.save();
-  drawSquircle(ctx, pX, pY, pW, pH, 7 * scale);
+  ctx.shadowColor = "rgba(0, 0, 0, 0.12)";
+  ctx.shadowBlur = 10 * scale;
+  ctx.shadowOffsetY = 4 * scale;
+  ctx.fillStyle = "#ffffff";
+  drawSquircle(ctx, pX - 6 * scale, pY - 6 * scale, pW + 12 * scale, pH + 12 * scale, 12 * scale);
+  ctx.fill();
+  ctx.restore();
+
+  // Photo border stroke
+  ctx.strokeStyle = "#e2e8f0";
+  ctx.lineWidth = 1.5 * scale;
+  drawSquircle(ctx, pX - 6 * scale, pY - 6 * scale, pW + 12 * scale, pH + 12 * scale, 12 * scale);
+  ctx.stroke();
+
+  // Photo clip
+  ctx.save();
+  drawSquircle(ctx, pX, pY, pW, pH, 8 * scale);
   ctx.clip();
+
   if (img) {
     drawUserPhoto(ctx, img, photo, pX + pW / 2, pY + pH / 2, pW, pH);
   } else {
     const pg = ctx.createLinearGradient(pX, pY, pX + pW, pY + pH);
-    pg.addColorStop(0, "#1e40af");
-    pg.addColorStop(1, "#0d6b3e");
+    pg.addColorStop(0, "#093820");
+    pg.addColorStop(1, "#031c10");
     ctx.fillStyle = pg;
     ctx.fillRect(pX, pY, pW, pH);
 
-    // Abstract swirl pattern in placeholder
-    ctx.strokeStyle = "rgba(255,255,255,0.15)";
-    ctx.lineWidth = 3 * scale;
-    for (let sw = pY; sw < pY + pH; sw += 20 * scale) {
-      ctx.beginPath();
-      for (let sx = pX; sx < pX + pW; sx += 4 * scale) {
-        const sy = sw + Math.sin((sx - pX) * 0.03 + sw * 0.02) * 15 * scale;
-        if (sx === pX) ctx.moveTo(sx, sy); else ctx.lineTo(sx, sy);
-      }
-      ctx.stroke();
-    }
-
-    ctx.fillStyle = "rgba(255,255,255,0.4)";
+    ctx.fillStyle = "rgba(250, 204, 21, 0.6)";
     ctx.font = `600 ${14 * scale}px sans-serif`;
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
-    ctx.fillText("Upload Photo", pX + pW / 2, pY + pH / 2);
+    ctx.fillText("Click to Upload Photo", pX + pW / 2, pY + pH / 2);
   }
   ctx.restore();
 
-  // === Attendee Info ===
-  let ty = pY + pH + 20 * scale;
-
-  // Role tag
-  ctx.fillStyle = "#facc15";
-  ctx.font = `italic bold ${8 * scale}px 'Georgia', serif`;
-  ctx.textAlign = "left";
-  ctx.fillText((card.role || "FULLSTACK").toUpperCase(), cardX + 20 * scale, ty);
-
-  ctx.textAlign = "right";
-  ctx.fillStyle = "rgba(254,252,232,0.5)";
-  ctx.font = `500 ${8 * scale}px monospace`;
-  const handle = card.handle ? `@${card.handle.replace("@", "")}` : "@handle";
-  ctx.fillText(handle, cardX + cardW - 20 * scale, ty);
-
-  // Big name
-  ty += 24 * scale;
-  ctx.fillStyle = "#ffffff";
-  ctx.font = `900 ${22 * scale}px sans-serif`;
+  // Washi Tape Strip Accent across top-left of photo (Scribbled aesthetic)
+  ctx.save();
+  ctx.translate(pX + 10 * scale, pY - 10 * scale);
+  ctx.rotate(-0.08);
+  ctx.fillStyle = "rgba(250, 204, 21, 0.9)";
+  ctx.shadowColor = "rgba(0,0,0,0.1)";
+  ctx.shadowBlur = 4 * scale;
+  ctx.fillRect(0, 0, 72 * scale, 18 * scale);
+  ctx.fillStyle = "#072e1a";
+  ctx.font = `700 ${10 * scale}px 'Caveat', cursive, sans-serif`;
   ctx.textAlign = "center";
-  ctx.fillText(card.name || "YOUR NAME", cardX + cardW / 2, ty);
+  ctx.textBaseline = "middle";
+  ctx.fillText("SHIPPED ✦", 36 * scale, 9 * scale);
+  ctx.restore();
 
-  // Fun title
-  ty += 18 * scale;
-  ctx.fillStyle = "rgba(254,252,232,0.45)";
-  ctx.font = `italic ${8 * scale}px 'Georgia', serif`;
-  ctx.fillText(card.funTitle || "Everything intentional. Shipping in Goa.", cardX + cardW / 2, ty);
+  // === Builder Info Section ===
+  let ty = pY + pH + 24 * scale;
 
-  // Tech stack pills
-  ty += 16 * scale;
+  // Full Name (Massive, Bold, Crisp Dark)
+  const nameText = (card.name || "ALEX RIVERA").toUpperCase();
+  ctx.fillStyle = "#171717";
+  ctx.font = `900 ${22 * scale}px 'Impact', sans-serif`;
+  ctx.textAlign = "left";
+  ctx.textBaseline = "top";
+  ctx.fillText(nameText, cardX + 22 * scale, ty);
+
+  // Handwritten Wavy Red/Gold Underline underneath name
+  const nameW = ctx.measureText(nameText).width;
+  drawWavyUnderline(ctx, cardX + 22 * scale, ty + 26 * scale, cardX + 22 * scale + Math.min(nameW, cardW - 44 * scale), "#b91c1c", scale);
+
+  // Role Pill & Handle
+  ty += 34 * scale;
+  const roleText = (card.role || "FULLSTACK").toUpperCase();
+
+  // Role Pill (Dark background, vibrant gold font)
+  ctx.font = `bold ${8.5 * scale}px sans-serif`;
+  const rWidth = ctx.measureText(roleText).width + 16 * scale;
+  ctx.fillStyle = "#171717";
+  drawSquircle(ctx, cardX + 22 * scale, ty, rWidth, 18 * scale, 5 * scale);
+  ctx.fill();
+
+  ctx.fillStyle = "#facc15";
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillText(roleText, cardX + 22 * scale + rWidth / 2, ty + 9 * scale);
+
+  // Handle (Right aligned)
+  const handleText = card.handle ? `@${card.handle.replace("@", "")}` : "@alexbuilds";
+  ctx.fillStyle = "#525252";
+  ctx.font = `600 ${10 * scale}px monospace`;
+  ctx.textAlign = "right";
+  ctx.textBaseline = "middle";
+  ctx.fillText(handleText, cardX + cardW - 22 * scale, ty + 9 * scale);
+
+  // Handwritten Tagline / Fun Title
+  ty += 28 * scale;
+  const tagline = card.funTitle || "10x Caffeine-to-Code Pipeline";
+  ctx.fillStyle = "#093820";
+  ctx.font = `700 ${16 * scale}px 'Caveat', cursive, 'Georgia', serif`;
+  ctx.textAlign = "left";
+  ctx.textBaseline = "top";
+  ctx.fillText(`“ ${tagline} ”`, cardX + 22 * scale, ty);
+
+  // Tech Stack Badges
+  ty += 26 * scale;
   const stack = card.techStack?.length > 0 ? card.techStack : ["React", "Next.js", "Solana", "TypeScript"];
-  ctx.font = `bold ${7 * scale}px sans-serif`;
-  const widths = stack.slice(0, 4).map(t => ctx.measureText(t).width + 12 * scale);
-  const total = widths.reduce((a, b) => a + b, 0) + (widths.length - 1) * 4 * scale;
-  let sx = cardX + (cardW - total) / 2;
+  ctx.font = `bold ${7.5 * scale}px sans-serif`;
+  const stackW = stack.slice(0, 4).map((t) => ctx.measureText(t).width + 14 * scale);
+  let sx = cardX + 22 * scale;
+
   for (let i = 0; i < Math.min(stack.length, 4); i++) {
-    const pw = widths[i];
-    ctx.fillStyle = "rgba(250, 204, 21, 0.2)";
-    drawSquircle(ctx, sx, ty - 9 * scale, pw, 14 * scale, 4 * scale);
+    const pw = stackW[i];
+    if (sx + pw > cardX + cardW - 22 * scale) break;
+
+    ctx.fillStyle = "#ffffff";
+    drawSquircle(ctx, sx, ty, pw, 16 * scale, 4 * scale);
     ctx.fill();
-    ctx.fillStyle = "#facc15";
+
+    ctx.strokeStyle = "#cbd5e1";
+    ctx.lineWidth = 1 * scale;
+    drawSquircle(ctx, sx, ty, pw, 16 * scale, 4 * scale);
+    ctx.stroke();
+
+    ctx.fillStyle = "#0f172a";
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
-    ctx.fillText(stack[i], sx + pw / 2, ty);
-    sx += pw + 4 * scale;
+    ctx.fillText(stack[i], sx + pw / 2, ty + 8 * scale);
+
+    sx += pw + 6 * scale;
   }
-  ctx.textBaseline = "alphabetic";
 
-  ctx.restore(); // End card clip
+  // === Bottom Barcode & QR Code Section ===
+  const qrS = 48 * scale;
+  const qrX = cardX + cardW - qrS - 20 * scale;
+  const qrY = cardY + cardH - qrS - 16 * scale;
 
-  // === QR Code (Bottom Right of Card) ===
-  const qrS = 50 * scale;
-  const qrX = cardX + cardW - qrS - 16 * scale;
-  const qrY = cardY + cardH - qrS - 12 * scale;
-
+  // QR Code Box
   ctx.fillStyle = "#ffffff";
-  ctx.fillRect(qrX - 4 * scale, qrY - 4 * scale, qrS + 8 * scale, qrS + 8 * scale);
+  ctx.fillRect(qrX - 3 * scale, qrY - 3 * scale, qrS + 6 * scale, qrS + 6 * scale);
+  ctx.strokeStyle = "#171717";
+  ctx.lineWidth = 1.5 * scale;
+  ctx.strokeRect(qrX - 3 * scale, qrY - 3 * scale, qrS + 6 * scale, qrS + 6 * scale);
 
   const cs = 4 * scale;
   const gn = Math.floor(qrS / cs);
-  // Seeded pseudo-random for consistent look
   let seed = 42;
-  const seededRand = () => { seed = (seed * 16807) % 2147483647; return seed / 2147483647; };
+  const seededRand = () => {
+    seed = (seed * 16807) % 2147483647;
+    return seed / 2147483647;
+  };
   for (let gx = 0; gx < gn; gx++) {
     for (let gy = 0; gy < gn; gy++) {
       if (seededRand() > 0.42) {
@@ -795,29 +745,42 @@ export function renderBuilderCard(
     ctx.fillRect(fx + 4 * scale, fy + 4 * scale, 4 * scale, 4 * scale);
   });
 
-  // === Small Info Below Card ===
-  ctx.fillStyle = "rgba(254,252,232,0.3)";
-  ctx.font = `500 ${6.5 * scale}px monospace`;
-  ctx.textAlign = "center";
-  ctx.fillText(
-    "PASS NO. " + (card.badgeId || "HHG-26-0000") + " // EVERYTHING INTENTIONAL // GOA, INDIA",
-    W / 2,
-    cardY + cardH + 30 * scale
-  );
+  // Barcode (Bottom Left of Card)
+  const barY = cardY + cardH - 34 * scale;
+  const barX = cardX + 22 * scale;
+  const barH = 16 * scale;
 
-  // === Bottom Ticker Tape ===
-  const tickerH = 24 * scale;
+  ctx.fillStyle = "#171717";
+  const bars = [2, 1, 3, 1, 2, 4, 1, 2, 3, 1, 2, 1, 4, 2, 1, 3];
+  let bx = barX;
+  for (const b of bars) {
+    ctx.fillRect(bx, barY, b * scale * 0.7, barH);
+    bx += (b + 1.2) * scale * 0.7;
+  }
+  ctx.font = `600 ${6 * scale}px monospace`;
+  ctx.textAlign = "left";
+  ctx.textBaseline = "top";
+  ctx.fillText(`PASS ID: ${card.badgeId || "HHG-26-8420"}`, barX, barY + barH + 3 * scale);
+
+  // Handwritten Doodle Stars on Card Margins (Scribbled aesthetic)
+  drawScribbleStar(ctx, cardX + cardW - 30 * scale, cardY + hdrH + 12 * scale, 6 * scale, "#d97706", scale);
+  drawScribbleStar(ctx, cardX + 16 * scale, cardY + cardH - 54 * scale, 5 * scale, "#b91c1c", scale);
+
+  ctx.restore(); // End card clip
+
+  // === 5. Bottom Ticker Tape ===
+  const tickerH = 26 * scale;
   const tickerY = H - tickerH;
 
   ctx.fillStyle = "#facc15";
   ctx.fillRect(0, tickerY, W, tickerH);
 
   ctx.fillStyle = "#072e1a";
-  ctx.font = `bold ${8 * scale}px monospace`;
+  ctx.font = `bold ${8.5 * scale}px monospace`;
   ctx.textAlign = "left";
   ctx.textBaseline = "middle";
 
-  const tickerText = "+ Hacker House Goa 2026 + Hacker House Goa 2026 ";
+  const tickerText = "+ HACKER HOUSE GOA 2026 + EVERYTHING INTENTIONAL + SHIP HARD VIBE HARDER ";
   let tx = 0;
   while (tx < W + 300 * scale) {
     ctx.fillText(tickerText, tx, tickerY + tickerH / 2);
