@@ -8,7 +8,7 @@ import ExportActions from "@/components/ExportActions";
 import ShareModal from "@/components/ShareModal";
 import CustomizeDrawer from "@/components/CustomizeDrawer";
 import { isHeicFile, convertHeicToBlob } from "@/lib/heicConverter";
-import { Upload, Sliders, ImagePlus, Loader2 } from "lucide-react";
+import { Sliders, ImagePlus } from "lucide-react";
 
 const DEFAULT_PHOTO: PhotoState = {
   src: null,
@@ -110,44 +110,10 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen bg-[#073820] text-[#faf8f3] flex flex-col justify-between relative overflow-x-hidden selection:bg-[#ff007f] selection:text-[#ffe600]">
-      {/* ── Left Side Ticker (Desktop) ────────────────────── */}
-      <aside className="hidden xl:flex fixed left-8 top-1/2 -translate-y-1/2 flex-col items-center gap-6 z-20 pointer-events-none opacity-40 hover:opacity-100 transition-opacity">
-        <div className="sprocket-dots">
-          <div className="sprocket-dot" />
-          <div className="sprocket-dot" />
-          <div className="sprocket-dot" />
-        </div>
-        <div className="vertical-ticker">
-          SOMMELIER · RACE CONDITION MYSTIC · MERGE CONFLICT ARCHITECT · EDGE CASE DIPLOMAT
-        </div>
-        <div className="sprocket-dots">
-          <div className="sprocket-dot" />
-          <div className="sprocket-dot" />
-          <div className="sprocket-dot" />
-        </div>
-      </aside>
-
-      {/* ── Right Side Ticker (Desktop) ───────────────────── */}
-      <aside className="hidden xl:flex fixed right-8 top-1/2 -translate-y-1/2 flex-col items-center gap-6 z-20 pointer-events-none opacity-40 hover:opacity-100 transition-opacity">
-        <div className="sprocket-dots">
-          <div className="sprocket-dot" />
-          <div className="sprocket-dot" />
-          <div className="sprocket-dot" />
-        </div>
-        <div className="vertical-ticker">
-          OCT 28 - OCT 31 · 2026 · GOA · 15.2993° N, 74.1240° E · LESS NOISE. MORE SIGNAL.
-        </div>
-        <div className="sprocket-dots">
-          <div className="sprocket-dot" />
-          <div className="sprocket-dot" />
-          <div className="sprocket-dot" />
-        </div>
-      </aside>
-
-      {/* ── Header ────────────────────────────────────────── */}
+      {/* ── Header Branding ─────────────────────────────────── */}
       <Header mode={mode} onModeChange={setMode} />
 
-      {/* ── Main Hero Dropzone & Studio Area ──────────────── */}
+      {/* ── Main Studio Area ──────────────────────────────── */}
       <main className="flex-1 max-w-4xl mx-auto w-full px-4 sm:px-6 py-4 flex flex-col items-center justify-center my-auto">
         <input
           ref={fileInputRef}
@@ -158,7 +124,7 @@ export default function HomePage() {
         />
 
         <div className="w-full max-w-[560px] flex flex-col items-center space-y-6">
-          {/* Main Central Card Container */}
+          {/* Central Dashed Dropzone Card containing Preview Frame */}
           <div
             onDragOver={(e) => {
               e.preventDefault();
@@ -166,12 +132,9 @@ export default function HomePage() {
             }}
             onDragLeave={() => setDragOver(false)}
             onDrop={handleDrop}
-            className={`w-full dashed-dropzone p-4 sm:p-8 flex flex-col items-center justify-center transition-all ${
+            className={`w-full dashed-dropzone p-3 sm:p-6 flex flex-col items-center justify-center transition-all ${
               dragOver ? "drag-over" : ""
-            } ${!photo.src ? "min-h-[380px] sm:min-h-[420px]" : ""}`}
-            onClick={() => {
-              if (!photo.src) fileInputRef.current?.click();
-            }}
+            }`}
           >
             {/* Corner Crop Brackets */}
             <div className="corner-bracket corner-tl" />
@@ -179,88 +142,59 @@ export default function HomePage() {
             <div className="corner-bracket corner-bl" />
             <div className="corner-bracket corner-br" />
 
-            {/* Content State 1: Upload Prompt */}
-            {!photo.src ? (
-              <div className="flex flex-col items-center text-center space-y-6 py-8">
-                {uploading ? (
-                  <div className="flex flex-col items-center gap-3">
-                    <Loader2 className="w-10 h-10 text-[#ffe600] animate-spin" />
-                    <p className="font-mono text-sm text-emerald-200">Processing Photo...</p>
-                  </div>
-                ) : (
-                  <>
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        fileInputRef.current?.click();
-                      }}
-                      className="btn-yellow text-sm py-3.5 px-8"
-                    >
-                      <Upload className="w-4 h-4 text-[#042616]" />
-                      UPLOAD A PHOTO
-                    </button>
-
-                    <div className="space-y-1 font-mono text-[11px] text-emerald-300/70 uppercase tracking-widest">
-                      <div>JPG · PNG · HEIC · WEBP</div>
-                      <div>ANY SHAPE – WE&apos;LL FRAME IT</div>
-                    </div>
-                  </>
-                )}
-              </div>
-            ) : (
-              /* Content State 2: Live Canvas Preview */
-              <div className="w-full flex flex-col items-center space-y-4">
-                <PreviewCanvas
-                  canvasRef={canvasRef}
-                  mode={mode}
-                  photo={photo}
-                  frame={frame}
-                  card={card}
-                  onPhotoOffsetChange={(offsetX, offsetY) =>
-                    updatePhoto({ offsetX, offsetY })
-                  }
-                />
-              </div>
-            )}
+            {/* Always Display Preview Canvas with Centered Upload Button when photo is null */}
+            <div className="w-full flex flex-col items-center">
+              <PreviewCanvas
+                canvasRef={canvasRef}
+                mode={mode}
+                photo={photo}
+                frame={frame}
+                card={card}
+                onPhotoOffsetChange={(offsetX, offsetY) =>
+                  updatePhoto({ offsetX, offsetY })
+                }
+                onUploadClick={() => fileInputRef.current?.click()}
+                uploading={uploading}
+              />
+            </div>
           </div>
 
-          {/* Quick Action Toolbar underneath main card */}
-          {photo.src && (
-            <div className="w-full space-y-3">
+          {/* Actions & Customization Toolbar */}
+          <div className="w-full space-y-3">
+            {photo.src ? (
               <ExportActions
                 canvasRef={canvasRef}
                 mode={mode}
                 onShareClick={() => setShareOpen(true)}
               />
+            ) : null}
 
-              <div className="flex items-center justify-center gap-2 pt-1">
-                <button
-                  onClick={() => setCustomizeOpen(true)}
-                  className="btn-dark-pill flex items-center gap-2 text-xs !py-2 !px-5"
-                >
-                  <Sliders className="w-3.5 h-3.5 text-[#ffe600]" />
-                  Tweak & Customize
-                </button>
+            <div className="flex items-center justify-center gap-2 pt-1">
+              <button
+                onClick={() => setCustomizeOpen(true)}
+                className="btn-dark-pill flex items-center gap-2 text-xs !py-2.5 !px-6 shadow-lg"
+              >
+                <Sliders className="w-4 h-4 text-[#ffe600]" />
+                Customize & Tweak Details
+              </button>
+
+              {photo.src && (
                 <button
                   onClick={() => fileInputRef.current?.click()}
-                  className="btn-dark-pill flex items-center gap-2 text-xs !py-2 !px-5"
+                  className="btn-dark-pill flex items-center gap-2 text-xs !py-2.5 !px-6 shadow-lg"
                 >
-                  <ImagePlus className="w-3.5 h-3.5 text-emerald-300" />
+                  <ImagePlus className="w-4 h-4 text-emerald-300" />
                   Replace Photo
                 </button>
-              </div>
+              )}
             </div>
-          )}
+          </div>
         </div>
       </main>
 
-      {/* ── Footer ────────────────────────────────────────── */}
-      <footer className="text-center py-6 px-4 space-y-1.5 font-mono text-[11px] text-emerald-300/60 uppercase tracking-widest border-t border-[#166940]/40 bg-[#042616]/60 backdrop-blur-sm select-none">
-        <div>NO LOGIN. NO SIGNUP. ONE PASS.</div>
-        <div className="text-emerald-400/80 font-bold">
-          <span className="text-[#ff007f]">#FrameInGoa</span> · mhgoa.com
-        </div>
+      {/* ── Simple Minimalist Footer ────────────────────────── */}
+      <footer className="text-center py-6 px-4 font-mono text-[12px] text-emerald-300/80 uppercase tracking-widest select-none">
+        <span className="text-[#ff007f] font-black">#FrameInGoa</span> · mhgoa.com
       </footer>
 
       {/* ── Modals & Drawers ──────────────────────────────── */}
@@ -285,4 +219,5 @@ export default function HomePage() {
     </div>
   );
 }
+
 

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useCallback } from "react";
+import { Upload, Loader2 } from "lucide-react";
 import type {
   PhotoState,
   FrameSettings,
@@ -16,6 +17,8 @@ interface PreviewCanvasProps {
   card: CardData;
   onPhotoOffsetChange: (offsetX: number, offsetY: number) => void;
   canvasRef: React.RefObject<HTMLCanvasElement | null>;
+  onUploadClick?: () => void;
+  uploading?: boolean;
 }
 
 export default function PreviewCanvas({
@@ -25,6 +28,8 @@ export default function PreviewCanvas({
   card,
   onPhotoOffsetChange,
   canvasRef,
+  onUploadClick,
+  uploading = false,
 }: PreviewCanvasProps) {
   const imgRef = useRef<HTMLImageElement | null>(null);
   const isDragging = useRef(false);
@@ -66,21 +71,25 @@ export default function PreviewCanvas({
     render();
   }, [render]);
 
-  const handlePointerDown = useCallback((e: React.PointerEvent) => {
-    isDragging.current = true;
-    lastPos.current = { x: e.clientX, y: e.clientY };
-    (e.target as HTMLElement).setPointerCapture(e.pointerId);
-  }, []);
+  const handlePointerDown = useCallback(
+    (e: React.PointerEvent) => {
+      if (!photo.src) return;
+      isDragging.current = true;
+      lastPos.current = { x: e.clientX, y: e.clientY };
+      (e.target as HTMLElement).setPointerCapture(e.pointerId);
+    },
+    [photo.src]
+  );
 
   const handlePointerMove = useCallback(
     (e: React.PointerEvent) => {
-      if (!isDragging.current) return;
+      if (!isDragging.current || !photo.src) return;
       const dx = e.clientX - lastPos.current.x;
       const dy = e.clientY - lastPos.current.y;
       lastPos.current = { x: e.clientX, y: e.clientY };
       onPhotoOffsetChange(photo.offsetX + dx, photo.offsetY + dy);
     },
-    [photo.offsetX, photo.offsetY, onPhotoOffsetChange]
+    [photo.src, photo.offsetX, photo.offsetY, onPhotoOffsetChange]
   );
 
   const handlePointerUp = useCallback(() => {
@@ -89,7 +98,7 @@ export default function PreviewCanvas({
 
   const isPfp = mode === "pfp-frame";
   let aspectRatioStyle = "4 / 5";
-  let maxWStyle = "max-w-[420px]";
+  let maxWStyle = "max-w-[400px]";
 
   if (isPfp) {
     if (frame.aspectRatio === "1:1") {
@@ -104,22 +113,61 @@ export default function PreviewCanvas({
     }
   } else {
     aspectRatioStyle = "800 / 418";
-    maxWStyle = "max-w-[640px]";
+    maxWStyle = "max-w-[600px]";
   }
-
 
   return (
     <div className="relative flex flex-col items-center justify-center w-full animate-scale-in">
       <div className="relative w-full flex items-center justify-center p-2 sm:p-4 rounded-2xl bg-[#031f12]/80 border border-[#166940] shadow-inner">
-        <canvas
-          ref={canvasRef}
-          className={`relative w-full ${maxWStyle} rounded-xl shadow-2xl cursor-grab active:cursor-grabbing border border-[#166940]`}
-          style={{ aspectRatio: aspectRatioStyle }}
-          onPointerDown={handlePointerDown}
-          onPointerMove={handlePointerMove}
-          onPointerUp={handlePointerUp}
-          onPointerLeave={handlePointerUp}
-        />
+        <div className={`relative w-full ${maxWStyle} rounded-xl overflow-hidden shadow-2xl border border-[#166940]`}>
+          <canvas
+            ref={canvasRef}
+            className={`w-full ${photo.src ? "cursor-grab active:cursor-grabbing" : "cursor-pointer"}`}
+            style={{ aspectRatio: aspectRatioStyle }}
+            onPointerDown={handlePointerDown}
+            onPointerMove={handlePointerMove}
+            onPointerUp={handlePointerUp}
+            onPointerLeave={handlePointerUp}
+            onClick={() => {
+              if (!photo.src && onUploadClick) onUploadClick();
+            }}
+          />
+
+          {/* Centered UPLOAD A PHOTO overlay inside preview frame when photo is null */}
+          {!photo.src && (
+            <div
+              className="absolute inset-0 flex flex-col items-center justify-center p-4 bg-[#042616]/30 backdrop-blur-[2px] cursor-pointer group transition-colors hover:bg-[#042616]/20"
+              onClick={onUploadClick}
+            >
+              {uploading ? (
+                <div className="flex flex-col items-center gap-2">
+                  <Loader2 className="w-8 h-8 text-[#ffe600] animate-spin" />
+                  <span className="font-mono text-xs text-[#ffe600] uppercase tracking-wider font-bold">
+                    Processing Image…
+                  </span>
+                </div>
+              ) : (
+                <div className="flex flex-col items-center text-center space-y-3">
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onUploadClick?.();
+                    }}
+                    className="btn-yellow text-xs sm:text-sm py-3 px-6 sm:px-8 shadow-2xl group-hover:scale-105 transition-transform"
+                  >
+                    <Upload className="w-4 h-4 text-[#042616]" />
+                    UPLOAD A PHOTO
+                  </button>
+                  <p className="font-mono text-[10px] sm:text-[11px] text-[#ffe600] font-bold uppercase tracking-widest drop-shadow">
+                    JPG · PNG · HEIC · WEBP
+                  </p>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+
         {photo.src && (
           <div className="absolute bottom-4 left-1/2 -translate-x-1/2 text-[10px] text-[#ffe600] font-mono bg-[#042616]/90 px-3 py-1 rounded-full border border-[#166940] backdrop-blur-md pointer-events-none shadow-md uppercase tracking-wider">
             ✦ drag photo to reposition
@@ -129,4 +177,5 @@ export default function PreviewCanvas({
     </div>
   );
 }
+
 
