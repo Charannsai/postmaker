@@ -309,13 +309,220 @@ export function renderPfpFrame(
   ctx.font = `500 ${5 * scale}px monospace`;
   ctx.fillText("HH-GOA-2026-PFP", barcodeX, barcodeY + barH + 4 * scale);
 
+  // === 8. Active Stamps & Scribble Stickers ===
+  const activeStickers = frame.stickers || [];
+  if (activeStickers.includes("postmark")) {
+    drawRubberPostmark(ctx, mx + stampW - 75 * scale, my + 65 * scale, scale);
+  }
+  if (activeStickers.includes("approved-stamp")) {
+    drawApprovedStamp(ctx, mx + 75 * scale, my + stampH * 0.72, "APPROVED FOR GOA", scale);
+  }
+  if (activeStickers.includes("goa-sunset-stamp")) {
+    drawGoaSunsetStamp(ctx, mx + 55 * scale, my + 55 * scale, scale);
+  }
+  if (activeStickers.includes("gold-starburst")) {
+    drawGoldStarburst(ctx, mx + stampW - 55 * scale, my + stampH * 0.74, 28 * scale, scale);
+  }
+  if (activeStickers.includes("scribble-doodles")) {
+    drawScribblesAndDoodles(ctx, W, H, "pfp-frame", scale);
+  }
+
   // Grain over stamp
   addGrain(ctx, W, H, 0.025, scale);
 
   ctx.restore(); // End stamp clip
 }
 
-// ── Scribble Helpers ──────────────────────────────────────────
+
+// ── Scribble & Stamp Helpers ─────────────────────────────────
+function drawRubberPostmark(
+  ctx: CanvasRenderingContext2D,
+  cx: number,
+  cy: number,
+  scale: number
+) {
+  ctx.save();
+  ctx.translate(cx, cy);
+  ctx.rotate(-0.14);
+
+  ctx.strokeStyle = "rgba(185, 28, 28, 0.85)";
+  ctx.lineWidth = 2.5 * scale;
+
+  ctx.beginPath();
+  ctx.arc(0, 0, 36 * scale, 0, Math.PI * 2);
+  ctx.stroke();
+
+  ctx.beginPath();
+  ctx.arc(0, 0, 31 * scale, 0, Math.PI * 2);
+  ctx.stroke();
+
+  ctx.fillStyle = "rgba(185, 28, 28, 0.9)";
+  ctx.font = `bold ${6.5 * scale}px sans-serif`;
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillText("AIR MAIL · GOA", 0, -10 * scale);
+  ctx.font = `900 ${11 * scale}px 'Impact', sans-serif`;
+  ctx.fillText("AUG 2026", 0, 2 * scale);
+  ctx.font = `bold ${5.5 * scale}px monospace`;
+  ctx.fillText("POSTAL SERVICE", 0, 13 * scale);
+
+  // Wavy cancellation lines extending out
+  ctx.beginPath();
+  for (let wave = -20 * scale; wave <= 20 * scale; wave += 10 * scale) {
+    ctx.moveTo(38 * scale, wave);
+    for (let x = 38 * scale; x <= 105 * scale; x += 4 * scale) {
+      const y = wave + Math.sin((x - 38 * scale) * 0.1) * 3 * scale;
+      ctx.lineTo(x, y);
+    }
+  }
+  ctx.stroke();
+
+  ctx.restore();
+}
+
+function drawApprovedStamp(
+  ctx: CanvasRenderingContext2D,
+  cx: number,
+  cy: number,
+  text: string,
+  scale: number
+) {
+  ctx.save();
+  ctx.translate(cx, cy);
+  ctx.rotate(-0.16);
+
+  const stampW = 126 * scale;
+  const stampH = 36 * scale;
+
+  ctx.strokeStyle = "rgba(220, 38, 38, 0.85)";
+  ctx.lineWidth = 3 * scale;
+  ctx.strokeRect(-stampW / 2, -stampH / 2, stampW, stampH);
+
+  ctx.lineWidth = 1 * scale;
+  ctx.strokeRect(-stampW / 2 + 3 * scale, -stampH / 2 + 3 * scale, stampW - 6 * scale, stampH - 6 * scale);
+
+  ctx.fillStyle = "rgba(220, 38, 38, 0.9)";
+  ctx.font = `900 ${13 * scale}px 'Impact', sans-serif`;
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillText(text.toUpperCase(), 0, 0);
+
+  ctx.restore();
+}
+
+function drawGoaSunsetStamp(
+  ctx: CanvasRenderingContext2D,
+  cx: number,
+  cy: number,
+  scale: number
+) {
+  ctx.save();
+  ctx.translate(cx, cy);
+  ctx.rotate(0.08);
+
+  const r = 32 * scale;
+  ctx.strokeStyle = "rgba(217, 119, 6, 0.85)";
+  ctx.lineWidth = 2.5 * scale;
+  ctx.beginPath();
+  ctx.arc(0, 0, r, 0, Math.PI * 2);
+  ctx.stroke();
+
+  ctx.fillStyle = "rgba(217, 119, 6, 0.9)";
+  ctx.font = `bold ${7 * scale}px sans-serif`;
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillText("🌴 GOA VIBES 🌴", 0, -r + 10 * scale);
+  ctx.font = `900 ${12 * scale}px 'Impact', sans-serif`;
+  ctx.fillText("2026", 0, 2 * scale);
+  ctx.font = `700 ${6 * scale}px monospace`;
+  ctx.fillText("#FrameInGoa", 0, r - 10 * scale);
+
+  ctx.restore();
+}
+
+function drawGoldStarburst(
+  ctx: CanvasRenderingContext2D,
+  cx: number,
+  cy: number,
+  starR: number,
+  scale: number
+) {
+  ctx.save();
+  ctx.translate(cx, cy);
+  ctx.rotate(0.12);
+
+  ctx.shadowColor = "rgba(0,0,0,0.3)";
+  ctx.shadowBlur = 10 * scale;
+  ctx.shadowOffsetY = 4 * scale;
+
+  ctx.fillStyle = "#facc15";
+  ctx.beginPath();
+  for (let i = 0; i < 24; i++) {
+    const angle = (i * Math.PI) / 12 - Math.PI / 2;
+    const r = i % 2 === 0 ? starR : starR * 0.78;
+    const sx = Math.cos(angle) * r;
+    const sy = Math.sin(angle) * r;
+    if (i === 0) ctx.moveTo(sx, sy);
+    else ctx.lineTo(sx, sy);
+  }
+  ctx.closePath();
+  ctx.fill();
+  ctx.shadowColor = "transparent";
+
+  ctx.fillStyle = "#072e1a";
+  ctx.font = `bold ${7 * scale}px sans-serif`;
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillText("★ 100% ★", 0, -5 * scale);
+  ctx.font = `italic 900 ${10 * scale}px 'Georgia', serif`;
+  ctx.fillText("BUILDER", 0, 7 * scale);
+  ctx.restore();
+}
+
+function drawScribblesAndDoodles(
+  ctx: CanvasRenderingContext2D,
+  W: number,
+  H: number,
+  mode: string,
+  scale: number
+) {
+  ctx.save();
+  ctx.strokeStyle = "#d97706";
+  ctx.lineWidth = 2.5 * scale;
+  ctx.lineCap = "round";
+
+  if (mode === "pfp-frame") {
+    drawScribbleStar(ctx, W * 0.84, H * 0.22, 10 * scale, "#d97706", scale);
+    drawScribbleStar(ctx, W * 0.16, H * 0.78, 8 * scale, "#b91c1c", scale);
+
+    ctx.beginPath();
+    ctx.moveTo(W * 0.14, H * 0.38);
+    ctx.quadraticCurveTo(W * 0.18, H * 0.44, W * 0.22, H * 0.46);
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.moveTo(W * 0.20, H * 0.43);
+    ctx.lineTo(W * 0.22, H * 0.46);
+    ctx.lineTo(W * 0.18, H * 0.47);
+    ctx.stroke();
+
+    ctx.fillStyle = "#0d4a2b";
+    ctx.font = `700 ${14 * scale}px 'Caveat', cursive, serif`;
+    ctx.textAlign = "left";
+    ctx.fillText("shipping in Goa ☕", W * 0.06, H * 0.34);
+  } else {
+    drawScribbleStar(ctx, W * 0.88, H * 0.16, 9 * scale, "#facc15", scale);
+    drawScribbleStar(ctx, W * 0.12, H * 0.80, 7 * scale, "#ec4899", scale);
+
+    ctx.fillStyle = "#facc15";
+    ctx.font = `700 ${14 * scale}px 'Caveat', cursive, serif`;
+    ctx.textAlign = "right";
+    ctx.fillText("100% Legit Builder ✦", W * 0.92, H * 0.10);
+  }
+
+  ctx.restore();
+}
+
 function drawScribbleStar(
   ctx: CanvasRenderingContext2D,
   cx: number,
@@ -363,6 +570,7 @@ function drawWavyUnderline(
   ctx.stroke();
   ctx.restore();
 }
+
 
 // ─────────────────────────────────────────────────────────────
 // DESIGN 2: EVENT PASS (BUILDER ID)
@@ -766,7 +974,26 @@ export function renderBuilderCard(
   drawScribbleStar(ctx, cardX + cardW - 30 * scale, cardY + hdrH + 12 * scale, 6 * scale, "#d97706", scale);
   drawScribbleStar(ctx, cardX + 16 * scale, cardY + cardH - 54 * scale, 5 * scale, "#b91c1c", scale);
 
+  // Dynamic Stamps & Scribbles on Card
+  const activeCardStickers = card.stickers || [];
+  if (activeCardStickers.includes("postmark")) {
+    drawRubberPostmark(ctx, cardX + cardW - 65 * scale, cardY + hdrH + 50 * scale, scale);
+  }
+  if (activeCardStickers.includes("approved-stamp")) {
+    drawApprovedStamp(ctx, cardX + 75 * scale, cardY + cardH - 75 * scale, "BUILDER VERIFIED", scale);
+  }
+  if (activeCardStickers.includes("goa-sunset-stamp")) {
+    drawGoaSunsetStamp(ctx, cardX + 50 * scale, cardY + hdrH + 45 * scale, scale);
+  }
+  if (activeCardStickers.includes("gold-starburst")) {
+    drawGoldStarburst(ctx, cardX + cardW - 50 * scale, cardY + cardH - 85 * scale, 24 * scale, scale);
+  }
+  if (activeCardStickers.includes("scribble-doodles")) {
+    drawScribblesAndDoodles(ctx, W, H, "builder-card", scale);
+  }
+
   ctx.restore(); // End card clip
+
 
   // === 5. Bottom Ticker Tape ===
   const tickerH = 26 * scale;

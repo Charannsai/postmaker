@@ -31,7 +31,7 @@ const DEFAULT_FRAME: FrameSettings = {
   caption: "HH GOA",
   subcaption: "HH GOA 2026",
   captionStyle: "bold-street",
-  stickers: ["washi-tape"],
+  stickers: ["washi-tape", "postmark", "scribble-doodles"],
   bgStyle: "paper-wrinkled",
   aspectRatio: "4:5",
 };
@@ -45,9 +45,10 @@ const DEFAULT_CARD: CardData = {
   funTitle: "10x Caffeine-to-Code Pipeline",
   noteText: "TREMBLING W/ EXCITEMENT & NERVES",
   badgeId: "HHG-26-8420",
-  stickers: ["wizard-hat"],
+  stickers: ["washi-tape", "approved-stamp", "scribble-doodles"],
   bgStyle: "notebook-lined",
 };
+
 
 export default function HomePage() {
   const [mode, setMode] = useState<AppMode>("pfp-frame");

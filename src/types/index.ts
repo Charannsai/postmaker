@@ -48,13 +48,14 @@ export interface CaptionStyleDef {
 }
 
 export type StickerType =
-  | "wizard-hat"
   | "washi-tape"
-  | "signpost"
   | "postmark"
+  | "approved-stamp"
+  | "gold-starburst"
+  | "scribble-doodles"
+  | "goa-sunset-stamp"
   | "barcode"
-  | "sparkles"
-  | "verified";
+  | "sparkles";
 
 // ── Format A: PFP Poster Frame ────────────────────────────────
 export interface FrameSettings {

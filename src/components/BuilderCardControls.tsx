@@ -1,7 +1,7 @@
 "use client";
 
 import type { CardData, BuilderRole } from "@/types";
-import { ROLES, TECH_STACK_OPTIONS } from "@/lib/templates";
+import { ROLES, TECH_STACK_OPTIONS, STICKERS } from "@/lib/templates";
 import { Shuffle } from "lucide-react";
 
 interface BuilderCardControlsProps {
@@ -120,6 +120,35 @@ export default function BuilderCardControls({ card, onCardChange }: BuilderCardC
           ))}
         </div>
       </div>
+
+      {/* Stamps & Scribbles */}
+      <div className="space-y-1.5 pt-2 border-t border-[#e6dfd2]">
+        <label className="text-[11px] font-bold text-[#171717] uppercase tracking-wider block">
+          Pass Stamps & Doodles
+        </label>
+        <div className="flex flex-wrap gap-1.5">
+          {STICKERS.map((s) => {
+            const active = card.stickers?.includes(s.id);
+            return (
+              <button
+                key={s.id}
+                onClick={() => {
+                  const current = card.stickers || [];
+                  if (current.includes(s.id)) {
+                    onCardChange({ stickers: current.filter((item) => item !== s.id) });
+                  } else {
+                    onCardChange({ stickers: [...current, s.id] });
+                  }
+                }}
+                className={`pill !text-[10px] !py-1 ${active ? "active" : ""}`}
+              >
+                {s.label}
+              </button>
+            );
+          })}
+        </div>
+      </div>
     </div>
   );
 }
+

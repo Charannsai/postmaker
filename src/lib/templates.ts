@@ -83,13 +83,14 @@ export interface StickerDef {
 }
 
 export const STICKERS: StickerDef[] = [
-  { id: "wizard-hat", label: "Hacker Hat" },
   { id: "washi-tape", label: "Washi Tape" },
-  { id: "verified", label: "Verified Pass" },
-  { id: "signpost", label: "Signpost Stamp" },
-  { id: "postmark", label: "Air Mail Stamp" },
+  { id: "postmark", label: "Air Mail Ink Stamp" },
+  { id: "approved-stamp", label: "Approved Rubber Stamp" },
+  { id: "gold-starburst", label: "★ VIP Starburst Seal" },
+  { id: "scribble-doodles", label: "Hand Doodles & Stars" },
+  { id: "goa-sunset-stamp", label: "🌴 Goa Sunset Stamp" },
   { id: "barcode", label: "Event Barcode" },
-  { id: "sparkles", label: "Star Cluster" },
+  { id: "sparkles", label: "Sparkle Cluster" },
 ];
 
 // ── Tech Stack Options ───────────────────────────────────────
