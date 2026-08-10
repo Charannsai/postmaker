@@ -1,7 +1,7 @@
 "use client";
 
 import type { CardData, BuilderRole } from "@/types";
-import { ROLES, TECH_STACK_OPTIONS, STICKERS } from "@/lib/templates";
+import { ROLES } from "@/lib/templates";
 import { Shuffle } from "lucide-react";
 
 interface BuilderCardControlsProps {
@@ -20,15 +20,6 @@ const FUN_TITLES = [
 ];
 
 export default function BuilderCardControls({ card, onCardChange }: BuilderCardControlsProps) {
-  const toggleTech = (tech: string) => {
-    const current = card.techStack || [];
-    if (current.includes(tech)) {
-      onCardChange({ techStack: current.filter((t) => t !== tech) });
-    } else if (current.length < 4) {
-      onCardChange({ techStack: [...current, tech] });
-    }
-  };
-
   const randomizeTitle = () => {
     const filtered = FUN_TITLES.filter((t) => t !== card.funTitle);
     onCardChange({ funTitle: filtered[Math.floor(Math.random() * filtered.length)] });
@@ -66,15 +57,24 @@ export default function BuilderCardControls({ card, onCardChange }: BuilderCardC
         />
       </div>
 
-      {/* Role */}
+      {/* Role with Custom Text Input & Quick Preset Chips */}
       <div className="space-y-1.5">
         <label className="text-[11px] font-mono font-bold text-[#ffe600] uppercase tracking-wider block">
           Role
         </label>
-        <div className="flex flex-wrap gap-1.5">
+        <input
+          type="text"
+          value={card.role}
+          onChange={(e) => onCardChange({ role: e.target.value as BuilderRole })}
+          placeholder="Enter your role (e.g. Fullstack, Web3 Dev...)"
+          maxLength={24}
+          className="input !text-[13px]"
+        />
+        <div className="flex flex-wrap gap-1.5 pt-1">
           {ROLES.map((r) => (
             <button
               key={r}
+              type="button"
               onClick={() => onCardChange({ role: r as BuilderRole })}
               className={`pill !text-[10px] !py-1 ${card.role === r ? "active" : ""}`}
             >
@@ -84,11 +84,11 @@ export default function BuilderCardControls({ card, onCardChange }: BuilderCardC
         </div>
       </div>
 
-      {/* Fun Title */}
+      {/* Fun Title / Tagline */}
       <div className="space-y-1 pt-2 border-t border-[#166940]">
         <div className="flex items-center justify-between">
           <label className="text-[11px] font-mono font-bold text-[#ffe600] uppercase tracking-wider">Tagline</label>
-          <button onClick={randomizeTitle} className="flex items-center gap-1 text-[10px] text-[#ffe600] hover:text-[#fff066] font-mono font-semibold">
+          <button type="button" onClick={randomizeTitle} className="flex items-center gap-1 text-[10px] text-[#ffe600] hover:text-[#fff066] font-mono font-semibold">
             <Shuffle className="w-3 h-3" /> Random
           </button>
         </div>
@@ -101,55 +101,10 @@ export default function BuilderCardControls({ card, onCardChange }: BuilderCardC
           className="input !text-[12px]"
         />
       </div>
-
-      {/* Tech Stack */}
-      <div className="space-y-1.5 pt-2 border-t border-[#166940]">
-        <div className="flex items-center justify-between">
-          <label className="text-[11px] font-mono font-bold text-[#ffe600] uppercase tracking-wider">Tech Stack</label>
-          <span className="text-[10px] font-mono text-[#ffe600] font-semibold">{card.techStack?.length || 0}/4</span>
-        </div>
-        <div className="flex flex-wrap gap-1.5">
-          {TECH_STACK_OPTIONS.map((t) => (
-            <button
-              key={t}
-              onClick={() => toggleTech(t)}
-              className={`pill !text-[10px] !py-1 ${card.techStack?.includes(t) ? "active" : ""}`}
-            >
-              {t}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* Stamps & Scribbles */}
-      <div className="space-y-1.5 pt-2 border-t border-[#166940]">
-        <label className="text-[11px] font-mono font-bold text-[#ffe600] uppercase tracking-wider block">
-          Pass Stamps & Doodles
-        </label>
-        <div className="flex flex-wrap gap-1.5">
-          {STICKERS.map((s) => {
-            const active = card.stickers?.includes(s.id);
-            return (
-              <button
-                key={s.id}
-                onClick={() => {
-                  const current = card.stickers || [];
-                  if (current.includes(s.id)) {
-                    onCardChange({ stickers: current.filter((item) => item !== s.id) });
-                  } else {
-                    onCardChange({ stickers: [...current, s.id] });
-                  }
-                }}
-                className={`pill !text-[10px] !py-1 ${active ? "active" : ""}`}
-              >
-                {s.label}
-              </button>
-            );
-          })}
-        </div>
-      </div>
     </div>
   );
 }
+
+
 
 

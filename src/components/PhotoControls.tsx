@@ -42,14 +42,33 @@ export default function PhotoControls({ photo, onChange }: PhotoControlsProps) {
             {Math.round(photo.zoom * 100)}%
           </span>
         </div>
-        <input
-          type="range"
-          min={0.5}
-          max={3}
-          step={0.05}
-          value={photo.zoom}
-          onChange={(e) => onChange({ zoom: parseFloat(e.target.value) })}
-        />
+        <div className="flex items-center gap-3">
+          <button
+            type="button"
+            onClick={() => onChange({ zoom: Math.max(0.5, photo.zoom - 0.1) })}
+            className="w-7 h-7 rounded-lg bg-[#031c10] border border-[#166940] text-[#ffe600] font-mono font-bold text-sm flex items-center justify-center hover:bg-[#166940] transition-colors shrink-0"
+            title="Zoom out"
+          >
+            -
+          </button>
+          <input
+            type="range"
+            min={0.5}
+            max={3}
+            step={0.05}
+            value={photo.zoom}
+            onChange={(e) => onChange({ zoom: parseFloat(e.target.value) })}
+            className="flex-1"
+          />
+          <button
+            type="button"
+            onClick={() => onChange({ zoom: Math.min(3, photo.zoom + 0.1) })}
+            className="w-7 h-7 rounded-lg bg-[#031c10] border border-[#166940] text-[#ffe600] font-mono font-bold text-sm flex items-center justify-center hover:bg-[#166940] transition-colors shrink-0"
+            title="Zoom in"
+          >
+            +
+          </button>
+        </div>
       </div>
 
       {/* Rotation */}
@@ -60,15 +79,35 @@ export default function PhotoControls({ photo, onChange }: PhotoControlsProps) {
             {photo.rotation}°
           </span>
         </div>
-        <input
-          type="range"
-          min={-180}
-          max={180}
-          step={1}
-          value={photo.rotation}
-          onChange={(e) => onChange({ rotation: parseInt(e.target.value) })}
-        />
+        <div className="flex items-center gap-3">
+          <button
+            type="button"
+            onClick={() => onChange({ rotation: ((photo.rotation - 15 + 180) % 360) - 180 })}
+            className="w-7 h-7 rounded-lg bg-[#031c10] border border-[#166940] text-[#ffe600] font-mono font-bold text-xs flex items-center justify-center hover:bg-[#166940] transition-colors shrink-0"
+            title="Rotate -15°"
+          >
+            -15°
+          </button>
+          <input
+            type="range"
+            min={-180}
+            max={180}
+            step={1}
+            value={photo.rotation}
+            onChange={(e) => onChange({ rotation: parseInt(e.target.value) })}
+            className="flex-1"
+          />
+          <button
+            type="button"
+            onClick={() => onChange({ rotation: ((photo.rotation + 15 + 180) % 360) - 180 })}
+            className="w-7 h-7 rounded-lg bg-[#031c10] border border-[#166940] text-[#ffe600] font-mono font-bold text-xs flex items-center justify-center hover:bg-[#166940] transition-colors shrink-0"
+            title="Rotate +15°"
+          >
+            +15°
+          </button>
+        </div>
       </div>
+
 
       {/* Quick actions */}
       <div className="flex items-center gap-2">

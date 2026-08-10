@@ -120,7 +120,7 @@ export default function HomePage() {
       <Header mode={mode} onModeChange={setMode} />
 
       {/* ── Main Studio Area ──────────────────────────────── */}
-      <main className="flex-1 max-w-5xl mx-auto w-full px-4 sm:px-6 py-4 flex flex-col items-center justify-center my-auto">
+      <main className="flex-1 max-w-6xl mx-auto w-full px-4 sm:px-6 py-6 flex flex-col items-center justify-center my-auto">
         <input
           ref={fileInputRef}
           type="file"
@@ -129,54 +129,92 @@ export default function HomePage() {
           onChange={handleInputChange}
         />
 
-        <div className="w-full flex flex-col items-center space-y-6">
-          {/* Central Dashed Dropzone Card containing Preview Frame */}
-          <div
-            onDragOver={(e) => {
-              e.preventDefault();
-              setDragOver(true);
-            }}
-            onDragLeave={() => setDragOver(false)}
-            onDrop={handleDrop}
-            className={`w-full max-w-[580px] dashed-dropzone p-3 sm:p-6 flex flex-col items-center justify-center transition-all ${
-              dragOver ? "drag-over" : ""
-            }`}
-          >
-            {/* Corner Crop Brackets */}
-            <div className="corner-bracket corner-tl" />
-            <div className="corner-bracket corner-tr" />
-            <div className="corner-bracket corner-bl" />
-            <div className="corner-bracket corner-br" />
+        {/* State 1: No Photo Uploaded -> Centered Hero Preview */}
+        {!photo.src ? (
+          <div className="w-full max-w-[560px] flex flex-col items-center space-y-6">
+            <div
+              onDragOver={(e) => {
+                e.preventDefault();
+                setDragOver(true);
+              }}
+              onDragLeave={() => setDragOver(false)}
+              onDrop={handleDrop}
+              className={`w-full dashed-dropzone p-3 sm:p-6 flex flex-col items-center justify-center transition-all ${
+                dragOver ? "drag-over" : ""
+              }`}
+            >
+              {/* Corner Crop Brackets */}
+              <div className="corner-bracket corner-tl" />
+              <div className="corner-bracket corner-tr" />
+              <div className="corner-bracket corner-bl" />
+              <div className="corner-bracket corner-br" />
 
-            {/* Display Preview Canvas with Centered Upload Button when photo is null & top-right X button when photo is present */}
-            <div className="w-full flex flex-col items-center">
-              <PreviewCanvas
-                canvasRef={canvasRef}
-                mode={mode}
-                photo={photo}
-                frame={frame}
-                card={card}
-                onPhotoOffsetChange={(offsetX, offsetY) =>
-                  updatePhoto({ offsetX, offsetY })
-                }
-                onUploadClick={() => fileInputRef.current?.click()}
-                onRemovePhoto={handleRemovePhoto}
-                uploading={uploading}
-              />
+              <div className="w-full flex flex-col items-center">
+                <PreviewCanvas
+                  canvasRef={canvasRef}
+                  mode={mode}
+                  photo={photo}
+                  frame={frame}
+                  card={card}
+                  onPhotoOffsetChange={(offsetX, offsetY) =>
+                    updatePhoto({ offsetX, offsetY })
+                  }
+                  onUploadClick={() => fileInputRef.current?.click()}
+                  onRemovePhoto={handleRemovePhoto}
+                  uploading={uploading}
+                />
+              </div>
             </div>
           </div>
+        ) : (
+          /* State 2: Photo Uploaded -> Side-by-Side 2-Column Layout (Image on left, Customization BESIDE it on right) */
+          <div className="w-full grid grid-cols-1 lg:grid-cols-12 gap-8 items-start animate-fade-in">
+            {/* Left Column: Preview Canvas & Export Action Buttons */}
+            <div className={`flex flex-col items-center space-y-6 ${mode === "builder-card" ? "lg:col-span-7" : "lg:col-span-5"}`}>
+              <div
+                onDragOver={(e) => {
+                  e.preventDefault();
+                  setDragOver(true);
+                }}
+                onDragLeave={() => setDragOver(false)}
+                onDrop={handleDrop}
+                className={`w-full dashed-dropzone p-3 sm:p-5 flex flex-col items-center justify-center transition-all ${
+                  dragOver ? "drag-over" : ""
+                }`}
+              >
+                {/* Corner Crop Brackets */}
+                <div className="corner-bracket corner-tl" />
+                <div className="corner-bracket corner-tr" />
+                <div className="corner-bracket corner-bl" />
+                <div className="corner-bracket corner-br" />
 
-          {/* When photo IS uploaded: Render Export Actions & Inline Customization Controls */}
-          {photo.src && (
-            <div className="w-full max-w-[580px] space-y-6 animate-fade-in">
-              {/* Export Buttons (Download, Copy, Share) */}
-              <ExportActions
-                canvasRef={canvasRef}
-                mode={mode}
-                onShareClick={() => setShareOpen(true)}
-              />
+                <PreviewCanvas
+                  canvasRef={canvasRef}
+                  mode={mode}
+                  photo={photo}
+                  frame={frame}
+                  card={card}
+                  onPhotoOffsetChange={(offsetX, offsetY) =>
+                    updatePhoto({ offsetX, offsetY })
+                  }
+                  onUploadClick={() => fileInputRef.current?.click()}
+                  onRemovePhoto={handleRemovePhoto}
+                  uploading={uploading}
+                />
+              </div>
 
-              {/* Inline Customization Panel directly on the page */}
+              {/* Export Buttons directly below canvas */}
+              <div className="w-full">
+                <ExportActions
+                  canvasRef={canvasRef}
+                  mode={mode}
+                  onShareClick={() => setShareOpen(true)}
+                />
+              </div>
+            </div>
+
+            {/* Right Column: Customization Panel BESIDE the image */}
+            <div className={`w-full ${mode === "builder-card" ? "lg:col-span-5" : "lg:col-span-7"}`}>
               <div className="w-full bg-[#042616] border border-[#166940] rounded-2xl p-5 sm:p-6 shadow-2xl space-y-5">
                 {/* Panel Title & Tabs */}
                 <div className="flex items-center justify-between border-b border-[#166940] pb-3">
@@ -231,8 +269,8 @@ export default function HomePage() {
                 )}
               </div>
             </div>
-          )}
-        </div>
+          </div>
+        )}
       </main>
 
       {/* ── Simple Minimalist Footer ────────────────────────── */}
@@ -250,6 +288,7 @@ export default function HomePage() {
     </div>
   );
 }
+
 
 
 
