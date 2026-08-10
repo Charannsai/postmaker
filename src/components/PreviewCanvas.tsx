@@ -8,7 +8,7 @@ import type {
   CardData,
   AppMode,
 } from "@/types";
-import { renderPfpFrame, renderBuilderCard } from "@/lib/canvasRenderer";
+import { renderPfpFrame, renderBuilderCard, subscribeAssetLoad } from "@/lib/canvasRenderer";
 
 interface PreviewCanvasProps {
   mode: AppMode;
@@ -72,6 +72,15 @@ export default function PreviewCanvas({
   useEffect(() => {
     render();
   }, [render]);
+
+  // Subscribe to background asset loading so stamp images pop in seamlessly
+  useEffect(() => {
+    const unsubscribe = subscribeAssetLoad(() => {
+      render();
+    });
+    return unsubscribe;
+  }, [render]);
+
 
   const handlePointerDown = useCallback(
     (e: React.PointerEvent) => {

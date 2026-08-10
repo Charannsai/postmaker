@@ -340,21 +340,40 @@ export function renderPfpFrame(
 
 // ── Asset Image Loader Cache ──────────────────────────────────
 const assetImageCache: Record<string, HTMLImageElement> = {};
+const assetListeners: Set<() => void> = new Set();
+
+export function subscribeAssetLoad(callback: () => void) {
+  assetListeners.add(callback);
+  return () => {
+    assetListeners.delete(callback);
+  };
+}
+
+function notifyAssetLoaded() {
+  assetListeners.forEach((cb) => cb());
+}
 
 function getOrLoadAsset(src: string): HTMLImageElement | null {
   if (typeof window === "undefined") return null;
   if (assetImageCache[src]) {
-    return assetImageCache[src].complete && assetImageCache[src].naturalWidth > 0
-      ? assetImageCache[src]
-      : null;
+    const cached = assetImageCache[src];
+    return cached.complete && cached.naturalWidth > 0 ? cached : null;
   }
   const img = new Image();
   img.src = src;
   img.onload = () => {
     assetImageCache[src] = img;
+    notifyAssetLoaded();
   };
   assetImageCache[src] = img;
-  return null;
+  return img.complete && img.naturalWidth > 0 ? img : null;
+}
+
+// Preload common asset stamps immediately on browser initialization
+if (typeof window !== "undefined") {
+  ["/assets/hacker-house-logo.png", "/assets/goa-hindi-logo.png", "/assets/image.png"].forEach((src) => {
+    getOrLoadAsset(src);
+  });
 }
 
 // ── Official Asset Stamp Renderers ────────────────────────────
@@ -368,26 +387,14 @@ function drawGoaHindiLogoStamp(
   scale: number = 2
 ) {
   const img = getOrLoadAsset("/assets/goa-hindi-logo.png");
+  if (!img) return;
   ctx.save();
   ctx.translate(cx, cy);
   ctx.rotate(angle);
   ctx.shadowColor = "rgba(0,0,0,0.3)";
   ctx.shadowBlur = 12 * scale;
   ctx.shadowOffsetY = 4 * scale;
-
-  if (img) {
-    ctx.drawImage(img, -w / 2, -h / 2, w, h);
-  } else {
-    // Fallback vector Devanagari badge if loading
-    ctx.fillStyle = "#ff007f";
-    drawSquircle(ctx, -w / 2, -h / 2, w, h, 8 * scale);
-    ctx.fill();
-    ctx.fillStyle = "#ffe600";
-    ctx.font = `900 ${18 * scale}px sans-serif`;
-    ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
-    ctx.fillText("गोवा", 0, 0);
-  }
+  ctx.drawImage(img, -w / 2, -h / 2, w, h);
   ctx.restore();
 }
 
@@ -400,23 +407,15 @@ function drawHackerHouseLogoStamp(
   scale: number = 2
 ) {
   const img = getOrLoadAsset("/assets/hacker-house-logo.png");
-
+  if (!img) return;
   ctx.save();
   ctx.translate(cx, cy);
   ctx.shadowColor = "rgba(0,0,0,0.2)";
   ctx.shadowBlur = 8 * scale;
-
-  if (img) {
-    ctx.drawImage(img, -w / 2, -h / 2, w, h);
-  } else {
-    ctx.fillStyle = "#facc15";
-    ctx.font = `900 ${28 * scale}px 'Impact', sans-serif`;
-    ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
-    ctx.fillText("HACKER HOUSE", 0, 0);
-  }
+  ctx.drawImage(img, -w / 2, -h / 2, w, h);
   ctx.restore();
 }
+
 
 
 function drawOfficialArtStamp(
