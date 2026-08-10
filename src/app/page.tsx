@@ -276,7 +276,15 @@ export default function HomePage() {
 
       {/* ── Simple Minimalist Footer ────────────────────────── */}
       <footer className="text-center py-6 px-4 font-mono text-[12px] text-emerald-300/80 uppercase tracking-widest select-none">
-        <span className="text-[#ff007f] font-black">#FrameInGoa</span> · mhgoa.com
+        <span className="text-[#ff007f] font-black">#FrameInGoa</span> ·{" "}
+        <a
+          href="https://hhgoa.com/"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="hover:text-white hover:underline transition-colors"
+        >
+          hhgoa.com
+        </a>
       </footer>
 
       {/* ── Share Modal ────────────────────────────────────── */}

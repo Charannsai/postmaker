@@ -20,7 +20,7 @@ export default function ShareModal({ open, onClose, canvasRef, mode, userName }:
   const siteUrl =
     typeof window !== "undefined" && window.location.origin && !window.location.origin.includes("localhost")
       ? window.location.origin
-      : "https://mhgoa.com";
+      : "https://hhgoa.com/";
 
   const userDisplayName = userName?.trim() || "";
   const nameLine = userDisplayName ? `\n\n${userDisplayName}` : "";
