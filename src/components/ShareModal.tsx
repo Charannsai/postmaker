@@ -25,7 +25,7 @@ export default function ShareModal({ open, onClose, canvasRef, mode, userName }:
   const userDisplayName = userName?.trim() || "";
   const nameLine = userDisplayName ? `\n\n${userDisplayName}` : "";
 
-  const caption = `Built my Hacker House Goa Builder Card! 🏝️🚀${nameLine}\n\nExcited to build, ship, and connect with amazing builders in Goa! ⚡🌴\n\nCreate your own Builder Card 👇\n${siteUrl}`;
+  const caption = `Built my Hacker House Goa Builder Card! 🏝️🚀${nameLine}\n\nExcited to build, ship, and connect with amazing builders in Goa! ⚡🌴\n\nCreate your own Builder Card 👇\n${siteUrl}\n\n#FrameInGoa #HHGoa2026`;
   const tweetUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(caption)}`;
 
   const handleCopyImage = async () => {
