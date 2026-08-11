@@ -110,7 +110,7 @@ export default function PhotoControls({ photo, onChange }: PhotoControlsProps) {
 
 
       {/* Quick actions */}
-      <div className="flex items-center gap-2">
+      <div className="grid grid-cols-4 gap-1.5 sm:gap-2">
         {[
           {
             icon: RotateCcw,
@@ -138,7 +138,7 @@ export default function PhotoControls({ photo, onChange }: PhotoControlsProps) {
           <button
             key={label}
             onClick={action}
-            className={`p-2.5 rounded-xl border transition-all ${
+            className={`flex items-center justify-center p-2.5 rounded-xl border transition-all ${
               active
                 ? "bg-[#ffe600] border-[#ffe600] text-[#042616] font-bold shadow-sm"
                 : "bg-[#031c10] border-[#166940] text-emerald-200 hover:border-[#ffe600] hover:text-[#ffe600]"
@@ -155,12 +155,12 @@ export default function PhotoControls({ photo, onChange }: PhotoControlsProps) {
         <label className="text-[11px] font-mono font-bold text-[#ffe600] uppercase tracking-wider block">
           Photo Filters
         </label>
-        <div className="grid grid-cols-3 gap-1.5">
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-1.5">
           {FILTERS.map((f) => (
             <button
               key={f.id}
               onClick={() => onChange({ filter: f.id as FilterType })}
-              className={`px-2 py-2 rounded-xl text-[11px] font-mono font-semibold transition-all ${
+              className={`px-2 py-2 rounded-xl text-[10px] sm:text-[11px] font-mono font-semibold transition-all ${
                 photo.filter === f.id
                   ? "bg-[#ffe600] text-[#042616] shadow-sm font-bold"
                   : "bg-[#031c10] text-emerald-200 border border-[#166940] hover:border-[#ffe600] hover:text-[#ffe600]"
