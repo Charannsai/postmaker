@@ -105,11 +105,11 @@ export default function ExportActions({
   };
 
   return (
-    <div className="flex flex-col gap-3 w-full animate-fade-in">
+    <div className="flex flex-col gap-2.5 sm:gap-3 w-full animate-fade-in">
       <button
         onClick={handleDownload}
         disabled={downloading}
-        className="btn-yellow flex items-center justify-center gap-2.5 w-full !py-3.5 !text-[13px] uppercase tracking-wider"
+        className="btn-yellow flex items-center justify-center gap-2.5 w-full !py-3 sm:!py-3.5 !text-[12px] sm:!text-[13px] uppercase tracking-wider"
       >
         {downloading ? (
           <Loader2 className="w-4 h-4 animate-spin text-[#042616]" />
@@ -119,10 +119,10 @@ export default function ExportActions({
         {downloading ? "Exporting High-Res PNG…" : "Download High-Res PNG (2x)"}
       </button>
 
-      <div className="flex gap-2.5">
+      <div className="flex flex-col sm:flex-row gap-2 sm:gap-2.5">
         <button
           onClick={handleCopy}
-          className="btn-dark-pill flex-1 flex items-center justify-center gap-2 text-[11px] uppercase tracking-wider"
+          className="btn-dark-pill flex-1 flex items-center justify-center gap-2 text-[11px] py-2.5 uppercase tracking-wider"
         >
           {copied ? (
             <>
@@ -138,7 +138,7 @@ export default function ExportActions({
         </button>
         <button
           onClick={handleShareToX}
-          className="btn-pink flex-1 flex items-center justify-center gap-2 text-[11px] uppercase tracking-wider"
+          className="btn-pink flex-1 flex items-center justify-center gap-2 text-[11px] py-2.5 uppercase tracking-wider"
         >
           <ExternalLink className="w-3.5 h-3.5" />
           Share on 𝕏
