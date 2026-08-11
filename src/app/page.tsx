@@ -168,9 +168,9 @@ export default function HomePage() {
           </div>
         ) : (
           /* State 2: Photo Uploaded -> Side-by-Side 2-Column Layout (Image on left, Customization BESIDE it on right) */
-          <div className="w-full grid grid-cols-1 lg:grid-cols-12 gap-8 items-start animate-fade-in">
+          <div className="w-full grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start animate-fade-in">
             {/* Left Column: Preview Canvas & Export Action Buttons */}
-            <div className={`flex flex-col items-center space-y-6 ${mode === "builder-card" ? "lg:col-span-7" : "lg:col-span-5"}`}>
+            <div className={`flex flex-col items-center space-y-4 sm:space-y-6 ${mode === "builder-card" ? "lg:col-span-7" : "lg:col-span-5"}`}>
               <div
                 onDragOver={(e) => {
                   e.preventDefault();
@@ -178,7 +178,7 @@ export default function HomePage() {
                 }}
                 onDragLeave={() => setDragOver(false)}
                 onDrop={handleDrop}
-                className={`w-full dashed-dropzone p-3 sm:p-5 flex flex-col items-center justify-center transition-all ${
+                className={`w-full dashed-dropzone p-2 sm:p-5 flex flex-col items-center justify-center transition-all ${
                   dragOver ? "drag-over" : ""
                 }`}
               >
@@ -219,20 +219,20 @@ export default function HomePage() {
 
             {/* Right Column: Customization Panel BESIDE the image */}
             <div className={`w-full ${mode === "builder-card" ? "lg:col-span-5" : "lg:col-span-7"}`}>
-              <div className="w-full bg-[#042616] border border-[#166940] rounded-2xl p-5 sm:p-6 shadow-2xl space-y-5">
+              <div className="w-full bg-[#042616] border border-[#166940] rounded-2xl p-4 sm:p-6 shadow-2xl space-y-4 sm:space-y-5">
                 {/* Panel Title & Tabs */}
-                <div className="flex items-center justify-between border-b border-[#166940] pb-3">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-[#166940] pb-3">
                   <div className="flex items-center gap-2">
                     <Sliders className="w-4 h-4 text-[#ffe600]" />
-                    <h3 className="text-sm font-mono font-bold text-[#ffe600] uppercase tracking-wider">
+                    <h3 className="text-xs sm:text-sm font-mono font-bold text-[#ffe600] uppercase tracking-wider">
                       Customization
                     </h3>
                   </div>
 
-                  <div className="flex p-0.5 rounded-full bg-[#031c10] border border-[#166940]">
+                  <div className="flex w-full sm:w-auto p-0.5 rounded-full bg-[#031c10] border border-[#166940]">
                     <button
                       onClick={() => setCustomTab("details")}
-                      className={`px-3.5 py-1 rounded-full text-[11px] font-mono font-bold flex items-center gap-1.5 transition-all ${
+                      className={`flex-1 sm:flex-initial px-3 sm:px-3.5 py-1 rounded-full text-[10px] sm:text-[11px] font-mono font-bold flex items-center justify-center gap-1.5 transition-all ${
                         customTab === "details"
                           ? "bg-[#ffe600] text-[#042616] shadow-md"
                           : "text-emerald-300/70 hover:text-white"
@@ -250,7 +250,7 @@ export default function HomePage() {
                     </button>
                     <button
                       onClick={() => setCustomTab("photo")}
-                      className={`px-3.5 py-1 rounded-full text-[11px] font-mono font-bold flex items-center gap-1.5 transition-all ${
+                      className={`flex-1 sm:flex-initial px-3 sm:px-3.5 py-1 rounded-full text-[10px] sm:text-[11px] font-mono font-bold flex items-center justify-center gap-1.5 transition-all ${
                         customTab === "photo"
                           ? "bg-[#ffe600] text-[#042616] shadow-md"
                           : "text-emerald-300/70 hover:text-white"
