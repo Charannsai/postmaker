@@ -751,8 +751,8 @@ export function renderBuilderCard(
   ctx.strokeStyle = "rgba(255, 255, 255, 0.25)";
   ctx.lineWidth = 1.5 * scale;
   ctx.beginPath();
-  ctx.moveTo(rx, 124 * scale);
-  ctx.lineTo(W - 40 * scale, 124 * scale);
+  ctx.moveTo(rx, 120 * scale);
+  ctx.lineTo(W - 40 * scale, 120 * scale);
   ctx.stroke();
 
   // Name Label / Big Title - Modern, clean & crisp styling
@@ -763,7 +763,7 @@ export function renderBuilderCard(
   ctx.textAlign = "left";
   ctx.textBaseline = "top";
 
-  let nameFontSize = 28 * scale;
+  let nameFontSize = 26 * scale;
   ctx.font = `700 ${nameFontSize}px 'Space Grotesk', 'Plus Jakarta Sans', sans-serif`;
   const maxNameWidth = W - rx - 40 * scale;
 
@@ -772,18 +772,18 @@ export function renderBuilderCard(
     ctx.font = `700 ${nameFontSize}px 'Space Grotesk', 'Plus Jakarta Sans', sans-serif`;
   }
 
-  ctx.fillText(nameStr, rx, 144 * scale);
+  ctx.fillText(nameStr, rx, 138 * scale);
   ctx.restore();
 
-  // Role in Hot Pink!
+  // Role / Builder Class in Hot Pink!
   const isRoleEmpty = !card.role?.trim();
   const roleStr = "» " + (card.role?.trim() || "BUILDER").toUpperCase();
   ctx.save();
   ctx.fillStyle = isRoleEmpty ? "rgba(255, 0, 127, 0.5)" : "#ff007f";
-  ctx.font = `900 ${18 * scale}px sans-serif`;
+  ctx.font = `900 ${16 * scale}px sans-serif`;
   ctx.textAlign = "left";
   ctx.textBaseline = "top";
-  ctx.fillText(roleStr, rx, 192 * scale);
+  ctx.fillText(roleStr, rx, 176 * scale);
   ctx.restore();
 
   // Handle
@@ -792,29 +792,66 @@ export function renderBuilderCard(
   const handleStr = rawHandle ? `@${rawHandle}` : "@yourhandle";
   ctx.save();
   ctx.fillStyle = isHandleEmpty ? "rgba(255, 230, 0, 0.4)" : "#ffe600";
-  ctx.font = `700 ${14 * scale}px monospace`;
+  ctx.font = `700 ${13 * scale}px monospace`;
   ctx.textAlign = "left";
   ctx.textBaseline = "top";
-  ctx.fillText(handleStr, rx, 226 * scale);
+  ctx.fillText(handleStr, rx, 204 * scale);
   ctx.restore();
+
+  // Tech Stack Badges
+  const techList = card.techStack || [];
+  if (techList.length > 0) {
+    ctx.save();
+    let currentX = rx;
+    const badgeY = 228 * scale;
+    const badgeH = 20 * scale;
+    const paddingX = 8 * scale;
+    const maxRowW = W - 40 * scale;
+
+    ctx.font = `700 ${10 * scale}px monospace`;
+
+    techList.slice(0, 5).forEach((tech) => {
+      const textMetrics = ctx.measureText(tech.toUpperCase());
+      const badgeW = textMetrics.width + paddingX * 2;
+
+      if (currentX + badgeW > maxRowW) return;
+
+      // Outer squircle background badge
+      ctx.fillStyle = "rgba(6, 66, 35, 0.75)";
+      ctx.strokeStyle = "rgba(255, 230, 0, 0.5)";
+      ctx.lineWidth = 1 * scale;
+      drawSquircle(ctx, currentX, badgeY, badgeW, badgeH, 4 * scale);
+      ctx.fill();
+      ctx.stroke();
+
+      // Text inside badge
+      ctx.fillStyle = "#ffe600";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText(tech.toUpperCase(), currentX + badgeW / 2, badgeY + badgeH / 2 + 0.5 * scale);
+
+      currentX += badgeW + 6 * scale;
+    });
+    ctx.restore();
+  }
 
   // Motto / Tagline
   const taglineStr = (card.funTitle?.trim() || "SHIPPING IN GOA · HH GOA 2026").toUpperCase();
   ctx.save();
   ctx.fillStyle = !card.funTitle?.trim() ? "rgba(255, 255, 255, 0.35)" : "rgba(255, 255, 255, 0.75)";
-  ctx.font = `700 ${12 * scale}px monospace`;
+  ctx.font = `700 ${11 * scale}px monospace`;
   ctx.textAlign = "left";
   ctx.textBaseline = "top";
-  ctx.fillText(taglineStr, rx, 272 * scale);
+  ctx.fillText(taglineStr, rx, 264 * scale);
   ctx.restore();
 
   // Link
   ctx.save();
   ctx.fillStyle = "#ffe600";
-  ctx.font = `700 ${15 * scale}px monospace`;
+  ctx.font = `700 ${14 * scale}px monospace`;
   ctx.textAlign = "left";
   ctx.textBaseline = "top";
-  ctx.fillText("hhgoa.com", rx, 305 * scale);
+  ctx.fillText("hhgoa.com", rx, 296 * scale);
   ctx.restore();
 
   // Dynamic Official Barcode or Verified Stamp (Cleaned up, no QR or beach art)
